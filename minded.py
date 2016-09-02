@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''MindEd - An Editor for programming LEGO Mindstorms Bricks
 - NXT with NXC
