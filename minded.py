@@ -197,7 +197,7 @@ class MindEdApp(Gtk.Application):
     
     def on_quit(self, action, param):
         self.quit()
-    
+   
             
 if __name__ == "__main__":
     app = MindEdApp()
