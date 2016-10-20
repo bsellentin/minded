@@ -14,41 +14,66 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkNotebook" id="notebook">
+          <object class="GtkPaned">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <signal name="switch-page" handler="on_notebook_switch_page" swapped="no"/>
+            <property name="orientation">vertical</property>
             <child>
-              <placeholder/>
+              <object class="GtkNotebook" id="notebook">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <signal name="switch-page" handler="on_notebook_switch_page" swapped="no"/>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
             </child>
-            <child type="tab">
-              <placeholder/>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0.0099999997764825821</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <object class="GtkScrolledWindow" id="compilerlog">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <property name="min_content_height">80</property>
+                    <child>
+                      <object class="GtkTextView" id="compilerview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="editable">False</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">compiler-log</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">False</property>
+                <property name="shrink">False</property>
+              </packing>
             </child>
           </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow" id="compilerlog">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="shadow_type">in</property>
-            <property name="min_content_height">80</property>
-            <child>
-              <object class="GtkTextView" id="compilerview">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="editable">False</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -395,12 +420,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="btn_brick_info">
+          <object class="GtkButton" id="btn_brickinfo">
+            <property name="label" translatable="yes">Brickinfo</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="receives_default">False</property>
-            <property name="action_name">win.foo</property>
-            <property name="text" translatable="yes">Brick Info</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <signal name="clicked" handler="on_btn_brickinfo_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>

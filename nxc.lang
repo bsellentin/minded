@@ -207,6 +207,7 @@
                     <keyword>default</keyword>
                     <keyword>do</keyword>
                     <keyword>else</keyword>
+                    <keyword>enum</keyword>
                     <keyword>for</keyword>
                     <keyword>fortran</keyword>
                     <keyword>goto</keyword>
@@ -216,12 +217,13 @@
                     <keyword>safecall</keyword>
                     <keyword>start</keyword>
                     <keyword>stop</keyword>
+                    <keyword>struct</keyword>
                     <keyword>sub</keyword>
                     <keyword>switch</keyword>
+                    <keyword>typedef</keyword>
                     <keyword>until</keyword>
                     <keyword>while</keyword>
                     <keyword>task</keyword>
-                    <keyword>priority</keyword>
                 </context>
 
                 <context id="types" style-ref="type" class="type">
@@ -235,32 +237,23 @@
                     <keyword>float</keyword>
                     <keyword>mutex</keyword>
                     <keyword>string</keyword>
-                    <keyword>struct</keyword>
-                    <keyword>typedef</keyword>
-                    <keyword>enum</keyword>
-                    <keyword>const</keyword>
-                    <keyword>static</keyword>
                 </context>
 
                 <context id="storage-class" style-ref="storage-class" class="storage-class">
                     <keyword>auto</keyword>
+                    <keyword>const</keyword>
                     <keyword>extern</keyword>
                     <keyword>inline</keyword>
                     <keyword>register</keyword>
                     <keyword>restrict</keyword>
+                    <keyword>static</keyword>
+                    <keyword>volatile</keyword>
                 </context>
 
                 <context id="nxt-ios" style-ref="nxt-ios" class="nxt-ios">
-                    <keyword>BTNEXIT</keyword>
                     <keyword>BTNRIGHT</keyword>
                     <keyword>BTNLEFT</keyword>
-                    <keyword>BTNCENTER</keyword>
-                    <keyword>BTN1</keyword>
-                    <keyword>BTN2</keyword>
-                    <keyword>BTN3</keyword>
-                    <keyword>BTN4</keyword>
-                    <keyword>DISPLAY_WIDTH</keyword>
-                    <keyword>DISPLAY_HEIGHT</keyword>
+                    <keyword>BTNENTER</keyword>
                     <keyword>IN_1</keyword>
                     <keyword>IN_2</keyword>
                     <keyword>IN_3</keyword>
@@ -287,19 +280,20 @@
                     <keyword>SENSOR_LIGHT</keyword>
                     <keyword>SENSOR_TOUCH</keyword>
                     <keyword>SENSOR_SOUND</keyword>
-                    <keyword>SENSOR_MODE_RAW</keyword>
-	                <keyword>SENSOR_MODE_EDGE</keyword>
-	                <keyword>SENSOR_MODE_PULSE</keyword>
-	                <keyword>SENSOR_MODE_PERCENT</keyword>
-	                <keyword>SENSOR_MODE_CELSIUS</keyword>
-	                <keyword>SENSOR_MODE_FAHRENHEIT</keyword>
-	                <keyword>SENSOR_MODE_ROTATION</keyword>
                 </context>
 
                 <context id="common-defines" style-ref="common-defines" class="common-defines">
                     <keyword>NULL</keyword>
+                    <keyword>MAX</keyword>
+                    <keyword>MIN</keyword>
                     <keyword>TRUE</keyword>
                     <keyword>FALSE</keyword>
+                    <keyword>__LINE__</keyword>
+                    <keyword>__DATA__</keyword>
+                    <keyword>__FILE__</keyword>
+                    <keyword>__func__</keyword>
+                    <keyword>__TIME__</keyword>
+                    <keyword>__STDC__</keyword>
                 </context>
 
                 <context id="commands" style-ref="commands" class="commands">
@@ -376,7 +370,6 @@
 		            <keyword>SetSensorTouch</keyword>
 		            <keyword>SetSensorMode</keyword>
 		            <keyword>SetSensorType</keyword>
-		            <keyword>StartTask</keyword>
 		            <keyword>StrCat</keyword>
 		            <keyword>StrLen</keyword>
 		            <keyword>StrToNum</keyword>
