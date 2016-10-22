@@ -420,18 +420,33 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="btn_brickinfo">
-            <property name="label" translatable="yes">Brickinfo</property>
+          <object class="GtkButton" id="btn_nxtinfo">
+            <property name="label" translatable="yes">NXT-Info</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="on_btn_brickinfo_clicked" swapped="no"/>
+            <signal name="clicked" handler="on_btn_nxtinfo_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_nxtfiler">
+            <property name="label" translatable="yes">NXT-Filer</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <signal name="clicked" handler="on_btn_nxtfiler_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -445,7 +460,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>
