@@ -121,12 +121,20 @@
               </packing>
             </child>
             <child>
+<<<<<<< HEAD:minded.glade
               <object class="GtkButton" id="language_button">
+=======
+              <object class="GtkButton" id="btn_language">
+>>>>>>> added bracket completion:minded/editor.glade
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="relief">none</property>
+<<<<<<< HEAD:minded.glade
                 <signal name="clicked" handler="on_language_button_clicked" swapped="no"/>
+=======
+                <signal name="clicked" handler="on_btn_language_clicked" swapped="no"/>
+>>>>>>> added bracket completion:minded/editor.glade
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>

@@ -20,13 +20,11 @@ from gi.repository import Gtk, Gdk, Gio, GObject, Pango
 gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
-# for usbListener
-#gi.require_version('GUdev', '1.0')
-#from gi.repository import GUdev
+import logging
+logger = logging.getLogger(__name__)
 
-import nxc_funcs
+import minded.nxc_funcs as nxc_funcs
 
-DEBUGLEVEL = 1
 SIMPLE_COMPLETE = 0
 
 class MindEdAppWin(object):
@@ -34,13 +32,19 @@ class MindEdAppWin(object):
 
     def __init__(self, application, *args, **kwargs):
         #self.app = application
+        
+        # args is tuple of tuples
+        #if any("debug" in arg for arg in args):
+        #    logger.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+        
+        
         builder = Gtk.Builder()
         GObject.type_register(GtkSource.View)
-        builder.add_from_file("minded.glade")
+        builder.add_from_file("minded/editor.glade")
         builder.connect_signals(self)
         self.window = builder.get_object("TopWin")
         self.window.set_application(application)
-
+        
         self.notebook = builder.get_object("notebook")
         self.compilerview = builder.get_object("compilerview")
         self.menupop = builder.get_object("menumenu")
@@ -55,6 +59,9 @@ class MindEdAppWin(object):
         self.brick_status = builder.get_object("brick_status")
         self.brick_status_id = self.brick_status.get_context_id("BrickStatus")
         # TODO: change label on tab change
+        self.btn_language = builder.get_object("btn_language")
+        self.btn_language.set_active(False)
+        self.btn_language.set_sensitive(False)
         self.language_label = builder.get_object("language_label")
         self.languagemenu = builder.get_object("languagemenu")
         self.language_tree = builder.get_object("languagetree")
@@ -70,10 +77,10 @@ class MindEdAppWin(object):
         # Look for Brick
         for device in application.client.query_by_subsystem("usb"):
             if device.get_property('ID_VENDOR') == '0694' and device.get_property('ID_MODEL') == '0002':
-            #if device.get_property('ID_MODEL_FROM_DATABASE') == "Mindstorms NXT":
                 self.brick_status.push(self.brick_status_id, "NXT")
                 self.btn_transmit.set_sensitive(True)
 
+        #self.window.set_default_icon_from_file('minded/nxt-symbolic.svg')
         self.window.show_all()
 
         self.untitledDocCount = 0
@@ -83,8 +90,7 @@ class MindEdAppWin(object):
         # get_n_pages from 0...n-1, remove reversed!
         for pagecount in range(self.notebook.get_n_pages()-1, -1, -1):
 
-            if DEBUGLEVEL > 0:
-                print("Window close clicked! Remove page %s" % pagecount)
+            logger.debug("Window close clicked! Remove page %s" % pagecount)
 
             editor = self.notebook.get_nth_page(pagecount)
             if editor.get_buffer().get_modified():
@@ -99,8 +105,7 @@ class MindEdAppWin(object):
 
     def on_btn_new_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button New clicked from:\n %s" % button)
+        logger.debug("Button New clicked from:\n %s" % button)
 
         self.untitledDocCount += 1
         
@@ -118,8 +123,7 @@ class MindEdAppWin(object):
 
     def on_btn_open_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button Open clicked from:\n %s" % button)
+        logger.debug("Button Open clicked from:\n %s" % button)
 
         open_dlg = Gtk.FileChooserDialog("Please choose a file", self.window,
                                          Gtk.FileChooserAction.OPEN,
@@ -133,8 +137,7 @@ class MindEdAppWin(object):
 
         open_dlg = dialog
         if response == Gtk.ResponseType.ACCEPT:
-            if DEBUGLEVEL > 0:
-                print("OpenDialog File selected: " + dialog.get_uri())
+            logger.debug("OpenDialog File selected: " + dialog.get_uri())
             # check if file already open
             for pagecount in range(self.notebook.get_n_pages()-1, -1, -1):
                 editor = self.notebook.get_nth_page(pagecount)
@@ -145,15 +148,13 @@ class MindEdAppWin(object):
                 self.load_file_in_editor(open_dlg.get_uri())
 
         elif response == Gtk.ResponseType.CANCEL:
-            if DEBUGLEVEL > 0:
-                print("OpenDialog Cancel clicked")
+            logger.debug("OpenDialog Cancel clicked")
 
         dialog.destroy()
 
     def on_btn_save_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button Save clicked from:\n %s" % button)
+        logger.debug("Button Save clicked from:\n %s" % button)
 
         page_num = self.notebook.get_current_page()
         editor = self.notebook.get_nth_page(page_num)
@@ -162,8 +163,7 @@ class MindEdAppWin(object):
 
     def on_btn_save_as_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button Save as clicked from:\n %s" % button)
+        logger.debug("Button Save as clicked from:\n %s" % button)
 
         if self.menupop.get_visible():
             self.menupop.hide()
@@ -173,31 +173,27 @@ class MindEdAppWin(object):
 
         self.save_file_as(editor, 0)
         
-        if DEBUGLEVEL > 0:
-            print("Save as: %s" % editor.file)
+        logger.debug("Save as: %s" % editor.file)
             
     def on_btn_close_tab_clicked(self, button, child):
 
         # widget must be child of page, that is scrolledwindow
         page_num = self.notebook.page_num(child)
         editor = self.notebook.get_nth_page(page_num)
-        if DEBUGLEVEL > 0:
-            print("Button CloseTab clicked from:\n %s" % button)
-            print("close tab %s" % page_num)
+        logger.debug("Button CloseTab clicked from:\n %s" % button)
+        logger.debug("close tab %s" % page_num)
 
         if page_num != -1 and not editor.get_buffer().get_modified():
             self.notebook.remove_page(page_num)
             editor.destroy()
             child.destroy()
         else:
-            if DEBUGLEVEL > 0:
-                print("file modified, save before closing")
+            logger.debug("file modified, save before closing")
             self.close_confirmation_dialog(child)
 
     def on_btn_compile_clicked(self, button):
         '''compile the saved file - a .rxe-file results'''
-        if DEBUGLEVEL > 0:
-            print("Button Compile clicked from:\n %s" % button)
+        logger.debug("Button Compile clicked from:\n %s" % button)
 
         page_num = self.notebook.get_current_page()
         editor = self.notebook.get_nth_page(page_num)
@@ -206,8 +202,7 @@ class MindEdAppWin(object):
         else:
             nbcfile = urlparse(unquote(editor.file))
             nbcout = os.path.splitext(nbcfile.path)[0]+".rxe"
-            if DEBUGLEVEL > 0:
-                print("File to compile: %s" % shlex.quote(nbcfile.path))
+            logger.debug("File to compile: %s" % shlex.quote(nbcfile.path))
             nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout), shlex.quote(nbcfile.path)))
 
             # change cursor
@@ -219,8 +214,7 @@ class MindEdAppWin(object):
 
     def on_btn_transmit_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button Transmit clicked from:\n %s" % button)
+        logger.debug("Button Transmit clicked from:\n %s" % button)
 
         page_num = self.notebook.get_current_page()
         editor = self.notebook.get_nth_page(page_num)
@@ -266,8 +260,7 @@ class MindEdAppWin(object):
 
     def on_btn_menu_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button Menu clicked from:\n %s" % button)
+        logger.debug("Button Menu clicked from:\n %s" % button)
 
         #Toggl
         if self.menupop.get_visible():
@@ -277,8 +270,7 @@ class MindEdAppWin(object):
 
     def on_btn_print_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button Print clicked from:\n %s" % button)
+        logger.debug("Button Print clicked from:\n %s" % button)
 
         if self.menupop.get_visible():
             self.menupop.hide()
@@ -305,7 +297,8 @@ class MindEdAppWin(object):
         aboutdlg.set_version("0.1")
         #image = GdkPixbuf.Pixbuf()
         #image.new_from_file("/home/selles/pyGtk/minded/minded.png")
-        aboutdlg.set_logo_icon_name("gedit-symbolic")
+        #aboutdlg.set_logo_icon_name(image)
+        aboutdlg.set_logo_icon_name()
         aboutdlg.set_copyright("2016")
         aboutdlg.set_website("http://sellentin.homepage.t-online.de/minded")
         aboutdlg.set_website_label("MindEd Website")
@@ -317,7 +310,7 @@ class MindEdAppWin(object):
         try:
             editor = EditorApp(file)
         except:
-            print("Something went terrible wrong")
+            logger.warn("Something went terrible wrong")
             
         self.create_tab_label(editor)
         self.notebook.append_page(editor, self.box)
@@ -333,9 +326,10 @@ class MindEdAppWin(object):
             self.btn_save_as.set_sensitive(True)
         if not self.btn_print.get_sensitive():
             self.btn_print.set_sensitive(True)
+        if not self.btn_language.get_sensitive():
+            self.btn_language.set_sensitive(True)
 
-        if DEBUGLEVEL > 0:
-            print("file %s loaded in buffer, modified %s" % (file, buffer.get_modified()))
+        logger.debug("file %s loaded in buffer, modified %s" % (file, buffer.get_modified()))
 
     def is_untitled(self, editor, close_tab):
         """looks if file is new with default name
@@ -354,8 +348,7 @@ class MindEdAppWin(object):
 
         path = editor.file
 
-        if DEBUGLEVEL > 0:
-            print("func save_file_as: %s on tab " % (path))
+        logger.debug("func save_file_as: %s on tab " % (path))
 
         # FileChooserDialog wants Gio.File
         file = Gio.File.new_for_uri(path)
@@ -369,7 +362,7 @@ class MindEdAppWin(object):
         try:
             save_dialog.set_file(file)
         except GObject.GError as e:
-            print("Error: " + e.message)
+            logger.error("Error: " + e.message)
 
         save_dialog.connect("response", self.save_file_as_response, editor, close_tab)
         save_dialog.show()
@@ -379,12 +372,12 @@ class MindEdAppWin(object):
         save_dialog = dialog
         if response == Gtk.ResponseType.ACCEPT:
             editor.file = save_dialog.get_uri()
-            if DEBUGLEVEL > 0:
+            if logger.isEnabledFor(logging.DEBUG):
                 page_num = self.notebook.page_num(editor)
-                print("func save_file_as_response: %s on tab %s, " % (editor.file, page_num))
+                logger.debug("func save_file_as_response: %s on tab %s, " % (editor.file, page_num))
             self.save_file(editor, close_tab)
         elif response == Gtk.ResponseType.CANCEL:
-            print("cancelled: SAVE AS")
+            logger.debug("cancelled: SAVE AS")
         dialog.destroy()
 
     def save_file(self, editor, close_tab):
@@ -398,7 +391,7 @@ class MindEdAppWin(object):
             saver = GtkSource.FileSaver.new(buffer, file)
             saver.save_async(1, None, None, None, self.on_save_finish, editor, close_tab)
         except GObject.GError as e:
-            print("Error: " + e.message)
+            logger.error("Error: " + e.message)
 
     def on_save_finish(self, source, result, editor, close_tab):
         
@@ -407,15 +400,21 @@ class MindEdAppWin(object):
 
             if close_tab:
                 page_num = self.notebook.page_num(editor)
-                if DEBUGLEVEL > 0:
-                    print("remove tab %s" % page_num)
+                logger.debug("remove tab %s" % page_num)
                 # async saving, we have to wait for finish before removing
                 self.notebook.get_nth_page(page_num).get_child().destroy()
                 self.notebook.get_nth_page(page_num).destroy()
                 self.notebook.remove_page(page_num)
-            if DEBUGLEVEL > 0:
-                print("file %s saved %s" % (editor.file, success))
-        
+            logger.debug("file %s saved %s" % (editor.file, success))
+
+            # change language according file extension, e.g. new created files
+            editor.nxc_lang = editor.lm.guess_language(editor.file, None)
+            if editor.nxc_lang:
+                editor.get_buffer().set_highlight_syntax(True)
+                editor.get_buffer().set_language(editor.nxc_lang)
+            self.language_label.set_text(editor.nxc_lang.get_name())
+
+            # change tab label
             thisbox = self.notebook.get_tab_label(editor)
             widglist = thisbox.get_children()
             fileuri = urlparse(unquote(editor.file))
@@ -423,7 +422,7 @@ class MindEdAppWin(object):
             widglist[0].set_text(filename)
         
         except GObject.GError as e:
-            print("problem saving file " + e.message)
+            logger.error("problem saving file " + e.message)
             return
 
     def close_confirmation_dialog(self, editor):
@@ -444,27 +443,24 @@ class MindEdAppWin(object):
     def close_confirmation_dialog_response(self, widget, response, editor):
 
         if response == Gtk.ResponseType.NO:
-            if DEBUGLEVEL > 0:
-                print("Close tab without saving")
+            logger.debug("Close tab without saving")
             # click perhaps not on current page
             page_num = self.notebook.page_num(editor)
             self.notebook.remove_page(page_num)
             editor.destroy()
 
         elif response == Gtk.ResponseType.CANCEL:
-            if DEBUGLEVEL > 0:
-                print("Cancel closing tab")
+            logger.debug("Cancel closing tab")
 
         elif response == Gtk.ResponseType.YES:
-            if DEBUGLEVEL > 0:
-                print("Save file before closing")
+            logger.debug("Save file before closing")
             
             close_tab = 1
             self.is_untitled(editor, close_tab)
 
         # if the messagedialog is destroyed (by pressing ESC)
         elif response == Gtk.ResponseType.DELETE_EVENT:
-            print("dialog closed or cancelled")
+            logger.debug("dialog closed or cancelled")
         # finally, destroy the messagedialog
         widget.destroy()
 
@@ -491,8 +487,7 @@ class MindEdAppWin(object):
         page_num = self.notebook.get_current_page()
         editor = self.notebook.get_nth_page(page_num)
         
-        if DEBUGLEVEL > 0:
-            print("modified tab %s %s" % (page_num, editor.get_buffer().get_modified()))
+        logger.debug("modified tab %s %s" % (page_num, editor.get_buffer().get_modified()))
         
         thisbox = self.notebook.get_tab_label(self.notebook.get_nth_page(page_num))
         widglist = thisbox.get_children()
@@ -504,23 +499,16 @@ class MindEdAppWin(object):
             filename = filename[1:]
         widglist[0].set_text(filename)
 
-    def on_language_button_clicked(self, button):
+    def on_btn_language_clicked(self, button):
 
-        if DEBUGLEVEL > 0:
-            print("Button Language clicked from:\n %s" % button)
-
-        #Toggl
-        if self.languagemenu.get_visible():
-            self.languagemenu.hide()
-        else:
-            self.languagemenu.show_all()
+        logger.debug("Button Language clicked from:\n %s" % button)
+        self.languagemenu.show_all()
             
     def on_languageselect_changed(self, selection):
-
+        ''' single click, language changed '''
         model, treeiter = selection.get_selected()
         if treeiter != None:
-            if DEBUGLEVEL > 0:
-                print("Language selected", model[treeiter][0])
+            logger.debug("Language selected %s", model[treeiter][0])
             
             self.language_label.set_text(model[treeiter][1])
             
@@ -539,6 +527,15 @@ class MindEdAppWin(object):
             
             self.languagemenu.hide()
 
+        editor.codeview.grab_focus()
+        
+    def on_languagetree_row_activated(self, treeview, path, column):
+        '''double click'''
+        selection = treeview.get_selection()
+        model, treeiter = selection.get_selected()
+        if treeiter != None:
+            logger.debug("Language selected %s", model[treeiter][0])
+            
     def on_notebook_switch_page(self, notebook, page, page_num):
         #print(page_num)
         editor = self.notebook.get_nth_page(page_num)
@@ -550,14 +547,14 @@ class MindEdAppWin(object):
 
     def on_btn_nxtinfo_clicked(self, button):
         '''new window with brick information like name, firmware...'''
-        import nxtinfo
+        import minded.nxtinfo as nxtinfo
         if self.menupop.get_visible():
             self.menupop.hide()
         self.nxt_info = nxtinfo.NXTInfo(self.window.get_application())
 
     def on_btn_nxtfiler_clicked(self, button):
         '''new window with brick information like name, firmware...'''
-        import nxtfiler
+        import minded.nxtfiler as nxtfiler
         if self.menupop.get_visible():
             self.menupop.hide()
         self.nxt_filer = nxtfiler.NXT_Filer(self.window.get_application())
@@ -569,7 +566,9 @@ class EditorApp(Gtk.ScrolledWindow):
         Gtk.ScrolledWindow.__init__(self)
         self.set_hexpand(True)
         self.set_vexpand(True)
-
+        
+        #logger.getLogger(__name__)
+        
         self.lm = GtkSource.LanguageManager.new()
         self.nxc_lang = self.lm.guess_language(file, None)
         #if self.nxc_lang:
@@ -577,21 +576,23 @@ class EditorApp(Gtk.ScrolledWindow):
         #else:
         #    self.language_label.set_text('Text')
         
-        #if DEBUGLEVEL > 0:
-        #    print language.get_name()
+        #logger.debug('language %s',language.get_name())
 
         self.buffer = GtkSource.Buffer()
         if self.nxc_lang:
             self.buffer.set_highlight_syntax(True)
             self.buffer.set_language(self.nxc_lang)
         else:
-            print('No language found for file "%s"' % file)
+            logger.warn('No language found for file "%s"' % file)
             self.buffer.set_highlight_syntax(False)
 
         self.codeview = GtkSource.View().new_with_buffer(self.buffer)
 
         self.codeview.set_show_line_numbers(True)
         self.codeview.set_auto_indent(True)
+        # selected lines are indented instead of being replaced, shift+tab unindents
+        self.codeview.set_indent_on_tab(True)
+        self.codeview.set_tab_width(4)
         self.codeview.modify_font(Pango.FontDescription("Monospace 12"))
 
         if SIMPLE_COMPLETE:
@@ -621,6 +622,10 @@ class EditorApp(Gtk.ScrolledWindow):
             self.codeview_completion = self.codeview.get_completion()
             self.codeview_completion.add_provider(self.custom_completion_provider)
 
+        # for bracket completion
+        self.codeview.connect('key-press-event', self.on_key_press)
+        self.add_brackets()
+        
         self.file = file
         self.codeview.show()
 
@@ -634,7 +639,7 @@ class EditorApp(Gtk.ScrolledWindow):
             loader = GtkSource.FileLoader.new(self.codeview.get_buffer(), afile)
             loader.load_async(1, None, None, None, self.file_load_finish, self.file)
         except GObject.GError as e:
-            print("Error: " + e.message)
+            logger.warn("Error: " + e.message)
 
     def file_load_finish(self, source, result, file):
 
@@ -642,14 +647,75 @@ class EditorApp(Gtk.ScrolledWindow):
             success = source.load_finish(result)
         except GObject.GError as e:
             # happens on new file, if not exists
-            print(e.message)
+            logger.warn(e.message)
 
-        if DEBUGLEVEL > 0:
-            print("file %s loaded %s" % (file, success))
+        logger.debug("file %s loaded %s" % (file, success))
 
     def get_buffer(self):
         return self.codeview.get_buffer()
+    
+    # bracket completion   
+    def on_key_press(self, view, event):
+        #logger.debug('key_press_event: %s', event)
+        doc = self.buffer
+        ch = self.to_char(event.keyval)
+        #logger.debug('keyval %s', ch)
+        if self.is_opening_paren(ch):
+            logger.debug('opening_paren %s', ch)
+        
+            if self.should_auto_close_paren():
+                #logger.debug('should_auto_close_paren')
+                self.auto_close_paren(doc, ch)
                 
+    def to_char(self, keyval_or_char):
+        """Convert a event keyval or character to a character"""
+        if isinstance(keyval_or_char, str):
+            return keyval_or_char
+        return chr(keyval_or_char) if 0 < keyval_or_char < 128 else None
+
+    def is_opening_paren(self, char):
+        return char in self.opening_parens
+
+    def is_closing_paren(self, char):
+        return char in self.closing_parens
+
+    def should_auto_close_paren(self):
+        iter1 = self.buffer.get_iter_at_mark(self.buffer.get_insert())
+        if iter1.is_end() or iter1.ends_line():
+            return True
+        char = iter1.get_char()
+        return not (char.isalnum() or char == '_')
+
+    def auto_close_paren(self, doc, opening_paren):
+        closing_paren = self.get_matching_closing_paren(opening_paren)
+        doc.begin_user_action()
+        doc.insert_at_cursor(closing_paren)
+        iter1 = doc.get_iter_at_mark(doc.get_insert())
+        iter1.backward_char()
+        doc.place_cursor(iter1)
+        doc.end_user_action()
+        logger.debug('autoclosed by %s', closing_paren)
+        return True        
+
+    def get_matching_closing_paren(self,opener):
+        try:
+            return self.closing_parens[self.opening_parens.index(opener)]
+        except ValueError:
+            return None
+            
+    def add_brackets(self):
+        
+        brackets = '(){}[]""'
+        parens = [], []
+        for i in range(0, len(brackets), 2):
+            parens[0].append(brackets[i+0])
+            parens[1].append(brackets[i+1])
+        self.opening_parens = parens[0]
+        self.closing_parens = parens[1]
+        logger.debug('opening %s', self.opening_parens)
+        logger.debug('closing %s', self.closing_parens)    
+    # end bracket completion
+    
 class CustomCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
 
     def do_get_name(self):
@@ -720,26 +786,22 @@ class PrintingApp:
 
     def begin_print(self, operation, context, compositor):
 
-        if DEBUGLEVEL > 0:
-            print("Initializing printing process...")
+        logger.debug("Initializing printing process...")
 
         while not compositor.paginate(context):
             pass
         n_pages = compositor.get_n_pages()
         operation.set_n_pages(n_pages)
 
-        if DEBUGLEVEL > 0:
-            print("Sending", n_pages, " pages to printer")
+        logger.debug("Sending", n_pages, " pages to printer")
 
     def draw_page(self, operation, context, page_num, compositor):
 
-        if DEBUGLEVEL > 0:
-            print("Sending page:", (page_num+1))
+        logger.debug("Sending page:", (page_num+1))
 
         compositor.draw_page(context, page_num)
 
     def end_print(self, operation, context):
 
-        if DEBUGLEVEL > 0:
-            print("Document sent to printer")
+        logger.debug("Document sent to printer")
 
