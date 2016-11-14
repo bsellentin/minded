@@ -567,8 +567,6 @@ class EditorApp(Gtk.ScrolledWindow):
         self.set_hexpand(True)
         self.set_vexpand(True)
         
-        #logger.getLogger(__name__)
-        
         self.lm = GtkSource.LanguageManager.new()
         self.nxc_lang = self.lm.guess_language(file, None)
         #if self.nxc_lang:
@@ -656,17 +654,36 @@ class EditorApp(Gtk.ScrolledWindow):
     
     # bracket completion   
     def on_key_press(self, view, event):
-        #logger.debug('key_press_event: %s', event)
-        doc = self.buffer
+        handled = False
+        doc = view.get_buffer()
         ch = self.to_char(event.keyval)
-        #logger.debug('keyval %s', ch)
         if self.is_opening_paren(ch):
             logger.debug('opening_paren %s', ch)
+            if self.should_auto_close_paren(doc):
+                handled = self.auto_close_paren(doc, ch)
         
-            if self.should_auto_close_paren():
-                #logger.debug('should_auto_close_paren')
-                self.auto_close_paren(doc, ch)
-                
+        if not handled and event.keyval == Gdk.KEY_Return:
+            iter1 = doc.get_iter_at_mark(doc.get_insert())
+            rb = iter1.get_char()
+            iter1.backward_char()
+            lb = iter1.get_char()
+            if lb == '{' and rb == '}':
+                logger.debug('Insert new line and indent %s',view.get_tab_width())
+                text_to_insert = '\n' + self.get_current_line_indent(doc)
+                doc.begin_user_action()
+                mark = doc.get_insert()
+                iter1 = doc.get_iter_at_mark(mark)
+                doc.place_cursor(iter1)
+                doc.insert_at_cursor(text_to_insert + ' ' * view.get_tab_width())
+                doc.insert_at_cursor(text_to_insert)
+                mark = doc.get_insert()
+                iter2 = doc.get_iter_at_mark(mark)
+                iter2.backward_chars(len(text_to_insert))
+                doc.place_cursor(iter2)
+                doc.end_user_action()
+                handled = True
+        return handled
+        
     def to_char(self, keyval_or_char):
         """Convert a event keyval or character to a character"""
         if isinstance(keyval_or_char, str):
@@ -679,8 +696,8 @@ class EditorApp(Gtk.ScrolledWindow):
     def is_closing_paren(self, char):
         return char in self.closing_parens
 
-    def should_auto_close_paren(self):
-        iter1 = self.buffer.get_iter_at_mark(self.buffer.get_insert())
+    def should_auto_close_paren(self, doc):
+        iter1 = doc.get_iter_at_mark(doc.get_insert())
         if iter1.is_end() or iter1.ends_line():
             return True
         char = iter1.get_char()
@@ -689,7 +706,7 @@ class EditorApp(Gtk.ScrolledWindow):
     def auto_close_paren(self, doc, opening_paren):
         closing_paren = self.get_matching_closing_paren(opening_paren)
         doc.begin_user_action()
-        doc.insert_at_cursor(closing_paren)
+        doc.insert_at_cursor(opening_paren + closing_paren)
         iter1 = doc.get_iter_at_mark(doc.get_insert())
         iter1.backward_char()
         doc.place_cursor(iter1)
@@ -702,6 +719,21 @@ class EditorApp(Gtk.ScrolledWindow):
             return self.closing_parens[self.opening_parens.index(opener)]
         except ValueError:
             return None
+
+    def get_current_line_indent(self, doc):
+        it_start = doc.get_iter_at_mark(doc.get_insert())
+        it_start.set_line_offset(0)
+        it_end = it_start.copy()
+        it_end.forward_to_line_end()
+        indentation = []
+        while it_start.compare(it_end) < 0:
+          char = it_start.get_char()
+          if char == ' ' or char == '\t':
+            indentation.append(char)
+          else:
+            break
+          it_start.forward_char()
+        return ''.join(indentation)
             
     def add_brackets(self):
         
