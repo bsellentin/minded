@@ -1,0 +1,69 @@
+# selected lines are indented instead of being replaced, shift+tab unindents
+        self.codeview.set_indent_on_tab(True)
+        self.codeview.set_tab_width(4)
+        
+        # for bracket completion
+        self.codeview.connect('key-press-event', self.on_key_press)
+        self.add_brackets()
+        
+            # bracket completion   
+    def on_key_press(self, view, event):
+        #logger.debug('key_press_event: %s', event)
+        doc = self.buffer
+        ch = self.to_char(event.keyval)
+        #logger.debug('keyval %s', ch)
+        if self.is_opening_paren(ch):
+            logger.debug('opening_paren %s', ch)
+        
+            if self.should_auto_close_paren():
+                #logger.debug('should_auto_close_paren')
+                self.auto_close_paren(doc, ch)
+                
+    def to_char(self, keyval_or_char):
+        """Convert a event keyval or character to a character"""
+        if isinstance(keyval_or_char, str):
+            return keyval_or_char
+        return chr(keyval_or_char) if 0 < keyval_or_char < 128 else None
+
+    def is_opening_paren(self, char):
+        return char in self.opening_parens
+
+    def is_closing_paren(self, char):
+        return char in self.closing_parens
+
+    def should_auto_close_paren(self):
+        iter1 = self.buffer.get_iter_at_mark(self.buffer.get_insert())
+        if iter1.is_end() or iter1.ends_line():
+            return True
+        char = iter1.get_char()
+        return not (char.isalnum() or char == '_')
+
+    def auto_close_paren(self, doc, opening_paren):
+        closing_paren = self.get_matching_closing_paren(opening_paren)
+        doc.begin_user_action()
+        doc.insert_at_cursor(closing_paren)
+        iter1 = doc.get_iter_at_mark(doc.get_insert())
+        iter1.backward_char()
+        doc.place_cursor(iter1)
+        doc.end_user_action()
+        logger.debug('autoclosed by %s', closing_paren)
+        return True        
+
+    def get_matching_closing_paren(self,opener):
+        try:
+            return self.closing_parens[self.opening_parens.index(opener)]
+        except ValueError:
+            return None
+            
+    def add_brackets(self):
+        
+        brackets = '(){}[]""'
+        parens = [], []
+        for i in range(0, len(brackets), 2):
+            parens[0].append(brackets[i+0])
+            parens[1].append(brackets[i+1])
+        self.opening_parens = parens[0]
+        self.closing_parens = parens[1]
+        logger.debug('opening %s', self.opening_parens)
+        logger.debug('closing %s', self.closing_parens)    
+    # end bracket completion

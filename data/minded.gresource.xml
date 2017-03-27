@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gge-em/MindEd">
+    <file>minded.svg</file>
+    <file preprocess="xml-stripblanks">mindedappwin.ui</file>
+    <file preprocess="xml-stripblanks">minded-preferences-dialog.ui</file>
+    <file preprocess="xml-stripblanks">nxtinfo.ui</file>
+    <file preprocess="xml-stripblanks">app-menu.ui</file>
+  </gresource>
+</gresources>

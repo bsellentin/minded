@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/org/gge-em/MindEd/" id="org.gge-em.MindEd">
+    
+    <key name="nbcpath" type="s">
+      <default>""</default>
+      <summary>Path to NBC-executable</summary>
+      <description>
+        Set path to NextByteCodes-compiler.
+      </description>
+    </key>
+    <key name="enhancedfw" type="b">
+      <default>false</default>
+      <summary>Use enhanced firmware</summary>
+      <description>
+        Wether to use enhanced NBC/NXC formware or not.
+      </description>
+    </key>
+    <key name="armgcc" type="s">
+      <default>""</default>
+      <summary>Path to arm-gcc</summary>
+      <description>
+        Set path to C cross-compiler for armel architecture.
+      </description>
+    </key>
+    <key name="ldflags" type="s">
+      <default>""</default>
+      <summary>LDFLAGS for arm-gcc</summary>
+      <description>
+        Set path to EV3-library.
+      </description>
+    </key>
+    <key name="incs" type="s">
+      <default>""</default>
+      <summary>includes for arm-gcc</summary>
+      <description>
+        Set path to EV3 headers.
+      </description>
+    </key>
+    
+    <key name="fontname" type="s">
+      <default>"Monospace 11"</default>
+      <summary>Editor font</summary>
+      <description>
+        Set editor font.
+      </description>
+    </key>
+    <key name="showrightmargin" type="b">
+      <default>false</default>
+      <summary>Show right margin</summary>
+      <description>
+        If true a right margin is displayed.
+      </description>
+    </key>
+    <key name="setrightmargin" type="i">
+      <default>80</default>
+      <summary>Position of right margin</summary>
+      <description>
+        Sets the position of the right margin.
+      </description>
+    </key>
+    <key name="highlightcurrentline" type="b">
+      <default>true</default>
+      <summary>Highlight current line</summary>
+      <description>
+        If highlight is true the current line will be highlighted.
+      </description>
+    </key>
+    <key name="highlightmatchingbrackets" type="b">
+      <default>true</default>
+      <summary>Highlight matching brackets</summary>
+      <description>
+        If highlight is true matching brackets will be highlighted.
+      </description>
+    </key>
+    <key name="autoindent" type="b">
+      <default>true</default>
+      <summary>Enable auto-indentation</summary>
+      <description>
+        When Enter is pressed to create a new line, the auto-indentation
+        inserts the same indentation as the previous line.
+      </description>
+    </key>
+    <key name="indentontab" type="b">
+      <default>true</default>
+      <summary>Indent selected lines on tab key</summary>
+      <description>
+        If true, when the tab key is pressed when several lines are
+        selected, the selected lines are indented of one level instead
+        of being replaced with a \t character.
+        Shift+Tab unindents the selection.
+      </description>
+    </key>
+    <key name="spacesinsteadtab" type="b">
+      <default>true</default>
+      <summary>Insert spaces instead of tabs</summary>
+      <description>
+        If true a tab key pressed is replaced by a group of space characters.
+      </description>
+    </key>
+    <key name="smartbackspace" type="b">
+      <default>true</default>
+      <summary>Backspace deletes spaces to previous tab</summary>
+      <description>
+        When set to TRUE, pressing the Backspace key will try to delete
+        spaces up to the previous tab stop.
+      </description>
+    </key>
+    <key name="linenumbers" type="b">
+      <default>true</default>
+      <summary>Show line numbers</summary>
+      <description>
+        If true line numbers will be displayed beside the text.
+      </description>
+    </key>
+    <key name="tabwidth" type="i">
+      <range min="2" max="8"/>
+      <default>2</default>
+      <summary>Tab width</summary>
+      <description>
+        Sets the width of tabulation in characters.
+      </description>
+    </key>
+   
+    
+  </schema>
+</schemalist>
