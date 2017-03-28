@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 '''MindEd - An Editor for programming LEGO Mindstorms Bricks
 - NXT with NXC
@@ -197,7 +197,7 @@ class MindEdApp(Gtk.Application):
     
     def on_quit(self, action, param):
         self.quit()
-   
+    
             
 if __name__ == "__main__":
     app = MindEdApp()
