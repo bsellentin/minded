@@ -4,6 +4,7 @@
  Authors: Marco Barisione, Emanuele Aina
  Copyright (C) 2005-2007 Marco Barisione <barisione@gmail.com>
  Copyright (C) 2005-2007 Emanuele Aina
+ Copyright (C) 2016-2017 Bernd Sellentin <sel@gge-em.org>
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -309,32 +310,32 @@
                     <keyword>SENSOR_TOUCH</keyword>
                     <keyword>SENSOR_SOUND</keyword>
                     <keyword>SENSOR_MODE_RAW</keyword>
-	                <keyword>SENSOR_MODE_EDGE</keyword>
-	                <keyword>SENSOR_MODE_PULSE</keyword>
-	                <keyword>SENSOR_MODE_PERCENT</keyword>
-	                <keyword>SENSOR_MODE_CELSIUS</keyword>
-	                <keyword>SENSOR_MODE_FAHRENHEIT</keyword>
-	                <keyword>SENSOR_MODE_ROTATION</keyword>
-	                <keyword>SEC_1</keyword> 
-	                <keyword>SEC_2</keyword>
-	                <keyword>SEC_3</keyword>
-	                <keyword>SEC_4</keyword>
-	                <keyword>SEC_5</keyword>
-	                <keyword>SEC_6</keyword>
-	                <keyword>SEC_7</keyword>
-	                <keyword>SEC_8</keyword>
-	                <keyword>SEC_9</keyword>
-	                <keyword>SEC_10</keyword>
-	                <keyword>SEC_15</keyword>
-	                <keyword>SEC_20</keyword>
-	                <keyword>SEC_30</keyword>
-	                <keyword>MIN_1</keyword>
-	                <keyword>SOUND_CLICK</keyword>
-	                <keyword>SOUND_DOUBLE_BEEP</keyword>
-	                <keyword>SOUND_UP</keyword>
-	                <keyword>SOUND_DOWN</keyword>
-	                <keyword>SOUND_LOW_BEEP</keyword>
-	                <keyword>SOUND_FAST_UP</keyword>
+                    <keyword>SENSOR_MODE_EDGE</keyword>
+                    <keyword>SENSOR_MODE_PULSE</keyword>
+                    <keyword>SENSOR_MODE_PERCENT</keyword>
+                    <keyword>SENSOR_MODE_CELSIUS</keyword>
+                    <keyword>SENSOR_MODE_FAHRENHEIT</keyword>
+                    <keyword>SENSOR_MODE_ROTATION</keyword>
+                    <keyword>SEC_1</keyword> 
+                    <keyword>SEC_2</keyword>
+                    <keyword>SEC_3</keyword>
+                    <keyword>SEC_4</keyword>
+                    <keyword>SEC_5</keyword>
+                    <keyword>SEC_6</keyword>
+                    <keyword>SEC_7</keyword>
+                    <keyword>SEC_8</keyword>
+                    <keyword>SEC_9</keyword>
+                    <keyword>SEC_10</keyword>
+                    <keyword>SEC_15</keyword>
+                    <keyword>SEC_20</keyword>
+                    <keyword>SEC_30</keyword>
+                    <keyword>MIN_1</keyword>
+                    <keyword>SOUND_CLICK</keyword>
+                    <keyword>SOUND_DOUBLE_BEEP</keyword>
+                    <keyword>SOUND_UP</keyword>
+                    <keyword>SOUND_DOWN</keyword>
+                    <keyword>SOUND_LOW_BEEP</keyword>
+                    <keyword>SOUND_FAST_UP</keyword>
                 </context>
 
                 <context id="common-defines" style-ref="common-defines" class="common-defines">
@@ -396,24 +397,24 @@
                     <keyword>ResetTachoCount</keyword>
                     <keyword>ResetRotationCount</keyword>
                     <keyword>ResetAllTachoCounts</keyword>
-		            <keyword>RotateMotor</keyword>
-		            <keyword>RotateMotorEx</keyword>
-		            <keyword>RotateMotorNoWait</keyword>
-		            <keyword>RotateMotorNoWaitEx</keyword>
-		            <keyword>SetPower</keyword>
-		            <keyword>SetSensorLight</keyword>
-		            <keyword>SetSensorTouch</keyword>
-		            <keyword>SetSensorUS</keyword>
-		            <keyword>SetSensorGyro</keyword>
-		            <keyword>SetSensorNXTSound</keyword>
-		            <keyword>SetSensorMode</keyword>
-		            <keyword>SetAllSensorMode</keyword>
-		            <keyword>SetIRBeaconCH</keyword>
-		            <keyword>SetLedPattern</keyword>
+                    <keyword>RotateMotor</keyword>
+                    <keyword>RotateMotorEx</keyword>
+                    <keyword>RotateMotorNoWait</keyword>
+                    <keyword>RotateMotorNoWaitEx</keyword>
+                    <keyword>SetPower</keyword>
+                    <keyword>SetSensorLight</keyword>
+                    <keyword>SetSensorTouch</keyword>
+                    <keyword>SetSensorUS</keyword>
+                    <keyword>SetSensorGyro</keyword>
+                    <keyword>SetSensorNXTSound</keyword>
+                    <keyword>SetSensorMode</keyword>
+                    <keyword>SetAllSensorMode</keyword>
+                    <keyword>SetIRBeaconCH</keyword>
+                    <keyword>SetLedPattern</keyword>
                     <keyword>SetLedWarning</keyword>
-		            <keyword>ReadSensor</keyword>
-		            <keyword>ReadSensorData</keyword>
-		            <keyword>Wait</keyword>
+                    <keyword>ReadSensor</keyword>
+                    <keyword>ReadSensorData</keyword>
+                    <keyword>Wait</keyword>
                 </context>  
 
                 <!-- C99 booleans -->

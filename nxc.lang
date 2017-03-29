@@ -4,6 +4,7 @@
  Authors: Marco Barisione, Emanuele Aina
  Copyright (C) 2005-2007 Marco Barisione <barisione@gmail.com>
  Copyright (C) 2005-2007 Emanuele Aina
+ Copyright (C) 2016-2017 Bernd Sellentin <sel@gge-em.org>
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -41,7 +42,7 @@
         <style id="keyword"           _name="Keyword"             map-to="def:keyword"/>
         <style id="type"              _name="Data Type"           map-to="def:type"/>
         <style id="storage-class"     _name="Storage Class"       map-to="def:type"/>
-        <style id="nxt-ios"	      _name="NXT IOs"             map-to="def:type"/>
+        <style id="nxt-ios"           _name="NXT IOs"             map-to="def:type"/>
         <style id="printf"            _name="printf Conversion"   map-to="def:special-char"/>
         <style id="escaped-character" _name="Escaped Character"   map-to="def:special-char"/>
         <style id="floating-point"    _name="Floating point number" map-to="def:floating-point"/>
@@ -207,7 +208,6 @@
                     <keyword>default</keyword>
                     <keyword>do</keyword>
                     <keyword>else</keyword>
-                    <keyword>enum</keyword>
                     <keyword>for</keyword>
                     <keyword>fortran</keyword>
                     <keyword>goto</keyword>
@@ -217,13 +217,12 @@
                     <keyword>safecall</keyword>
                     <keyword>start</keyword>
                     <keyword>stop</keyword>
-                    <keyword>struct</keyword>
                     <keyword>sub</keyword>
                     <keyword>switch</keyword>
-                    <keyword>typedef</keyword>
                     <keyword>until</keyword>
                     <keyword>while</keyword>
                     <keyword>task</keyword>
+                    <keyword>priority</keyword>
                 </context>
 
                 <context id="types" style-ref="type" class="type">
@@ -237,23 +236,32 @@
                     <keyword>float</keyword>
                     <keyword>mutex</keyword>
                     <keyword>string</keyword>
+                    <keyword>struct</keyword>
+                    <keyword>typedef</keyword>
+                    <keyword>enum</keyword>
+                    <keyword>const</keyword>
+                    <keyword>static</keyword>
                 </context>
 
                 <context id="storage-class" style-ref="storage-class" class="storage-class">
                     <keyword>auto</keyword>
-                    <keyword>const</keyword>
                     <keyword>extern</keyword>
                     <keyword>inline</keyword>
                     <keyword>register</keyword>
                     <keyword>restrict</keyword>
-                    <keyword>static</keyword>
-                    <keyword>volatile</keyword>
                 </context>
 
                 <context id="nxt-ios" style-ref="nxt-ios" class="nxt-ios">
+                    <keyword>BTNEXIT</keyword>
                     <keyword>BTNRIGHT</keyword>
                     <keyword>BTNLEFT</keyword>
-                    <keyword>BTNENTER</keyword>
+                    <keyword>BTNCENTER</keyword>
+                    <keyword>BTN1</keyword>
+                    <keyword>BTN2</keyword>
+                    <keyword>BTN3</keyword>
+                    <keyword>BTN4</keyword>
+                    <keyword>DISPLAY_WIDTH</keyword>
+                    <keyword>DISPLAY_HEIGHT</keyword>
                     <keyword>IN_1</keyword>
                     <keyword>IN_2</keyword>
                     <keyword>IN_3</keyword>
@@ -280,20 +288,19 @@
                     <keyword>SENSOR_LIGHT</keyword>
                     <keyword>SENSOR_TOUCH</keyword>
                     <keyword>SENSOR_SOUND</keyword>
+                    <keyword>SENSOR_MODE_RAW</keyword>
+                    <keyword>SENSOR_MODE_EDGE</keyword>
+                    <keyword>SENSOR_MODE_PULSE</keyword>
+                    <keyword>SENSOR_MODE_PERCENT</keyword>
+                    <keyword>SENSOR_MODE_CELSIUS</keyword>
+                    <keyword>SENSOR_MODE_FAHRENHEIT</keyword>
+                    <keyword>SENSOR_MODE_ROTATION</keyword>
                 </context>
 
                 <context id="common-defines" style-ref="common-defines" class="common-defines">
                     <keyword>NULL</keyword>
-                    <keyword>MAX</keyword>
-                    <keyword>MIN</keyword>
                     <keyword>TRUE</keyword>
                     <keyword>FALSE</keyword>
-                    <keyword>__LINE__</keyword>
-                    <keyword>__DATA__</keyword>
-                    <keyword>__FILE__</keyword>
-                    <keyword>__func__</keyword>
-                    <keyword>__TIME__</keyword>
-                    <keyword>__STDC__</keyword>
                 </context>
 
                 <context id="commands" style-ref="commands" class="commands">
@@ -329,50 +336,51 @@
                     <keyword>OnRevReg</keyword>
                     <keyword>OnRevRegPID</keyword>
                     <keyword>OnRevSync</keyword>
-		            <keyword>OnRevSyncPID</keyword>
-		            <keyword>PlayFileEx</keyword>
-		            <keyword>PlayTone</keyword>
-		            <keyword>PlayToneEx</keyword>
-		            <keyword>PointOut</keyword>
-		            <keyword>Precedes</keyword>
-		            <keyword>Random</keyword>
-		            <keyword>ReadLn</keyword>
-		            <keyword>ReadLnString</keyword>
- 		            <keyword>ReceiveRemoteNumber</keyword>
-		            <keyword>ReceiveRemoteString</keyword>
-		            <keyword>RectOut</keyword>
-		            <keyword>Release</keyword>
-		            <keyword>RenameFile</keyword>
-		            <keyword>ResetScreen</keyword>
-		            <keyword>ResetSensor</keyword>
-		            <keyword>ResetRotationCount</keyword>
-		            <keyword>ResetTachoCount</keyword>
-		            <keyword>ResetAllTachoCounts</keyword>
-		            <keyword>RotateMotor</keyword>
-		            <keyword>RotateMotorEx</keyword>
-		            <keyword>RotateMotorExPID</keyword>
-		            <keyword>RotateMotorPID</keyword>
-		            <keyword>SendRemoteNumber</keyword>
-		            <keyword>SendRemoteString</keyword>
-		            <keyword>SendResponseNumber</keyword>
-		            <keyword>SendResponseString</keyword>
-		            <keyword>Sensor</keyword>
-		            <keyword>SensorUS</keyword>
-		            <keyword>SetSensor</keyword>
-		            <keyword>SetSensorColorFull</keyword>
-		            <keyword>SetSensorColorBlue</keyword>
-		            <keyword>SetSensorColorGreen</keyword>
-		            <keyword>SetSensorColorRed</keyword>
-		            <keyword>SetSensorColorNone</keyword>
-		            <keyword>SetSensorLight</keyword>
-		            <keyword>SetSensorLowspeed</keyword>
-		            <keyword>SetSensorSound</keyword>
-		            <keyword>SetSensorTouch</keyword>
-		            <keyword>SetSensorMode</keyword>
-		            <keyword>SetSensorType</keyword>
-		            <keyword>StrCat</keyword>
-		            <keyword>StrLen</keyword>
-		            <keyword>StrToNum</keyword>
+                    <keyword>OnRevSyncPID</keyword>
+                    <keyword>PlayFileEx</keyword>
+                    <keyword>PlayTone</keyword>
+                    <keyword>PlayToneEx</keyword>
+                    <keyword>PointOut</keyword>
+                    <keyword>Precedes</keyword>
+                    <keyword>Random</keyword>
+                    <keyword>ReadLn</keyword>
+                    <keyword>ReadLnString</keyword>
+                    <keyword>ReceiveRemoteNumber</keyword>
+                    <keyword>ReceiveRemoteString</keyword>
+                    <keyword>RectOut</keyword>
+                    <keyword>Release</keyword>
+                    <keyword>RenameFile</keyword>
+                    <keyword>ResetScreen</keyword>
+                    <keyword>ResetSensor</keyword>
+                    <keyword>ResetRotationCount</keyword>
+                    <keyword>ResetTachoCount</keyword>
+                    <keyword>ResetAllTachoCounts</keyword>
+                    <keyword>RotateMotor</keyword>
+                    <keyword>RotateMotorEx</keyword>
+                    <keyword>RotateMotorExPID</keyword>
+                    <keyword>RotateMotorPID</keyword>
+                    <keyword>SendRemoteNumber</keyword>
+                    <keyword>SendRemoteString</keyword>
+                    <keyword>SendResponseNumber</keyword>
+                    <keyword>SendResponseString</keyword>
+                    <keyword>Sensor</keyword>
+                    <keyword>SensorUS</keyword>
+                    <keyword>SetSensor</keyword>
+                    <keyword>SetSensorColorFull</keyword>
+                    <keyword>SetSensorColorBlue</keyword>
+                    <keyword>SetSensorColorGreen</keyword>
+                    <keyword>SetSensorColorRed</keyword>
+                    <keyword>SetSensorColorNone</keyword>
+                    <keyword>SetSensorLight</keyword>
+                    <keyword>SetSensorLowspeed</keyword>
+                    <keyword>SetSensorSound</keyword>
+                    <keyword>SetSensorTouch</keyword>
+                    <keyword>SetSensorMode</keyword>
+                    <keyword>SetSensorType</keyword>
+                    <keyword>StartTask</keyword>
+                    <keyword>StrCat</keyword>
+                    <keyword>StrLen</keyword>
+                    <keyword>StrToNum</keyword>
                     <keyword>TextOut</keyword>
                     <keyword>Off</keyword>
                     <keyword>OpenFileRead</keyword>
