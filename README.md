@@ -3,7 +3,7 @@ Editor for programming LEGO Mindstorms NXT and EV3 bricks with NXC/C4EV3
 
 MindEd is a GTK+ Editor for programming LEGO Mindstorms bricks.
 Not eXactly C ([NXC](http://bricxcc.sourceforge.net)) and Next Byte Codes(NBC) is used for NXT-bricks,
-EVC aka [C4EV3](https://github.com/c4ev3/ev3duder) and armgcc-cross-compiler is used for EV3-bricks. It
+EVC aka [C4EV3](https://github.com/c4ev3) and armgcc-cross-compiler is used for EV3-bricks. It
 offers Syntaxhighlightning, Autocompletion, API help ...  
 MindEd also compiles and uploads your programs to your brick over USB.
 
