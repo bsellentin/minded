@@ -27,11 +27,13 @@ Weitere Befehle
 
 Viele Leute finden eine grafische Programmierung prima, aber manche bevorzugen doch die textbasierte Programmierung.
 Hierzu entwickelte John Hansen für den Mindstorms NXT Stein die an C angelehnte Programmiersprache NXC. In Kombination
-mit dem Bricx Command Center (BricxCC) war es nun einfach, Programme zu schreiben, auf den NXT zu übertragen und zu
+mit dem Bricx Command Center ([BricxCC](http://bricxcc.sourceforge.net/)) war es nun einfach, Programme zu schreiben, auf den NXT zu übertragen und zu
 starten.
 Als dann der Mindstorms EV3 Stein erschien, hatte wieder John Hansen begonnen, eine C-ähnliche Programmiersprache zu
-entwickeln. Diese Ansätze wurden an der Hochschule Aschaffenburg im Rahmen des EVELIN Projektes weiterentwickelt und
+entwickeln. Diese Ansätze wurden an der Hochschule Aschaffenburg im Rahmen des [EVELIN](http://www.evelinprojekt.de/en/) Projektes weiterentwickelt und
 sind auf Github zu finden.
+
+
 Für Linux-Nutzer steht mit MindEd eine Programmierumgebung zur Verfügung, die
 
 + mit der originalen Firmware arbeitet,
@@ -457,9 +459,9 @@ return 0;
 
 ### NXT-Soundsensor
 
-##Tasks und Subroutinen
+## Tasks und Subroutinen
 
-##Musik
+## Musik
 
 ```c
 #include "ev3.h"
@@ -566,7 +568,7 @@ printf("%6.2f", 1.23)                  1.23
 
 Weitere Beispiele finden sich z.B. [hier](http://www.cprogramming.com/tutorial/printf-format-strings.html).
 
-###LEDs
+### LEDs
 
 ```c
 #include "ev3.h"
@@ -575,7 +577,7 @@ int main(){
   InitEV3();
   int i;
   
-  const char \*ledpatterns[] = {
+  const char *ledpatterns[] = {
     "LED_BLACK",
     "LED_GREEN",
     "LED_RED",
@@ -590,12 +592,12 @@ int main(){
   
   for(i=9;i>=0;i--){
     LcdClean();
-    LcdText(1,1,LCD_LINE4,ledpatterns[i]);
+    LcdText(1, 1, LCD_LINE4, ledpatterns[i]);
     SetLedPattern(i);
     Wait(2000);
   }
   LcdClean();
-  LcdText(1,1,LCD_LINE4,"WARNING");
+  LcdText(1, 1, LCD_LINE4, "WARNING");
   SetLedPattern(1);
   SetLedWarning(1);
   
