@@ -120,6 +120,7 @@ class MindEdApp(Gtk.Application):
                     logger.warn('ev3-python failure')              
         
         if not self.win:
+            logger.debug("NXT-lib: %s" % nxt.locator.__file__)
             self.win = MindEdAppWin(application=self)
 
     def do_command_line(self, command_line):
