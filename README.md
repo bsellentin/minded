@@ -17,9 +17,11 @@ For Debian-based systems MindEd requires the following packages to run:
 1. nbc
 1. gcc-arm-linux-gnueabi
 
-## Install
+## Don't Install
 
-Not completed! ```$ git clone https://github.com/bsellentin/minded.git```
+Not completed!
+
+```$ git clone --recursive https://github.com/bsellentin/minded.git```
 
 MindEd looks for the NBC compiler in ```/usr/bin``` and in ```/usr/local/bin```. GCC cross-compiler is searched
 in ```/usr/bin``` as ```arm-linux-gnueabi-gcc-6``` (Debian) or ```arm-linux-gnueabi-gcc``` (Ubuntu). Other
