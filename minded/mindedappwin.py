@@ -72,15 +72,15 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             else:
                 logger.warn('no arm-gcc executable found')
         if not self.settings.get_string('ldflags'):
-            if os.path.isfile(os.path.abspath('./libev3/libev3api.a')):
-                self.settings.set_string('ldflags', ' -L' + os.path.abspath('./libev3'))
+            if os.path.isfile(os.path.abspath('./EV3-API/API/libev3api.a')):
+                self.settings.set_string('ldflags', ' -L' + os.path.abspath('./EV3-API/API'))
             elif os.path.isfile('/usr/lib/c4ev3/libev3api.a'):
                 self.settings.set_string('ldflags', ' -L/usr/lib/c4ev3')
             else:
                 logger.warn('EV3 library not found')
         if not self.settings.get_string('incs'):
-            if os.path.isdir(os.path.abspath('./libev3')):  
-                self.settings.set_string('incs', ' -I' + os.path.abspath('./libev3'))
+            if os.path.isdir(os.path.abspath('./EV3-API/API')):  
+                self.settings.set_string('incs', ' -I' + os.path.abspath('./EV3-API/API'))
             elif os.path.isdir('/usr/lib/c4ev3'):
                 self.settings.set_string('incs', ' -I/usr/lib/c4ev3')
             else:
