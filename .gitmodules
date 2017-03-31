@@ -1,0 +1,3 @@
+[submodule "EV3-API"]
+	path = EV3-API
+	url = https://github.com/bsellentin/EV3-API
