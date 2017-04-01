@@ -455,9 +455,77 @@ return 0;
 
 ### Ultraschallsensor
 
+```c
+#include "ev3.h"
+
+int main(){
+  InitEV3();
+  
+  int x = 0;
+  
+  LcdText(1, 1, LCD_LINE1, "UltraschallSensor");
+  LcdText(1, 1, LCD_LINE8, "Exit with <CENTER>");  
+
+  SetSensorUS(IN_3);
+  
+  while(ButtonIsUp(BTNCENTER)){
+
+    x = ReadSensor(IN_3);				// distance in cm, 0 to 255
+
+  	LcdTextf(1, 1, LCD_LINE3, "Entfernung: %3d cm", x);
+  	Wait(20);
+  }
+
+  FreeEV3();
+  return 0;
+}
+```
+
 ### Infrarotsensor
 
 ### NXT-Soundsensor
+
+```c
+#include "ev3.h"
+
+int main(){
+  InitEV3();
+  
+  int x;
+  int min;
+  int max;
+  
+  SetSensorNXTSound(IN_2);
+
+  LcdSelectFont(1);
+  LcdText(1,1,LCD_LINE8,"Exit with <CENTER>");
+  LcdText(1,1,LCD_LINE6,"Reset with <DOWN>");
+  
+  while(ButtonIsUp(BTNCENTER)){
+    
+    x = ReadSensor(IN_2);
+    
+    if(x>max){
+      max = x;
+    }
+    if(x<min){
+      min=x;
+    }
+    
+    LcdTextf(1,1,LCD_LINE3, "Sensor: %3d", x);
+    LcdTextf(1,1,LCD_LINE4, "max:    %3d", max);
+    LcdTextf(1,1,LCD_LINE5, "min:    %3d", min);
+    Wait(20);
+    if(ButtonIsDown(BTNDOWN)){
+      min = 5000;
+      max = 0;
+    }
+  }
+  
+  FreeEV3();
+  return 0;
+}
+```
 
 ## Tasks und Subroutinen
 
