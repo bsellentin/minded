@@ -1,29 +1,31 @@
-# Programmierung LEGO EV3 Roboter mit EVC
+# Programmierung LEGO:registered: EV3 Roboter mit EVC
 
-Vorwort
-Das erste selbstgeschriebene Programm
-Baue einen Roboter
-MindEd
-Rudolf stellt sich vor
-Grundgerüst
-Ein interessanteres Programm
-Variablen
-Kontrollstrukturen
-Sensoren
-Berührungssensor
-Farbsensor
-Kreiselsensor
-Ultraschallsensor
-Infrarotsensor
-NXT-Soundsensor
-Tasks und Subroutinen
-Musik
-Mehr über Motoren
-Mehr über Sensoren
-Parallele Tasks
-Weitere Befehle
++ <a href="#vor">Vorwort</a>
++ <a href="#first">Das erste selbstgeschriebene Programm</a>
+    + Baue einen Roboter
+    + MindEd
+    + <a href="rudolf">Rudolf stellt sich vor</a>
+    + <a href="#always">Grundgerüst</a>
++ <a href="#fahre">Rudolf fährt um den Block</a>
++ Variablen
++ Kontrollstrukturen
++ <a href="#sensors">Sensoren</a>
+    + <a href="#touch">Berührungssensor</a>
+    + Farbsensor
+    + Kreiselsensor
+    + Ultraschallsensor
+    + Infrarotsensor
+    + NXT-Soundsensor
++ Tasks und Subroutinen
++ Musik
++ Mehr über Motoren
++ Mehr über Sensoren
++ Parallele Tasks
++ Weitere Befehle
+    + LCD-Ausgabe
+    + LEDs
 
-## Vorwort
+<h2 id="vor">Vorwort</h2>
 
 Viele Leute finden eine grafische Programmierung prima, aber manche bevorzugen doch die textbasierte Programmierung.
 Hierzu entwickelte John Hansen für den Mindstorms NXT Stein die an C angelehnte Programmiersprache NXC. In Kombination
@@ -54,7 +56,7 @@ Ich habe mich auf die Arbeiten vieler Vordenker gestützt: John Hansen's [NXC un
 informativen [EV3 Direct Commands-Blog](http://ev3directcommands.blogspot.com/) die Erweiterung für den EV3, aber ebenso wichtig: Daniele Benedettelli mit
 seinem [NXC-Tutorial](http://roberta-home.de/sites/default/files/Roberta_Band_NXT_Programmierung_FINAL.pdf), denn die schönste Software taugt wenig ohne Dokumentation.
 
-## Das erste selbstgeschriebene Programm
+<h2 id="first"> Das erste selbstgeschriebene Programm</h2>
 
 ### Baue einen Roboter
 
@@ -75,7 +77,7 @@ Vervollständigung aktiviert.
 
 ![minded.png](minded.png)
 
-### Rudolf stellt sich vor
+<h3 id="rudolf">Rudolf stellt sich vor</h3>
 
 Tippe das folgende Programm in MindEd ein und speichere es als rudolf.evc :
 
@@ -91,21 +93,26 @@ int main(){
 }
 ```
 
-Hast du gemerkt, dass bei den EVC-Befehlen nach dem zweiten Buchstaben die Auto-Vervollständigung anspringt und dir
-Vorschläge macht? Mit Pfeil runter oder hoch wählst du denn gewünschten Befehl aus, mit einem Klick auf Details kannst du
-zum gewählten Befehl noch näheres erfahren. Mit Eingabe-Taste ↩ wird er übernommen. Die Blaufärbung gibt dir die
-Gewissheit, das dieser Befehl bekannt und richtig geschrieben ist.
+Hast du gemerkt, dass bei den EVC-Befehlen nach dem zweiten Buchstaben die
+Auto-Vervollständigung anspringt und dir Vorschläge macht? Mit Pfeil runter oder
+hoch wählst du denn gewünschten Befehl aus, mit einem Klick auf Details kannst du
+zum gewählten Befehl noch näheres erfahren. Mit Eingabe-Taste :leftwards_arrow_with_hook:
+wird er übernommen. Die Blaufärbung gibt dir die Gewissheit, das dieser Befehl
+bekannt und richtig geschrieben ist.
 
-⚠ *Jeder Befehl endet mit einem Strich-Punkt. Zu jeder öffnenden Klammer gehört eine schließende.*
+:warning: *Jeder Befehl endet mit einem Strich-Punkt. Zu jeder öffnenden Klammer
+gehört eine schließende.*
 
-Nun schalte den EV3-Stein ein, schließe ihn mit dem USB-Kabel an den Computer an und übertrage das Programm mit einem
-Klick auf den Transmit-Button zum EV3-Stein. Wenn alles geklappt hat, sollte im unteren Teil des MindEd-Fensters Upload of
-rudolf successfull zu lesen und ein Sound zu hören sein.
-In der Datei-Navigation des EV3-Steins findest du jetzt den Ordner rudolf , öffne ihn und führe darin das Programm rudolf
-aus. Wenn jetzt auf dem EV3-Display zu sehen ist: Hallo, ich bin Rudolf! - Glückwunsch, du hast es geschafft - dein erstes
-C-Programm für den EV3!
+Nun schalte den EV3-Stein ein, schließe ihn mit dem USB-Kabel an den Computer an
+und übertrage das Programm mit einem Klick auf den Transmit-Button zum EV3-Stein.
+Wenn alles geklappt hat, sollte im unteren Teil des MindEd-Fensters `Upload of
+rudolf successfull` zu lesen und ein Sound zu hören sein.  
+In der Datei-Navigation des EV3-Steins findest du jetzt den Ordner `rudolf`, öffne
+ihn und führe darin das Programm `rudolf` aus. Wenn jetzt auf dem EV3-Display zu
+sehen ist: `Hallo, ich bin Rudolf!` - Glückwunsch, du hast es geschafft - dein
+erstes C-Programm für den EV3!
 
-### Grundgerüst
+<h3 id="always">Grundgerüst</h3>
 
 ```c
 #include "ev3.h"
@@ -120,7 +127,7 @@ int main(){
 }
 ```
 
-## Ein interessanteres Programm
+<h2 id="fahre">Rudolf fährt um den Block</h2>
 
 Rudolf soll sich bewegen. Dazu nehmen wir den schon von NXC bekannten Befehl 
 `OnFwd(outputs, pwr)`.
@@ -341,9 +348,9 @@ FreeEV3();
 
 ## Kontrollstrukturen
 
-## Sensoren
+<h2 id="sensors">Sensoren</h2>
 
-### Berührungssensor
+<h3 id="touch">Berührungssensor</h3>
 
 ```c
 #include "ev3.h"
@@ -432,7 +439,7 @@ int main(){
 
 ### Kreiselsensor
 
-⚠ Rudolf kalibriert den Kreiselsensor beim Booten, deshalb muss er dabei absolut ruhig stehen.
+:warning: Rudolf kalibriert den Kreiselsensor beim Booten, deshalb muss er dabei absolut ruhig stehen.
 
 ```c
 #include "ev3.h"
@@ -590,6 +597,41 @@ int main(){
 ## Mehr über Motoren
 
 ## Mehr über Sensoren
+
+Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
+`SetSensorMode(port, mode)` ausgelesen werden können.
+
+```c
+...
+  int x;
+      SetSensorMode(IN_1, TOUCH_PRESS);
+    
+      while(ButtonIsUp(BTNCENTER)){
+          x = ReadSensor(IN_1);
+          NumOut(30,LCD_LINE3,x);
+          Wait(20);
+      }
+...
+```
+
+| Sensor         | Modus       | Return |
+|----------------|-------------|-------|
+|EV3-Touch       | TOUCH_PRESS | Press |
+|EV3-Light       | COL_REFLECT | Reflect |
+|                | COL_AMBIENT | Ambient |
+|                | COL_COLOR   | Color |
+|EV3-Ultrasonic  | US_DIST_CM  | Dist in cm |
+|                | US_DIST_MM  | Dist in mm |
+|                | US_DIST_IN  | Dist in inch |
+|EV3-Gyroskop    | GYRO_ANG    | angle |
+|                | GYRO_RATE   | rate|
+|EV3-Infrared    | IR_PROX     | Proximity |
+|                | IR_SEEK     | Seek |
+|                | IR_REMOTE   | Remote Control |
+|NXT-Temperature | NXT_TEMP_C  | Temperature in C |
+|                | NXT_TEMP_F  | Temperature in F |
+|NXT-Sound       | NXT_SOUND_DB | Decibels |
+|                | NXT_SOUND_DBA | A-Weighted Decibels|
 
 ## Parallele Tasks
 
