@@ -67,11 +67,13 @@ Starte MindEd. Es sieht aus wie ein ganz normaler Text-Editor. Links oben in der
 Datei neu, Datei öffnen und Datei speichern. Auf der rechten Seite finden sich die Buttons zum Kompilieren, Übertragen und
 weitere Optionen. In der Fußleiste ist EV3 zu lesen, wenn ein EV3-Stein angeschlossen ist - oder eben NXT, wenn ein solcher
 Stein über USB verbunden ist. Ist eine Datei mit der Endung .evc geladen, dann steht rechts unten auch EVC als ausgewählte
-Sprache. Oder eben NXT, wenn eine nxc -Datei geladen ist.
+Sprache. Oder eben NXT, wenn eine nxc-Datei geladen ist.
 
 Bei einer neuen Datei weiß MindEd natürlich nicht, ob sie für einen NXT- oder einen EV3-Stein bestimmt sein soll, mit einem
 Klick kann hier die passende Sprache ausgewählt werden. Damit wird dann auch die Syntax-Hervorhebung und die Auto-
 Vervollständigung aktiviert.
+
+![minded.png](minded.png)
 
 ### Rudolf stellt sich vor
 
@@ -120,7 +122,8 @@ int main(){
 
 ## Ein interessanteres Programm
 
-Rudolf soll sich bewegen. Dazu nehmen wir den schon von NXC bekannten Befehl OnFwd(outputs, pwr) .
+Rudolf soll sich bewegen. Dazu nehmen wir den schon von NXC bekannten Befehl 
+`OnFwd(outputs, pwr)`.
 
 ```c
 #include "ev3.h"
@@ -138,12 +141,14 @@ int main(){
 }
 ```
 
-```OnFwd(OUT_BC, 75);``` übersetzt: einschalten, vorwärts, Ausgänge B und C mit 75% Leistung. Damit schaltest du die Motoren an.
-```Wait(1000);``` lässt Rudolf mit der Ausführung des nächsten Befehls 1 Sekunde warten, also fährt Rudolf 1 Sekunde lang
-vorwärts. Jetzt kommt ```OnRev(OUT_BC, 75);``` , du ahnst es: einschalten, rückwärts, ... also fährt Rudolf rückwärts. Und wartet
-nochmal 1 Sekunde, dann ist das Programm am Ende angelangt und Rudolf rollt aus.
+`OnFwd(OUT_BC, 75);` übersetzt: einschalten, vorwärts, Ausgänge B und C mit 75%
+Leistung. Damit schaltest du die Motoren an. `Wait(1000);` lässt Rudolf mit der
+Ausführung des nächsten Befehls 1 Sekunde warten, also fährt Rudolf 1 Sekunde lang
+vorwärts. Jetzt kommt `OnRev(OUT_BC, 75);` , du ahnst es: einschalten, rückwärts,
+... also fährt Rudolf rückwärts. Und wartet nochmal 1 Sekunde, dann ist das
+Programm am Ende angelangt und Rudolf rollt aus.
 
-In EVC geht das jetzt kürzer mit ```OnFor(outputs, time, power)```.
+In EVC geht das jetzt kürzer mit `OnFor(outputs, time, power)`.
 
 ```c
 #include "ev3.h"
@@ -181,12 +186,14 @@ int main(){
 ```
 
 Doch was passiert? Gar nichts! Rudolf bleibt stehen! Warum?
-Weil die Output-Befehle nicht den EV3-Stein blockieren, bis die angegebene Zeit vorbei ist. Denn der EV3 kann in dieser Zeit
-weitere Aufgaben erledigen. In diesem Programm hat Rudolf nichts weiter zu tun, er ist gleich wieder am Ende.
-Sollen wir ihm zwei ```Wait(1000);``` verpassen? Das ginge, aber damit ist der EV3 wieder blockiert, sicher nicht im Sinne des
-Entwicklers. Der hat für diesen Zweck ```MotorBusy(output)``` vorgesehen. Dieser Befehl ist eher als Frage aufzufassen, denn er
-unterscheidet sich von den bisherigen in einer ganz wichtigen Eigenschaft: er antwortet! Frage: Motor, bist du beschäftigt?
-Antwort Motor: ja = 1, nein = 0.
+Weil die Output-Befehle nicht den EV3-Stein blockieren, bis die angegebene Zeit
+vorbei ist. Denn der EV3 kann in dieser Zeit weitere Aufgaben erledigen. In
+diesem Programm hat Rudolf nichts weiter zu tun, er ist gleich wieder am Ende.
+Sollen wir ihm zwei `Wait(1000);` verpassen? Das ginge, aber damit ist der EV3
+wieder blockiert, sicher nicht im Sinne des Entwicklers. Der hat für diesen Zweck
+`MotorBusy(output)` vorgesehen. Dieser Befehl ist eher als Frage aufzufassen,
+denn er unterscheidet sich von den bisherigen in einer ganz wichtigen Eigenschaft:
+er antwortet! Frage: Motor, bist du beschäftigt? Antwort Motor: ja = 1, nein = 0.
 Das in eine while-Schleife packen:
 
 ```c
@@ -209,12 +216,14 @@ int main(){
 ```
 
 Rudolf fährt wieder und beim Rückwärtsfahren piept er wie ein großer Lastwagen.
-Allerdings wird Rudolf langsamer werden, wenn er bergauf fahren soll. Und er wird deutlich schneller werden, wenn es den Berg
-herunter geht. Es wäre besser, wenn er seine Power der Steigung anpasst und so mit gleichbleibender Geschwindigkeit fährt.
-Glücklicherweise sind die EV3-Motoren reguliert, was bedeutet, die können die Kraft für eine geforderte Geschwindigkeit
-anpassen. Der Befehl dazu unterscheidet sich kaum vom vorherigen: ```OutputTimeSpeed(outputs, speed, time1, time2,
-time3)``` . Ändere das vorige Programm ab, ersetze dort Power durch Speed und lasse Rudolf eine schräge Ebene hoch und
-runter fahren.
+Allerdings wird Rudolf langsamer werden, wenn er bergauf fahren soll. Und er
+wird deutlich schneller werden, wenn es den Berg herunter geht. Es wäre besser,
+wenn er seine Power der Steigung anpasst und so mit gleichbleibender Geschwindigkeit
+fährt. Glücklicherweise sind die EV3-Motoren reguliert, was bedeutet, die können
+die Kraft für eine geforderte Geschwindigkeit anpassen. Der Befehl dazu unterscheidet
+sich kaum vom vorherigen: `OutputTimeSpeed(outputs, speed, time1, time2, time3)`.
+Ändere das vorige Programm ab, ersetze dort Power durch Speed und lasse Rudolf
+eine schräge Ebene hoch und runter fahren.
 
 ```c
 ...
@@ -229,9 +238,10 @@ Mit Speed anstelle von Power zu arbeiten ist häufig die bessere Variante.
 
 ### Rudolf fährt ums Quadrat
 
-Rudolf fährt also geradeaus, biegt nach links ab, fährt geradeaus, nach links usw. Wie biegt er nach links ab? Indem das linke
-Rad sich langsamer dreht als das rechte, oder gar nicht oder sogar rückwärts.
-Erstmal soll das linke Rad stehen bleiben. Ein mögliches - aber ganz schlechtes - Programm:
+Rudolf fährt also geradeaus, biegt nach links ab, fährt geradeaus, nach links
+usw. Wie biegt er nach links ab? Indem das linke Rad sich langsamer dreht als
+das rechte, oder gar nicht oder sogar rückwärts. Erstmal soll das linke Rad
+stehen bleiben. Ein mögliches - aber ganz schlechtes - Programm:
 
 ```c
 ...
@@ -246,10 +256,12 @@ Erstmal soll das linke Rad stehen bleiben. Ein mögliches - aber ganz schlechtes
 ...
 ```
 
-Hast du es ausprobiert? Dann hast du sicher gemerkt, warum es so nichts taugt. Garantiert stimmt die Zeit nicht für eine 90°
-Kurve, du musst ewig ausprobieren und jedesmal an vier Stellen die Zeiten ändern. Zwischenzeitlich sinkt die Spannung der
-Batterien und wieder stimmt die Zeit nicht. Wäre es mit ```OutputTimeSpeed``` besser? Nein, eher noch schlimmer.
-Was tun? Damit Rudolf einmal um das Quadrat fährt, muss er viermal das gleiche machen, aber nicht du, denn dafür gibt es
+Hast du es ausprobiert? Dann hast du sicher gemerkt, warum es so nichts taugt.
+Garantiert stimmt die Zeit nicht für eine 90° Kurve, du musst ewig ausprobieren
+und jedesmal an vier Stellen die Zeiten ändern. Zwischenzeitlich sinkt die
+Spannung der Batterien und wieder stimmt die Zeit nicht. Wäre es mit `OutputTimeSpeed`
+besser? Nein, eher noch schlimmer. Was tun? Damit Rudolf einmal um das Quadrat
+fährt, muss er viermal das gleiche machen, aber nicht du, denn dafür gibt es
 Schleifen. Hier bietet sich eine Zählschleife an:
 
 ```
@@ -360,12 +372,15 @@ int main(){
 
 #### Ein einfacher Linienfolger
 
-Rudolf soll einer schwarzen Linie folgen, dazu bekommt er einen nach unten gerichteten Farbsensor angebaut, den du mit
-SetSensorLight(port) im Modus reflektiertes Licht auslesen kannst.
-Eigentlich folgt er nicht der schwarzen Linie, sondern der Kante der Linie. Sieht der Sensor weiß, fährt Rudolf auf linken Seite der
-Linienkante, sieht er schwarz, fährt er auf der rechten Seite der Kante.
-Im Port View Menü schaust du nach, welche Werte der Lichtsensor liefert, wenn er weiß und wenn er schwarz sieht. Daraus
-errechnet Rudolf dann den Grau-Wert, bei dem er geradeaus fährt.
+Rudolf soll einer schwarzen Linie folgen, dazu bekommt er einen nach unten
+gerichteten Farbsensor angebaut, den du mit `SetSensorLight(port)` im
+Modus reflektiertes Licht auslesen kannst. Eigentlich folgt er nicht der
+schwarzen Linie, sondern der Kante der Linie. Sieht der Sensor weiß, fährt
+Rudolf auf linken Seite der Linienkante, sieht er schwarz, fährt er auf der
+rechten Seite der Kante.  
+Im Port View Menü schaust du nach, welche Werte der Lichtsensor liefert, wenn
+er weiß und wenn er schwarz sieht. Daraus errechnet Rudolf dann den Grau-Wert,
+bei dem er geradeaus fährt.
 
 ```c
 #include "ev3.h"
@@ -464,7 +479,7 @@ int main(){
   int x = 0;
   
   LcdText(1, 1, LCD_LINE1, "UltraschallSensor");
-  LcdText(1, 1, LCD_LINE8, "Exit with <CENTER>");  
+  LcdText(1, 1, LCD_LINE8, "Exit with <CENTER>");
 
   SetSensorUS(IN_3);
   
@@ -575,6 +590,7 @@ int main(){
 ## Mehr über Motoren
 
 ## Mehr über Sensoren
+
 ## Parallele Tasks
 
 ```c
@@ -583,7 +599,7 @@ int main(){
 
 bool blink = TRUE;
 
-void \*blinkFunc(void \*arg){
+void *blinkFunc(void \*arg){
   while(blink){
     OnFwd(OUT_D,50);
     Wait(200);
@@ -617,6 +633,7 @@ int main(){
   pthread_exit(NULL);
 }
 ```
+
 ## Weitere Befehle
 
 ### LCD-Ausgabe
