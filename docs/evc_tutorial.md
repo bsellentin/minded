@@ -4,10 +4,10 @@
 + <a href="#first">Das erste selbstgeschriebene Programm</a>
     + Baue einen Roboter
     + MindEd
-    + <a href="rudolf">Rudolf stellt sich vor</a>
+    + <a href="#rudolf">Rudolf stellt sich vor</a>
     + <a href="#always">Grundgerüst</a>
 + <a href="#fahre">Rudolf fährt um den Block</a>
-+ Variablen
++ <a href = "#variables">Variablen</a>
 + Kontrollstrukturen
 + <a href="#sensors">Sensoren</a>
     + <a href="#touch">Berührungssensor</a>
@@ -17,23 +17,25 @@
     + Infrarotsensor
     + NXT-Soundsensor
 + Tasks und Subroutinen
-+ Musik
++ <a href = "#music">Musik</a>
 + Mehr über Motoren
-+ Mehr über Sensoren
-+ Parallele Tasks
-+ Weitere Befehle
++ <a href = "#moresensors">Mehr über Sensoren</a>
++ <a href = "#parallel">Parallele Tasks</a>
++ <a href = "#more">Weitere Befehle</a>
     + LCD-Ausgabe
     + LEDs
 
 <h2 id="vor">Vorwort</h2>
 
-Viele Leute finden eine grafische Programmierung prima, aber manche bevorzugen doch die textbasierte Programmierung.
-Hierzu entwickelte John Hansen für den Mindstorms NXT Stein die an C angelehnte Programmiersprache NXC. In Kombination
-mit dem Bricx Command Center ([BricxCC](http://bricxcc.sourceforge.net/)) war es nun einfach, Programme zu schreiben, auf den NXT zu übertragen und zu
-starten.
-Als dann der Mindstorms EV3 Stein erschien, hatte wieder John Hansen begonnen, eine C-ähnliche Programmiersprache zu
-entwickeln. Diese Ansätze wurden an der Hochschule Aschaffenburg im Rahmen des [EVELIN](http://www.evelinprojekt.de/en/) Projektes weiterentwickelt und
-sind auf Github zu finden.
+Viele Leute finden eine grafische Programmierung prima, aber manche bevorzugen
+doch die textbasierte Programmierung. Hierzu entwickelte John Hansen für den
+Mindstorms NXT Stein die an C angelehnte Programmiersprache NXC. In Kombination
+mit dem Bricx Command Center ([BricxCC](http://bricxcc.sourceforge.net/)) war es
+nun einfach, Programme zu schreiben, auf den NXT zu übertragen und zu starten.
+Als dann der Mindstorms EV3 Stein erschien, hatte wieder John Hansen begonnen,
+eine C-ähnliche Programmiersprache zu entwickeln. Diese Ansätze wurden an der
+Hochschule Aschaffenburg im Rahmen des [EVELIN](http://www.evelinprojekt.de/en/)
+Projektes weiterentwickelt und sind auf Github zu finden.
 
 
 Für Linux-Nutzer steht mit MindEd eine Programmierumgebung zur Verfügung, die
@@ -47,39 +49,51 @@ Für Linux-Nutzer steht mit MindEd eine Programmierumgebung zur Verfügung, die
 + Die Programme auf Knopfdruck kompiliert
 + und per USB-Kabel überträgt.
 
-Dieses Tutorial will dich bei den ersten Schritten mit EVC begleiten -- es ist gar nicht so schwer.
+Dieses Tutorial will dich bei den ersten Schritten mit EVC begleiten -- es ist
+gar nicht so schwer.
 
 ### Danksagung
 
-Ich habe mich auf die Arbeiten vieler Vordenker gestützt: John Hansen's [NXC und NBC](http://bricxcc.sourceforge.net/) und
-[nxt-python](https://github.com/Eelviny/nxt-python) ermöglichten eine erste Version von MindEd, dann kam über [c4ev3](http://github.com/c4ev3) und ChristophGaukel's [ev3-python3](https://github.com/ChristophGaukel/ev3-python3) mit seinem
-informativen [EV3 Direct Commands-Blog](http://ev3directcommands.blogspot.com/) die Erweiterung für den EV3, aber ebenso wichtig: Daniele Benedettelli mit
-seinem [NXC-Tutorial](http://roberta-home.de/sites/default/files/Roberta_Band_NXT_Programmierung_FINAL.pdf), denn die schönste Software taugt wenig ohne Dokumentation.
+Ich habe mich auf die Arbeiten vieler Vordenker gestützt: John Hansen's
+[NXC und NBC](http://bricxcc.sourceforge.net/) und
+[nxt-python](https://github.com/Eelviny/nxt-python) ermöglichten eine erste
+Version von MindEd, dann kam über [c4ev3](http://github.com/c4ev3) und 
+Christoph Gaukel's [ev3-python3](https://github.com/ChristophGaukel/ev3-python3)
+mit seinem [EV3 Direct Commands-Blog](http://ev3directcommands.blogspot.com/)
+die Erweiterung für den EV3, aber ebenso wichtig: Daniele Benedettelli mit seinem
+[NXC-Tutorial](http://roberta-home.de/sites/default/files/Roberta_Band_NXT_Programmierung_FINAL.pdf),
+welches mich und viele meiner Schüler in die Programmierung von LEGO Mindstorms
+Robotern mit einer an C angelehnten Sprache einführte.
 
 <h2 id="first"> Das erste selbstgeschriebene Programm</h2>
 
 ### Baue einen Roboter
 
-Für die folgenden Übungen solltest du dir einen fahrenden Roboter mit zwei Motoren bauen, einen für das linke Rad an Ausgang
-B, einen für das rechte Rad an Ausgang C. Beispiele kannst du hier oder hier finden.
+Für die folgenden Übungen solltest du dir einen fahrenden Roboter mit zwei Motoren
+bauen, einen für das linke Rad an Ausgang B, einen für das rechte Rad an Ausgang C.
+Beispiele kannst du [hier](http://robotsquare.com/wp-content/uploads/2013/10/45544_educator.pdf)
+oder [hier](http://robotsquare.com/2015/10/06/explor3r-building-instructions/) finden.
 
 ### MindEd
 
-Starte MindEd. Es sieht aus wie ein ganz normaler Text-Editor. Links oben in der Kopfleiste finden sich die üblichen Buttons für
-Datei neu, Datei öffnen und Datei speichern. Auf der rechten Seite finden sich die Buttons zum Kompilieren, Übertragen und
-weitere Optionen. In der Fußleiste ist EV3 zu lesen, wenn ein EV3-Stein angeschlossen ist - oder eben NXT, wenn ein solcher
-Stein über USB verbunden ist. Ist eine Datei mit der Endung .evc geladen, dann steht rechts unten auch EVC als ausgewählte
-Sprache. Oder eben NXT, wenn eine nxc-Datei geladen ist.
+Starte MindEd. Es sieht aus wie ein ganz normaler Text-Editor. Links oben in der
+Kopfleiste finden sich die üblichen Buttons für Datei neu, Datei öffnen und Datei
+speichern. Auf der rechten Seite finden sich die Buttons zum Kompilieren, Übertragen
+und weitere Optionen. In der Fußleiste ist EV3 zu lesen, wenn ein EV3-Stein
+angeschlossen ist - oder eben NXT, wenn ein solcher Stein über USB verbunden ist.
+Ist eine Datei mit der Endung `.evc` geladen, dann steht rechts unten auch EVC als
+ausgewählte Sprache. Oder eben NXT, wenn eine `.nxc`-Datei geladen ist.
 
-Bei einer neuen Datei weiß MindEd natürlich nicht, ob sie für einen NXT- oder einen EV3-Stein bestimmt sein soll, mit einem
-Klick kann hier die passende Sprache ausgewählt werden. Damit wird dann auch die Syntax-Hervorhebung und die Auto-
+Bei einer neuen Datei weiß MindEd natürlich nicht, ob sie für einen NXT- oder 
+einen EV3-Stein bestimmt sein soll, mit einem Klick kann hier die passende Sprache
+ausgewählt werden. Damit wird dann auch die Syntax-Hervorhebung und die Auto-
 Vervollständigung aktiviert.
 
 ![minded.png](minded.png)
 
 <h3 id="rudolf">Rudolf stellt sich vor</h3>
 
-Tippe das folgende Programm in MindEd ein und speichere es als rudolf.evc :
+Tippe das folgende Programm in MindEd ein und speichere es als `rudolf.evc`:
 
 ```c
 #include "ev3.h"
@@ -170,12 +184,14 @@ int main(){
 }
 ```
 
-Der Befehl bekommt gleich mitgeteilt, wie lange er gelten soll. Und die Richtung wird über das Vorzeichen der Leistung
-festgelegt: positiv vorwärts, negativ rückwärts.
-Leider hüpft Rudolf beim Richtungswechsel, weswegen er nicht wieder an seiner Startposition ankommt. Das Problem: von voll
-vorwärts auf voll rückwärts in null komma nichts. Die Lösung: erst abbremsen und dann wieder beschleunigen. Dazu gibt es den
-Befehl ```OutputTimePower(outputs, power, time1, time2, time3)``` . Dann kommt mit ```time1``` die Beschleunigungszeit, mit
-```time2``` die Zeit mit der angegebenen Geschwindigkeit und mit ```time3``` schließlich die Bremszeit.
+Der Befehl bekommt gleich mitgeteilt, wie lange er gelten soll. Und die Richtung
+wird über das Vorzeichen der Leistung festgelegt: positiv vorwärts, negativ rückwärts.
+Leider hüpft Rudolf beim Richtungswechsel, weswegen er nicht wieder an seiner
+Startposition ankommt. Das Problem: von voll vorwärts auf voll rückwärts in null
+komma nichts. Die Lösung: erst abbremsen und dann wieder beschleunigen. Dazu
+gibt es den Befehl `OutputTimePower(outputs, power, time1, time2, time3)`. Dann
+kommt mit `time1` die Beschleunigungszeit, mit `time2` die Zeit mit der angegebenen
+Geschwindigkeit und mit `time3` schließlich die Bremszeit.
 
 Das verleitet zu diesem Programm:
 
@@ -302,15 +318,18 @@ Initialisierung des Zählers
 ...
 ```
 
-## Variablen
+<h2 id = "variables">Variablen</h2>
 
-Eine Variable kann man sich als eine Kiste vorstellen, in die man etwas hinein legt, um es bei Bedarf wieder heraus zu holen.
-Wenn man viele solcher Kisten hat, ist es erstens sinnvoll, sie zu beschriften und zweitens, sie möglichst klein zu halten, weil sonst
-das Regal zu klein wird, in dem diese Kisten gelagert werden.
-Für den Computer gibt es ein weiteres Problem: er kennt nur Nullen und Einsen. Egal ob Buchstaben oder Zahlen, alles wird im
-binären Zahlensystem verarbeitet. Wenn der Computer dann in der Kiste nachschaut, findet er beispielsweise diese
-Kombination: 01000001. Das könnte die Zahl 65 oder der Buchstabe A sein. Wieso? Googel mal nach Binärsystem und ASCII-
-Tabelle. Man muss also drittens auf der Kiste vermerken, was drin ist. Damit sind wir bei den Datentypen.
+Eine Variable kann man sich als eine Kiste vorstellen, in die man etwas hinein
+legt, um es bei Bedarf wieder heraus zu holen. Wenn man viele solcher Kisten hat,
+ist es erstens sinnvoll, sie zu beschriften und zweitens, sie möglichst klein zu
+halten, weil sonst das Regal zu klein wird, in dem diese Kisten gelagert werden.
+Für den Computer gibt es ein weiteres Problem: er kennt nur Nullen und Einsen.
+Egal ob Buchstaben oder Zahlen, alles wird im binären Zahlensystem verarbeitet.
+Wenn der Computer dann in der Kiste nachschaut, findet er beispielsweise diese
+Kombination: 01000001. Das könnte die Zahl 65 oder der Buchstabe A sein. Wieso?
+Googel mal nach Binärsystem und ASCII-Tabelle. Man muss also drittens auf der
+Kiste vermerken, was drin ist. Damit sind wir bei den Datentypen.
 
 ### Datentypen
 
@@ -551,7 +570,7 @@ int main(){
 
 ## Tasks und Subroutinen
 
-## Musik
+<h2 id = "music">Musik</h2>
 
 ```c
 #include "ev3.h"
@@ -596,7 +615,7 @@ int main(){
 
 ## Mehr über Motoren
 
-## Mehr über Sensoren
+<h2 id = "moresensors">Mehr über Sensoren</h2>
 
 Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 `SetSensorMode(port, mode)` ausgelesen werden können.
@@ -633,7 +652,7 @@ Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 |NXT-Sound       | NXT_SOUND_DB | Decibels |
 |                | NXT_SOUND_DBA | A-Weighted Decibels|
 
-## Parallele Tasks
+<h2 id="parallel">Parallele Tasks</h2>
 
 ```c
 #include <pthread.h>
@@ -676,7 +695,7 @@ int main(){
 }
 ```
 
-## Weitere Befehle
+<h2 id = "more">Weitere Befehle</h2>
 
 ### LCD-Ausgabe
 Printf format strings - kurz und unvollständig %width.precision.specifier
