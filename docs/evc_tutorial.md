@@ -11,9 +11,9 @@
 + Kontrollstrukturen
 + <a href="#sensors">Sensoren</a>
     + <a href="#touch">Berührungssensor</a>
-    + Farbsensor
-    + Kreiselsensor
-    + Ultraschallsensor
+    + <a href="#light">Farbsensor</a>
+    + <a href="#gyro">Kreiselsensor</a>
+    + <a href="#ultrasonic">Ultraschallsensor</a>
     + Infrarotsensor
     + NXT-Soundsensor
 + Tasks und Subroutinen
@@ -22,7 +22,7 @@
 + <a href = "#moresensors">Mehr über Sensoren</a>
 + <a href = "#parallel">Parallele Tasks</a>
 + <a href = "#more">Weitere Befehle</a>
-    + LCD-Ausgabe
+    + <a href="#lcd">LCD-Ausgabe</a>
     + LEDs
 
 <h2 id="vor">Vorwort</h2>
@@ -334,10 +334,12 @@ Kiste vermerken, was drin ist. Damit sind wir bei den Datentypen.
 ### Datentypen
 
 Bevor man Variablen verwendet, sollte man sich überlegen, was man darin speichern oder verarbeiten möchte:
+
 + Zeichen
 + Text
 + Zahl
 + Kommazahl
+
 Denn entsprechend ist der richtige Datentyp zu wählen.
 
 ```c
@@ -394,7 +396,16 @@ int main(){
 }
 ```
 
-### Farbsensor
+<h3 id="light">Farbsensor</h>
+
+Der EV3-Farbsensor kann zum einen reflektiertes Licht messen, dazu schaltet er die
+rote Diode an und misst das reflektierte rote Licht. Das funktioniert am Besten
+in einem Abstand zur Oberfläche von 5 - 10 mm. Dieser Modus wird oft gebraucht,
+deshalb gibt es den Befehl `SetSensorLight(port)`.  
+Der EV3-Farbsensor kann auch das Umgebungslicht messen, da scheint dann nur die
+blaue Diode.  
+Und dann kann der EV3-Farbsensor auch Farben erkennen, naheliegender Befehl:
+`SetSensorColor(port)`.
 
 #### Ein einfacher Linienfolger
 
@@ -456,7 +467,7 @@ int main(){
 }
 ```
 
-### Kreiselsensor
+<h3 id="gyro">Kreiselsensor</h3>
 
 :warning: Rudolf kalibriert den Kreiselsensor beim Booten, deshalb muss er dabei absolut ruhig stehen.
 
@@ -494,7 +505,7 @@ return 0;
 }
 ```
 
-### Ultraschallsensor
+<h3 id="ultrasonic">Ultraschallsensor</h3>
 
 ```c
 #include "ev3.h"
@@ -511,10 +522,10 @@ int main(){
   
   while(ButtonIsUp(BTNCENTER)){
 
-    x = ReadSensor(IN_3);				// distance in cm, 0 to 255
+    x = ReadSensor(IN_3);       // distance in cm, 0 to 255
 
-  	LcdTextf(1, 1, LCD_LINE3, "Entfernung: %3d cm", x);
-  	Wait(20);
+    LcdTextf(1, 1, LCD_LINE3, "Entfernung: %3d cm", x);
+    Wait(20);
   }
 
   FreeEV3();
@@ -635,7 +646,7 @@ Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 
 | Sensor         | Modus       | Return |
 |----------------|-------------|-------|
-|EV3-Touch       | TOUCH_PRESS | Press |
+|EV3-Touch       | TOUCH       | Press |
 |EV3-Light       | COL_REFLECT | Reflect |
 |                | COL_AMBIENT | Ambient |
 |                | COL_COLOR   | Color |
@@ -649,8 +660,12 @@ Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 |                | IR_REMOTE   | Remote Control |
 |NXT-Temperature | NXT_TEMP_C  | Temperature in C |
 |                | NXT_TEMP_F  | Temperature in F |
-|NXT-Sound       | NXT_SOUND_DB | Decibels |
-|                | NXT_SOUND_DBA | A-Weighted Decibels|
+|NXT-Touch       | NXT_TOUCH   | |
+|NXT-Light v1    | NXT_REFLECT | |
+|                | NXT_AMBIENT | |
+|NXT-Sound       | NXT_SND_DB  | Decibels |
+|                | NXT_SND_DBA | A-Weighted Decibels|
+
 
 <h2 id="parallel">Parallele Tasks</h2>
 
@@ -660,7 +675,7 @@ Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 
 bool blink = TRUE;
 
-void *blinkFunc(void \*arg){
+void *blinkFunc(void *arg){
   while(blink){
     OnFwd(OUT_D,50);
     Wait(200);
@@ -697,8 +712,18 @@ int main(){
 
 <h2 id = "more">Weitere Befehle</h2>
 
-### LCD-Ausgabe
-Printf format strings - kurz und unvollständig %width.precision.specifier
+<h3 id="lcd">LCD-Ausgabe</h3>
+
+Formatierte Ausgaben auf dem Display sind mit `LcdTextf(color, x, y, format string, variable)`
+zu erreichen - so wie in C mit `printf`.  
+
+```c
+int huete = 1, ecken = 3;
+LcdTextf(1, 1, LCD_LINE3, " %d Hut hat %d Ecken", huete, ecken); 
+
+```
+
+Printf format strings - kurz und unvollständig `%width.precision.specifier`
 Benutze als specifier d für eine Ganzezahl, f für eine Kommazahl und s für eine Zeichenkette.
 precision gibt die maximale Anzahl an Stellen für die Ausgabe an, width die minimale.
 

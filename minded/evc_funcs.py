@@ -414,14 +414,6 @@ evc_funcs = [
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
         'Negative values forward, positive values backwards</small>'],
-    ['SetSensorLight', 'SetSensorLight()', '<small><b>SetSensorLight(' +
-        '<span foreground="brown">input</span>)</b>\n\n' +
-        'Allocate EV3 Color Sensor to specified input port in COL_REFLECT mode.\n' +
-        'Returns the reflected light intensities in % [0...100].\n\n' +
-        '<b>Parameters</b>\n' +
-        '  <span foreground="brown">input</span>        The port to configure.\n' +
-        '<b>Example:</b>\n' +
-        '  SetSensorLight(IN_1);</small>'],
     ['SetSensorTouch', 'SetSensorTouch()', '<small><b>SetSensorTouch(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Touch Sensor to specified input port in TOUCH_PRESS mode.\n' +
@@ -430,6 +422,16 @@ evc_funcs = [
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
         '  SetSensorTouch(IN_1);</small>'],
+    ['SetSensorLight', 'SetSensorLight()', '<small><b>SetSensorLight(' +
+        '<span foreground="brown">input</span>)</b>\n\n' +
+        'Allocate EV3 Color Sensor to specified input port in COL_REFLECT mode.\n' +
+        'Returns the reflected light intensities in % [0...100].\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">input</span>        The port to configure.\n' +
+        '<b>Example:</b>\n' +
+        '  SetSensorLight(IN_1);</small>'],
+    ['SetSensorColor', 'SetSensorColor()', '<small><b>SetSensorColor(' +
+        '<span foreground="brown">input</span>)</b></small>'],
     ['SetSensorUS', 'SetSensorUS()', '<small><b>SetSensorUS(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Ultrasonic Sensor to specified input port in US_DIST_CM mode.\n' +
@@ -438,13 +440,6 @@ evc_funcs = [
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
         '  SetSensorUS(IN_1);</small>'],
-    ['SetSensorNXTSound', 'SetSensorNXTSound()', '<small><b>SetSensorNXTSound(' +
-        '<span foreground="brown">input</span>)</b>\n\n' +
-        'Configure the sensor on the specified port as a NXT-sound sensor.\n\n' +
-        '<b>Parameters</b>\n' +
-        '  <span foreground="brown">input</span>        The port to configure.\n' +
-        '<b>Example:</b>\n' +
-        '  SetSensorNXTSound(IN_1);</small>'],
     ['SetSensorGyro', 'SetSensorGyro()', '<small><b>SetSensorGyro(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Gyro Sensor to specified input port in angle mode\n' +
@@ -452,10 +447,31 @@ evc_funcs = [
         '<b>Parameters</b>\n' +
 	    '  <span foreground="brown">input</span>  The Input port to configure.\n' +
 	    '<b>Example:</b>\n  SetSensorGyro(IN_1);</small>'],
+    ['SetSensorNXTTouch', 'SetSensorNXTTouch()', '<small><b>SetSensorNXTTouch(' +
+        '<span foreground="brown">input</span>)</b>\n\n' +
+        'Configure the sensor on the specified port as a NXT-touch sensor.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">input</span>        The port to configure.\n' +
+        '<b>Example:</b>\n' +
+        '  SetSensorNXTTouch(IN_1);</small>'],
+    ['SetSensorNXTLight', 'SetSensorNXTLight()', '<small><b>SetSensorNXTLight(' +
+        '<span foreground="brown">input</span>)</b>\n\n' +
+        'Configure the sensor on the specified port as a NXT-light sensor.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">input</span>        The port to configure.\n' +
+        '<b>Example:</b>\n' +
+        '  SetSensorNXTLight(IN_1);</small>'],
+    ['SetSensorNXTSound', 'SetSensorNXTSound()', '<small><b>SetSensorNXTSound(' +
+        '<span foreground="brown">input</span>)</b>\n\n' +
+        'Configure the sensor on the specified port as a NXT-sound sensor.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">input</span>        The port to configure.\n' +
+        '<b>Example:</b>\n' +
+        '  SetSensorNXTSound(IN_1);</small>'],
     ['SetSensorMode', 'SetSensorMode()', '<small><b>SetSensorMode(' +
         '<span foreground="brown">input</span>, ' +
         '<span foreground="brown">mode</span>)</b>\n\n' +
-        'Touch sensor TOUCH_PRESS Return of state (2 states possible)\n' +
+        'Touch sensor TOUCH       Return of state (2 states possible)\n' +
         'Light sensor COL_REFLECT Return of the reflected light intensities in %\n' +
         '             COL_AMBIENT Return of room light intensities in %\n' +
         '             COL_COLOR   Return of color 0: transparent\n' +
@@ -472,7 +488,7 @@ evc_funcs = [
         'Infrared     IR_PROX    Return of distance in % (up to 70cm)\n' +
         '             IR_SEEK    Position of the Beacon\n' +
         '             IR_REMOTE  Controlling EV3 with Beacon</small>'],
-    ['SetAllSensorMode', 'SetAllSensorMode()', ''],
+    ['SetAllSensorMode', 'SetAllSensorMode()', 'obsolete'],
     ['SetIRBeaconCH', 'SetIRBeaconCH()', ''],
     ['SetLedPattern', 'SetLedPattern()', '<small><b>SetLedPattern(' +
         '<span foreground="brown">pattern</span>)</b></small>'],

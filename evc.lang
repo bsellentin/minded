@@ -403,9 +403,12 @@
                     <keyword>RotateMotorNoWaitEx</keyword>
                     <keyword>SetPower</keyword>
                     <keyword>SetSensorLight</keyword>
+                    <keyword>SetSensorColor</keyword>
                     <keyword>SetSensorTouch</keyword>
                     <keyword>SetSensorUS</keyword>
                     <keyword>SetSensorGyro</keyword>
+                    <keyword>SetSensorNXTTouch</keyword>
+                    <keyword>SetSensorNXTLight</keyword>
                     <keyword>SetSensorNXTSound</keyword>
                     <keyword>SetSensorMode</keyword>
                     <keyword>SetAllSensorMode</keyword>
