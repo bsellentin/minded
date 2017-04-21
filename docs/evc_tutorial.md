@@ -644,27 +644,30 @@ Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 ...
 ```
 
-| Sensor         | Modus       | Return |
-|----------------|-------------|-------|
-|EV3-Touch       | TOUCH       | Press |
-|EV3-Light       | COL_REFLECT | Reflect |
-|                | COL_AMBIENT | Ambient |
-|                | COL_COLOR   | Color |
-|EV3-Ultrasonic  | US_DIST_CM  | Dist in cm |
-|                | US_DIST_MM  | Dist in mm |
-|                | US_DIST_IN  | Dist in inch |
-|EV3-Gyroskop    | GYRO_ANG    | angle |
-|                | GYRO_RATE   | rate|
-|EV3-Infrared    | IR_PROX     | Proximity |
-|                | IR_SEEK     | Seek |
-|                | IR_REMOTE   | Remote Control |
-|NXT-Temperature | NXT_TEMP_C  | Temperature in C |
-|                | NXT_TEMP_F  | Temperature in F |
-|NXT-Touch       | NXT_TOUCH   | |
-|NXT-Light v1    | NXT_REFLECT | |
-|                | NXT_AMBIENT | |
-|NXT-Sound       | NXT_SND_DB  | Decibels |
-|                | NXT_SND_DBA | A-Weighted Decibels|
+| Sensor             | Modus       | Befehl            | Return |
+|--------------------|-------------|-------------------|--------|
+|EV3-Touch           | TOUCH       | SetSensorTouch    | Press |
+|EV3-Light           | COL_REFLECT | SetSensorLight    | Reflect |
+|                    | COL_AMBIENT |                   | Ambient |
+|                    | COL_COLOR   | SetSensorColor    | Color |
+|EV3-Ultrasonic      | US_DIST_CM  | SetSensorUS       | Dist in cm |
+|                    | US_DIST_MM  |                   | Dist in mm |
+|                    | US_DIST_IN  |                   | Dist in inch |
+|EV3-Gyroskop        | GYRO_ANG    | SetSensorGyro     | angle |
+|                    | GYRO_RATE   |                   | rate |
+|EV3-Infrared        | IR_PROX     | SetSensorIR       | Proximity |
+|                    | IR_SEEK     |                   | Seek |
+|                    | IR_REMOTE   |                   | Remote Control |
+|NXT-Temperature     | NXT_TEMP_C  |                   | Temperature in C |
+|                    | NXT_TEMP_F  |                   | Temperature in F |
+|NXT-Touch           | NXT_TOUCH   | SetSensorNXTTouch | |
+|NXT-Light 9844      | NXT_REFLECT | SetSensorNXTLight | |
+|                    | NXT_AMBIENT |                   | |
+|NXT-Color 9694      | NXT_COL_REF | | |
+|                    | NXT_COL_AMB | | |
+|NXT-Sound           | NXT_SND_DB  | SetSensorNXTSound | Decibels |
+|                    | NXT_SND_DBA |                   | A-Weighted Decibels |
+|HiTechnic IR-Seeker | HT_DIR_DC   | | Direction of IR signal 1-9 |
 
 
 <h2 id="parallel">Parallele Tasks</h2>
