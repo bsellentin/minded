@@ -629,7 +629,8 @@ int main(){
 <h2 id = "moresensors">Mehr über Sensoren</h2>
 
 Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
-`SetSensorMode(port, mode)` ausgelesen werden können.
+`SetSensorMode(port, mode)` angelegt werden und mit `ReadSensor(port)` 
+gelesen werden können.
 
 ```c
 ...
@@ -647,8 +648,8 @@ Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 | Sensor             | Modus       | Befehl            | Return |
 |--------------------|-------------|-------------------|--------|
 |EV3-Touch           | TOUCH       | SetSensorTouch    | Press |
-|EV3-Light           | COL_REFLECT | SetSensorLight    | Reflect |
-|                    | COL_AMBIENT |                   | Ambient |
+|EV3-Light           | COL_REFLECT | SetSensorLight    | Reflected light |
+|                    | COL_AMBIENT |                   | Ambient light|
 |                    | COL_COLOR   | SetSensorColor    | Color |
 |EV3-Ultrasonic      | US_DIST_CM  | SetSensorUS       | Dist in cm |
 |                    | US_DIST_MM  |                   | Dist in mm |
@@ -663,8 +664,9 @@ Neben den benannten Sensor-Initialisierungen gibt es weitere Modi, die mit
 |NXT-Touch           | NXT_TOUCH   | SetSensorNXTTouch | |
 |NXT-Light 9844      | NXT_REFLECT | SetSensorNXTLight | |
 |                    | NXT_AMBIENT |                   | |
-|NXT-Color 9694      | NXT_COL_REF | | |
-|                    | NXT_COL_AMB | | |
+|NXT-Color 9694      | NXT_COL_REF |                   | Reflected light|
+|                    | NXT_COL_AMB |                   | Ambient light  |
+|                    | NXT_COL_COL |                   | Color          |
 |NXT-Sound           | NXT_SND_DB  | SetSensorNXTSound | Decibels |
 |                    | NXT_SND_DBA |                   | A-Weighted Decibels |
 |HiTechnic IR-Seeker | HT_DIR_DC   | | Direction of IR signal 1-9 |

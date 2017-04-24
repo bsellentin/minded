@@ -440,6 +440,14 @@ evc_funcs = [
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
         '  SetSensorUS(IN_1);</small>'],
+    ['SetSensorIR', 'SetSensorIR()', '<small><b>SetSensorIR(' +
+        '<span foreground="brown">input</span>)</b>\n\n' +
+        'Allocate EV3 Infrared Sensor to specified input port in IR_PROX mode.\n' +
+        'Returns distance in cm [1...250].\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">input</span>        The port to configure.\n' +
+        '<b>Example:</b>\n' +
+        '  SetSensorIR(IN_1);</small>'],
     ['SetSensorGyro', 'SetSensorGyro()', '<small><b>SetSensorGyro(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Gyro Sensor to specified input port in angle mode\n' +
@@ -482,7 +490,7 @@ evc_funcs = [
         '                                         5: red\n' +
         '                                         6: white\n' +
         '                                         7: brown\n' +
-        'Sonar sensor US_DIST_MM Return of distance in mm, 0 to 2550\n' +
+        'Sonar sensor US_DIST_CM Return of distance in mm, 0 to 2550\n' +
         'Gyro sensor  GYRO_ANG   Return angle in degrees. Clockwise is positive.\n' +
         '             GYRO_RATE  Return rotational speed in degrees per second\n' +
         'Infrared     IR_PROX    Return of distance in % (up to 70cm)\n' +

@@ -306,16 +306,28 @@
                     <keyword>SENSOR_2</keyword>
                     <keyword>SENSOR_3</keyword>
                     <keyword>SENSOR_4</keyword>
-                    <keyword>SENSOR_LIGHT</keyword>
-                    <keyword>SENSOR_TOUCH</keyword>
-                    <keyword>SENSOR_SOUND</keyword>
-                    <keyword>SENSOR_MODE_RAW</keyword>
-                    <keyword>SENSOR_MODE_EDGE</keyword>
-                    <keyword>SENSOR_MODE_PULSE</keyword>
-                    <keyword>SENSOR_MODE_PERCENT</keyword>
-                    <keyword>SENSOR_MODE_CELSIUS</keyword>
-                    <keyword>SENSOR_MODE_FAHRENHEIT</keyword>
-                    <keyword>SENSOR_MODE_ROTATION</keyword>
+                    <keyword>TOUCH</keyword>
+                    <keyword>COL_REFLECT</keyword>
+                    <keyword>COL_AMBIENT</keyword>
+                    <keyword>COL_COLOR</keyword>
+                    <keyword>US_DIST_CM</keyword>
+                    <keyword>US_DIST_IN</keyword>
+                    <keyword>GYRO_ANG</keyword>
+                    <keyword>GYRO_RATE</keyword>
+                    <keyword>IR_PROX</keyword>
+                    <keyword>IR_REMOTE</keyword>
+                    <keyword>IR_SEEK</keyword>
+                    <keyword>NXT_TEMP_C</keyword>
+                    <keyword>NXT_TEMP_F</keyword>
+                    <keyword>NXT_SND_DB</keyword>
+                    <keyword>NXT_SND_DBA</keyword>
+                    <keyword>NXT_TOUCH</keyword>
+                    <keyword>NXT_REFLECT</keyword>
+                    <keyword>NXT_AMBIENT</keyword>
+                    <keyword>NXT_COL_REF</keyword>
+                    <keyword>NXT_COL_AMB</keyword>
+                    <keyword>NXT_COL_COL</keyword>
+                    <keyword>HT_DIR_DC</keyword>
                     <keyword>SEC_1</keyword> 
                     <keyword>SEC_2</keyword>
                     <keyword>SEC_3</keyword>
@@ -406,6 +418,7 @@
                     <keyword>SetSensorColor</keyword>
                     <keyword>SetSensorTouch</keyword>
                     <keyword>SetSensorUS</keyword>
+                    <keyword>SetSensorIR</keyword>
                     <keyword>SetSensorGyro</keyword>
                     <keyword>SetSensorNXTTouch</keyword>
                     <keyword>SetSensorNXTLight</keyword>
