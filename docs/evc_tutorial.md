@@ -635,7 +635,7 @@ gelesen werden können.
 ```c
 ...
   int x;
-      SetSensorMode(IN_1, TOUCH_PRESS);
+      SetSensorMode(IN_1, COL_AMBIENT);     // messe das Umgebungslicht
     
       while(ButtonIsUp(BTNCENTER)){
           x = ReadSensor(IN_1);
@@ -647,11 +647,11 @@ gelesen werden können.
 
 | Sensor             | Modus       | Befehl            | Return |
 |--------------------|-------------|-------------------|--------|
-|EV3-Touch           | TOUCH       | SetSensorTouch    | Press |
-|EV3-Light           | COL_REFLECT | SetSensorLight    | Reflected light |
-|                    | COL_AMBIENT |                   | Ambient light|
+|EV3-Touch           | TOUCH       | SetSensorTouch    | 0: nicht gedrückt, 1: gedrückt |
+|EV3-Light           | COL_REFLECT | SetSensorLight    | Reflektiertes Licht in Prozent |
+|                    | COL_AMBIENT |                   | Umgebungslicht in Prozent      |
 |                    | COL_COLOR   | SetSensorColor    | Color |
-|EV3-Ultrasonic      | US_DIST_CM  | SetSensorUS       | Dist in cm |
+|EV3-Ultrasonic      | US_DIST_CM  | SetSensorUS       | Distanz in Centimeter          |
 |                    | US_DIST_MM  |                   | Dist in mm |
 |                    | US_DIST_IN  |                   | Dist in inch |
 |EV3-Gyroskop        | GYRO_ANG    | SetSensorGyro     | angle |
@@ -669,14 +669,15 @@ gelesen werden können.
 |                    | NXT_COL_COL |                   | Color          |
 |NXT-Sound           | NXT_SND_DB  | SetSensorNXTSound | Decibels |
 |                    | NXT_SND_DBA |                   | A-Weighted Decibels |
-|HiTechnic IR-Seeker | HT_DIR_DC   | | Direction of IR signal 1-9 |
+|NXT-Ultrasonic      | NXT_US_CM   |                   | Dist in cm |
+|HiTechnic IR-Seeker | HT_DIR_DC   |                   | Direction of IR signal 1-9 |
 
 
 <h2 id="parallel">Parallele Tasks</h2>
 
 ```c
 #include <pthread.h>
-#include "ev3.h"
+#include "ev3.h" 
 
 bool blink = TRUE;
 
