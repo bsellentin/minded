@@ -396,7 +396,7 @@ int main(){
 }
 ```
 
-<h3 id="light">Farbsensor</h>
+<h3 id="light">Farbsensor</h3>
 
 Der EV3-Farbsensor kann zum einen reflektiertes Licht messen, dazu schaltet er die
 rote Diode an und misst das reflektierte rote Licht. Das funktioniert am Besten
