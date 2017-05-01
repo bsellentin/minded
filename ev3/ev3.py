@@ -117,7 +117,7 @@ class EV3():
                 return True
         else:
             return False
-        
+
     def set_brickname(self, name):
         cmd = b''.join([
             opCom_Set,
@@ -163,7 +163,7 @@ class EV3():
         (vbatt,) = struct.unpack('<f', reply[5:])
         return '{:f}'.format(vbatt)
         #return vbatt
-    
+
     def get_lbatt(self):
         cmd = b''.join([
             opUI_Read,
@@ -174,7 +174,7 @@ class EV3():
         reply = self.send_direct_cmd(cmd, global_mem=1)
         (lbatt,) = struct.unpack('<f', reply[5:])
         return '{:f}'.format(batt)
-    
+
     def get_os_version(self):
         cmd = b''.join([
             opUI_Read,
@@ -187,7 +187,7 @@ class EV3():
         os_version = os_version.split(b'\x00')[0]
         os_version = os_version.decode('utf-8')
         return os_version
-        
+
     def get_folders(self, directory):
         '''
         reads the number of sub folders within a folder
