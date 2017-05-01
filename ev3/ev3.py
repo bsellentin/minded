@@ -292,6 +292,36 @@ class EV3():
             self.send_system_cmd(cmd)
             rest -= part_size
 
+    def read_file(self, path:str) -> bytes:
+        cmd = b''.join([
+            BEGIN_UPLOAD,
+            struct.pack('<H', 1012),    # SIZE
+            str.encode(path) + b'\x00'  # NAME
+        ])
+        reply = self.send_system_cmd(cmd)
+        (size, handle) = struct.unpack('<IB', reply[7:12])
+        part_size = min(1012, size)
+        if part_size > 0:
+            fmt = str(part_size) + 's'
+            data = struct.unpack(fmt, reply[12:])[0]
+        else:
+            data = b''
+        rest = size - part_size
+        while rest > 0:
+            part_size = min(1016, rest)
+            cmd = b''.join([
+                CONTINUE_UPLOAD,
+                struct.pack('<BH', handle, part_size)   # HANDLE, SIZE
+            ])
+            reply = self.send_system_cmd(cmd)
+            fmt = 'B' + str(part_size) + 's'
+            (handle, part) = struct.unpack(fmt, reply[7:])
+            data += part
+            rest -= part_size
+            if rest <= 0 and reply[6:7] != SYSTEM_END_OF_FILE:
+                raise SysCmdError("end of file not reached")
+        return data
+
     def del_file(self, path: str) -> None:
         '''
         deletes a file and empty directories

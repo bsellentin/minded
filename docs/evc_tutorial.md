@@ -396,14 +396,14 @@ int main(){
 }
 ```
 
-<h3 id="light">Farbsensor</h>
+<h3 id="light">Farbsensor</h3>
 
 Der EV3-Farbsensor kann zum einen reflektiertes Licht messen, dazu schaltet er die
 rote Diode an und misst das reflektierte rote Licht. Das funktioniert am Besten
 in einem Abstand zur Oberfläche von 5 - 10 mm. Dieser Modus wird oft gebraucht,
 deshalb gibt es den Befehl `SetSensorLight(port)`.  
 Der EV3-Farbsensor kann auch das Umgebungslicht messen, da scheint dann nur die
-blaue Diode.  
+blaue Diode: `SetSensorMode(port, COL_AMBIENT)`.  
 Und dann kann der EV3-Farbsensor auch Farben erkennen, naheliegender Befehl:
 `SetSensorColor(port)`.
 
