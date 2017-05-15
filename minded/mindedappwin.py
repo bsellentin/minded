@@ -123,7 +123,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.cell = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn("Language", self.cell, text=1)
         self.language_tree.append_column(column)
-        
+
         # Look for Brick
         for device in self.application.client.query_by_subsystem("usb"):
             if device.get_property('ID_VENDOR') == '0694' and device.get_property('ID_MODEL') == '0002':
@@ -138,7 +138,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         #self.set_title('MindEd', '')
         self.untitledDocCount = 0
         self.open_new()
-    
+
     def gtk_main_quit(self, *args):
         '''
         TopWin CloseButton clicked, are there unsaved changes
@@ -166,7 +166,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
     def on_btn_new_clicked(self, button):
 
         self.open_new()
-        
 
     def on_btn_open_clicked(self, button):
 
@@ -175,6 +174,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                                          (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                           Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
         open_dlg.set_local_only(False)
+        self.add_filters(open_dlg)
         open_dlg.connect("response", self.open_dlg_response)
         open_dlg.show()
 
@@ -197,6 +197,18 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         dialog.destroy()
 
+    def add_filters(self, dialog):
+        filter_brickc = Gtk.FileFilter()
+        filter_brickc.set_name("Brick files")
+        filter_brickc.add_pattern("*.evc")
+        filter_brickc.add_pattern("*.nxc")
+        dialog.add_filter(filter_brickc)
+
+        filter_any = Gtk.FileFilter()
+        filter_any.set_name("Any files")
+        filter_any.add_pattern("*")
+        dialog.add_filter(filter_any)
+
     def on_btn_save_clicked(self, button):
 
         page_num = self.notebook.get_current_page()
@@ -213,9 +225,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         editor = self.notebook.get_nth_page(page_num)
 
         self.save_file_as(editor, 0)
-        
+
         logger.debug("Save as: %s" % editor.document)
-            
+
     def on_btn_close_tab_clicked(self, button, child):
 
         # widget must be child of page, that is scrolledwindow
@@ -235,7 +247,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         compile the saved file - a .rxe-file results
         '''
-        
+
         page_num = self.notebook.get_current_page()
         editor = self.notebook.get_nth_page(page_num)
         if editor.get_buffer().get_modified():
