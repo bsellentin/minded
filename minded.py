@@ -9,6 +9,7 @@ import os
 import sys
 import argparse
 import logging
+import pathlib
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -62,9 +63,9 @@ class MindEdApp(Gtk.Application):
         
     def do_startup(self):    
         Gtk.Application.do_startup(self)
-        
-        self.args = ()
 
+        self.args = ()
+        self.filelist = []
         # look for ui-files
         srcdir = os.path.abspath(os.path.dirname(__file__))
         if os.path.exists(os.path.join(srcdir, 'data')):
@@ -118,10 +119,16 @@ class MindEdApp(Gtk.Application):
                     self.ev3brick.do_nothing()
                 except:
                     logger.warn('ev3-python failure')              
-        
+
         if not self.win:
             logger.debug("NXT-lib: %s" % nxt.locator.__file__)
-            self.win = MindEdAppWin(application=self)
+            self.win = MindEdAppWin(self.filelist, application=self )
+        else:
+            '''MindEd already running, brick file in file browser clicked'''
+            #if len(self.filelist)>1:
+            for nth_file in self.filelist[1:]:
+                if os.path.isfile(nth_file):
+                    self.win.load_file_in_editor(pathlib.Path(nth_file).as_uri())
 
     def do_command_line(self, command_line):
 
@@ -131,15 +138,18 @@ class MindEdApp(Gtk.Application):
             logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s', level=logging.DEBUG)
         else:
             logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s', level=logging.WARN)
-       
+
+        self.filelist = command_line.get_arguments()
+        logger.debug("Filelist: %s" % self.filelist)
+
         self.activate()
         return 0
-    
+
     def on_uevent(self, client, action, device):
         ''' report plugin-event to application'''
         #for device_key in device.get_property_keys():
         #    print("   device property %s: %s"  % (device_key, device.get_property(device_key)))
-        
+
         # only LEGO-devices
         if (device.get_property('ID_VENDOR') == '0694' or device.get_property('ID_VENDOR_ID') == '0694'):
             # NXT
@@ -194,12 +204,10 @@ class MindEdApp(Gtk.Application):
         dlg.window.set_transient_for(self.win)
         dlg.window.set_modal(True)
         dlg.window.present()
-        
-    
+
     def on_quit(self, action, param):
         self.quit()
-    
-            
+
 if __name__ == "__main__":
     app = MindEdApp()
     app.run(sys.argv)

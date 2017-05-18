@@ -34,12 +34,13 @@ from minded.nxtfiler import NXTFiler
 class MindEdAppWin(Gtk.ApplicationWindow):
     '''The Main Application Window'''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, files, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
         #for key in kwargs:
         #    print("%s : %s" % (key, kwargs[key]))
         self.application = kwargs["application"]
+        logger.debug("Filelist : %s" % files)
         
         # look for settings
         srcdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) 
@@ -132,12 +133,16 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             if device.get_property('ID_VENDOR_ID') == '0694' and device.get_property('ID_MODEL_ID') == '0005':
                 self.brick_status.push(self.brick_status_id, "EV3")
                 self.btn_transmit.set_sensitive(True)
-        
-        #self.window.set_default_icon_from_file('minded/nxt-symbolic.svg')
+
         self.window.show_all()
-        #self.set_title('MindEd', '')
+
         self.untitledDocCount = 0
-        self.open_new()
+        if len(files)>1:
+            for nth_file in files[1:]:
+                if os.path.isfile(nth_file):
+                    self.load_file_in_editor(pathlib.Path(nth_file).as_uri())
+        else:
+            self.open_new()
 
     def gtk_main_quit(self, *args):
         '''
@@ -506,12 +511,12 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         aboutdlg.set_program_name("MindEd")
         aboutdlg.set_comments("An Editor for LEGO Mindstorms Bricks")
         aboutdlg.set_authors(authors)
-        aboutdlg.set_version("0.7.2")
+        aboutdlg.set_version("0.7.3")
         #image = GdkPixbuf.Pixbuf()
         #image.new_from_file("/home/selles/pyGtk/minded/minded.png")
         #aboutdlg.set_logo_icon_name(image)
         aboutdlg.set_logo_icon_name()
-        aboutdlg.set_copyright("2016")
+        aboutdlg.set_copyright("2017")
         aboutdlg.set_website("http://github.com/bsellentin/minded")
         aboutdlg.set_website_label("MindEd Website")
 
