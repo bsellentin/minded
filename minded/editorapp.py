@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import minded.nxc_funcs as nxc_funcs
-from minded.nxccompletionprovider import NXCCompletionProvider
+from minded.brickcompletionprovider import BrickCompletionProvider
 
 SIMPLE_COMPLETE = 0
 
@@ -181,7 +181,7 @@ class EditorApp(Gtk.ScrolledWindow):
                 self.view_keyword_complete = GtkSource.CompletionWords.new('keyword')
                 self.view_keyword_complete.register(self.keybuff)
             else:
-                self.custom_completion_provider = NXCCompletionProvider(self.this_lang)
+                self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
 
             if SIMPLE_COMPLETE:
                 self.codeview_completion = self.codeview.get_completion()

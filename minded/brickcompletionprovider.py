@@ -15,7 +15,7 @@ import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
 
 
-class NXCCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
+class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
 
     def __init__(self, language):
         GObject.GObject.__init__(self)
@@ -24,17 +24,20 @@ class NXCCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             logger.debug('Completion for language: %s', language.get_name())
             if language.get_name() == 'NXC':
                 self.funcs = nxc_funcs.nxc_funcs
+                self.consts = nxc_funcs.nxc_consts
                 self.lang = 'NXC'
             if language.get_name() == 'EVC':
                 self.funcs = evc_funcs.evc_funcs
+                self.consts = evc_funcs.evc_consts
                 self.lang = 'EVC'
         else:
             logger.debug('No language - no completion')
             self.funcs = []
+            self.consts = []
             self.lang = ''   
             
     def do_get_name(self):
-        return ('%s-Functions' % self.lang)
+        return ('%s' % self.lang)
 
     def do_match(self, context):
         return True
@@ -64,7 +67,10 @@ class NXCCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
                     if func[0].startswith(left_text):
                         proposals.append(GtkSource.CompletionItem.new(
                             func[0], func[1], None, func[2]))
-
+                for const in self.consts:
+                    if const[0].startswith(left_text):
+                        proposals.append(GtkSource.CompletionItem.new(
+                            const[0], const[1], None, None))
                 context.add_proposals(self, proposals, True)
             return
     
@@ -78,14 +84,15 @@ class NXCCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             start_iter = text_iter.copy()
             buf.delete(start_iter, end_iter)
         buf.insert_at_cursor(completion_item.get_text())
-       
-        ins_iter = buf.get_iter_at_mark(buf.get_insert())
-        lim_iter = ins_iter.copy()
-        if lim_iter.backward_word_start():
-            start_iter = lim_iter.copy()
-            match_start, match_end = ins_iter.backward_search('(', Gtk.TextSearchFlags.VISIBLE_ONLY, start_iter)
-            match_start.forward_char()
-            buf.place_cursor(match_start)
+        # set cursor after opening bracket
+        if completion_item.get_text().endswith(')'):
+            ins_iter = buf.get_iter_at_mark(buf.get_insert())
+            lim_iter = ins_iter.copy()
+            if lim_iter.backward_word_start():
+                start_iter = lim_iter.copy()
+                match_start, match_end = ins_iter.backward_search('(', Gtk.TextSearchFlags.VISIBLE_ONLY, start_iter)
+                match_start.forward_char()
+                buf.place_cursor(match_start)
         buf.end_user_action()
         
         return True

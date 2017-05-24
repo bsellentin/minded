@@ -513,3 +513,11 @@ evc_funcs = [
         '<b>Example:</b>\n' +
         '  Wait(1000);</small>']
 ]
+evc_consts = [
+    ['BTNEXIT', 'BTNEXIT'],
+    ['BTNRIGHT', 'BTNRIGHT'],
+    ['BTNLEFT', 'BTNLEFT'],
+    ['BTNCENTER', 'BTNCENTER'],
+    ['BTNUP', 'BTNUP'],
+    ['BTNDOWN', 'BTNDOWN']
+]

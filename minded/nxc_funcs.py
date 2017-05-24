@@ -1,117 +1,125 @@
 # -*- coding: utf-8 -*-
 nxc_funcs = [
-            ['Acquire', 'Acquire()', '<small><b>Acquire (mutex <span foreground="brown">m</span>)</b>\n\n' +
-                'Acquire the specified mutex variable. If another task already\n' +
-                'has acquired the mutex then the current task will be suspended\n' +
-                'until the mutex is released by the other task. This function\n' +
-                'is used to ensure that the current task has exclusive access\n' +
-                'to a shared resource, such as the display or a motor. After the\n' +
-                'current task has finished using the shared resource the program\n' +
-                'should call Release to allow other tasks to acquire the mutex.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">m</span>  The mutex to acquire.\n' +
-                '<b>Examples:</b>\n' +
-                '  mutex motorMutex;\n' +
-                '  // ...\n' +
-                '  Acquire(motorMutex); // make sure we have exclusive access\n' +
-                '  // use the motors\n' +
-                '  Release(motorMutex);</small>'], 
-            ['ArrayInit', 'ArrayInit(,,)', '<small><b>ArrayInit (<span foreground="brown">aout[]</span>, ' +
-                '<span foreground="brown">value</span>, <span foreground="brown">count</span>)</b>\n\n' +
-                'Initialize an array to contain count elements with each element\n' +
-                'equal to the value provided. To initialize a multi-dimensional\n' +
-                'array, the value should be an array of N-1 dimensions, where N is\n' +
-                'the number of dimensions in the array being initialized.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">aout</span>   The output array to initialize.\n' +
-                '  <span foreground="brown">value</span>  The value to initialize each element to.\n' +
-                '  <span foreground="brown">count</span>  The number of elements to create in the output array.\n' +
-                '<b>Examples:</b>\n' +
-                '  int myArray[];\n' +
-                '  ArrayInit(myArray, 0, 10); // 10 elements == zero</small>' ], 
-            ['ArrayLen', 'ArrayLen()', '<small><b>ArrayLen (<span foreground="brown">data[]</span>)</b>\n\n' +
-                'Return the length of the specified array. Any type of array\n' +
-                'of up to four dimensions can be passed into this function.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">data</span>  The array whose length you need to read.\n' +
-                '<b>Returns</b>\n' +
-                '  The length of the specified array.\n' +
-                '<b>Examples:</b>\n' +
-                '  x = ArrayLen(myArray);</small>'],
-            ['BluetoothStatus', 'BluetoothStatus()', '<small><b>BluetoothStatus (<span foreground="brown">conn</span>)</b>\n\n' +
-                'Check the status of the bluetooth subsystem for the specified\n' +
-                'connection slot.\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">conn</span>    The connection slot (0..3).\n' +
-                '          Connections 0 through 3 are for bluetooth connections.\n' +
-                '<b>Returns</b>\n' +
-                '  The bluetooth status for the specified connection.\n' +
-                '<b>Examples:</b>\n' +
-                '  x = BluetoothStatus(1);</small>'],
-            ['ButtonCount', 'ButtonCount()', '<small><b>ButtonCount (<span foreground="brown">btn</span>, ' +
-                '<span foreground="brown">resetCount</span> = false)</b>\n\n' +
-                'Return the number of times the specified button has been pressed\n' +
-                'since the last time the button press count was reset. Optionally\n' +
-                'clear the count after reading it.\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">btn</span>           The button to check.\n' +
-                '  <span foreground="brown">resetCount</span>    Whether or not to reset the press counter.\n' +
-                '<b>Returns</b>\n' +
-                '  The button press count.\n' +
-                '<b>Examples:</b>\n' +
-                '  value = ButtonCount(BTNRIGHT, true);</small>'], 
-            ['ButtonLongPressCount', 'ButtonLongPressCount()', ''], 
-            ['ButtonPressCount', 'ButtonPressCount()', ''], 
-            ['ButtonPressed', 'ButtonPressed()', '<small><b>ButtonPressed (<span foreground="brown">btn</span>, ' +
-                '<span foreground="brown">resetCount</span> = false)</b>\n\n' +
-                'Check for button press. This function checks whether the specified\n' +
-                'button is pressed or not. You may optionally reset the press count.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">btn</span>         The button to check. See Button name constants.\n' +
-                '  <span foreground="brown">resetCount</span>  Whether or not to reset the press counter.\n' +
-                '<b>Returns</b>\n' +
-                '  A boolean value indicating whether the button is pressed or not.\n' +
-                '<b>Examples:</b>\n' +
-                '  // Wait until user presses and releases exit button before continuing loop\n' +
-                '  while(!(ButtonPressed(BTNEXIT, 0)));\n' +
-                '  while(ButtonPressed(BTNEXIT, 0));</small>'], 
-            ['ButtonState', 'ButtonState()', '<small><b>ButtonState (<span foreground="brown">btn</span>)</b>\n\n' +
-                'Get the state of the specified button.\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">btn</span>    The button to check.\n' +
-                '<b>Returns</b>\n' +
-                '  The button state.\n' +
-                '<b>Examples:</b>\n' +
-                '  value = ButtonState(BTNLEFT);</small>'],
-            ['ClearScreen', 'ClearScreen()', '<small><b>ClearScreen ()</b>\n\n' +
-                'Clear LCD screen. This function lets you clear\n' +
-                'the NXT LCD to a blank screen.\n\n' +
-                '<b>Example:</b>\n' +
-                '  ClearScreen();</small>'], 
-            ['ClearSensor', 'ClearSensor()', '<small><b>ClearSensor (<span foreground="brown">port</span>)</b>\n\n' +
-                'Clear the value of a sensor - only affects sensors that are\n' +
-                'configured to measure a cumulative quantity such as rotation\n' +
-                'or a pulse count.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">port</span>  The Input port to clear.\n' +
-                '<b>Examples:</b>\n' +
-                '  ClearSensor(IN_1);</small>'], 
-            ['CircleOut', 'CircleOut(,,)', '<small><b>CircleOut (<span foreground="brown">x</span>,' +
-                ' <span foreground="brown">y</span>, <span foreground="brown">radius</span>,' +
-                ' <span foreground="brown">options</span> = DRAW_OPT_NORMAL)</b>\n\n' +
-                'Draw a circle on the screen with its center at the specified\n' +
-                'x and y location, using the specified radius. Optionally specify\n' +
-                'drawing options. If this argument is not specified it defaults\n' +
-                'to DRAW_OPT_NORMAL.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">x</span>        The x value for the center of the circle.\n' +
-                '  <span foreground="brown">y</span>        The y value for the center of the circle.\n' +
-                '  <span foreground="brown">radius</span>   The radius of the circle.\n' +
-                '  <span foreground="brown">options</span>  The optional drawing options.\n' +
-                '           <b>Warning:</b> These options require the\n' +
-                '           enhanced NBC/NXC firmware\n' +
-                '<b>Examples:</b>\n' +
-                '  CircleOut(20, 50, 20);</small>'], 
+    ['Acquire', 'Acquire()', '<small><b>Acquire (mutex <span foreground="brown">m</span>)</b>\n\n' +
+        'Acquire the specified mutex variable. If another task already\n' +
+        'has acquired the mutex then the current task will be suspended\n' +
+        'until the mutex is released by the other task. This function\n' +
+        'is used to ensure that the current task has exclusive access\n' +
+        'to a shared resource, such as the display or a motor. After the\n' +
+        'current task has finished using the shared resource the program\n' +
+        'should call Release to allow other tasks to acquire the mutex.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">m</span>  The mutex to acquire.\n' +
+        '<b>Examples:</b>\n' +
+        '  mutex motorMutex;\n' +
+        '  // ...\n' +
+        '  Acquire(motorMutex); // make sure we have exclusive access\n' +
+        '  // use the motors\n' +
+        '  Release(motorMutex);</small>'], 
+    ['ArrayInit', 'ArrayInit(,,)', '<small><b>ArrayInit (<span foreground="brown">aout[]</span>, ' +
+        '<span foreground="brown">value</span>, <span foreground="brown">count</span>)</b>\n\n' +
+        'Initialize an array to contain count elements with each element\n' +
+        'equal to the value provided. To initialize a multi-dimensional\n' +
+        'array, the value should be an array of N-1 dimensions, where N is\n' +
+        'the number of dimensions in the array being initialized.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">aout</span>   The output array to initialize.\n' +
+        '  <span foreground="brown">value</span>  The value to initialize each element to.\n' +
+        '  <span foreground="brown">count</span>  The number of elements to create in the output array.\n' +
+        '<b>Examples:</b>\n' +
+        '  int myArray[];\n' +
+        '  ArrayInit(myArray, 0, 10); // 10 elements == zero</small>' ], 
+    ['ArrayLen', 'ArrayLen()', '<small><b>ArrayLen (<span foreground="brown">data[]</span>)</b>\n\n' +
+        'Return the length of the specified array. Any type of array\n' +
+        'of up to four dimensions can be passed into this function.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">data</span>  The array whose length you need to read.\n' +
+        '<b>Returns</b>\n' +
+        '  The length of the specified array.\n' +
+        '<b>Examples:</b>\n' +
+        '  x = ArrayLen(myArray);</small>'],
+    ['BluetoothStatus', 'BluetoothStatus()', '<small><b>BluetoothStatus (<span foreground="brown">conn</span>)</b>\n\n' +
+        'Check the status of the bluetooth subsystem for the specified\n' +
+        'connection slot.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">conn</span>    The connection slot (0..3).\n' +
+        '          Connections 0 through 3 are for bluetooth connections.\n' +
+        '<b>Returns</b>\n' +
+        '  The bluetooth status for the specified connection.\n' +
+        '<b>Examples:</b>\n' +
+        '  x = BluetoothStatus(1);</small>'],
+    ['ButtonCount', 'ButtonCount()', '<small><b>ButtonCount (<span foreground="brown">btn</span>, ' +
+        '<span foreground="brown">resetCount</span> = false)</b>\n\n' +
+        'Return the number of times the specified button has been pressed\n' +
+        'since the last time the button press count was reset. Optionally\n' +
+        'clear the count after reading it.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">btn</span>           The button to check.\n' +
+        '  <span foreground="brown">resetCount</span>    Whether or not to reset the press counter.\n' +
+        '<b>Returns</b>\n' +
+        '  The button press count.\n' +
+        '<b>Examples:</b>\n' +
+        '  value = ButtonCount(BTNRIGHT, true);</small>'], 
+    ['ButtonLongPressCount', 'ButtonLongPressCount()', ''], 
+    ['ButtonPressCount', 'ButtonPressCount()', '<small><b>ButtonPressCount (' +
+        '<span foreground="brown">btn</span>)</b>\n\n' +
+        'Get the press count of the specified button.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">btn</span>    The button to check.\n' +
+        '<b>Returns</b>\n' +
+        '  The button press count.\n' +
+        '<b>Examples:</b>\n' +
+        '  value = ButtonPressCount(BTN1);</small>'], 
+    ['ButtonPressed', 'ButtonPressed()', '<small><b>ButtonPressed (<span foreground="brown">btn</span>, ' +
+        '<span foreground="brown">resetCount</span> = false)</b>\n\n' +
+        'Check for button press. This function checks whether the specified\n' +
+        'button is pressed or not. You may optionally reset the press count.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">btn</span>         The button to check. See Button name constants.\n' +
+        '  <span foreground="brown">resetCount</span>  Whether or not to reset the press counter.\n' +
+        '<b>Returns</b>\n' +
+        '  A boolean value indicating whether the button is pressed or not.\n' +
+        '<b>Examples:</b>\n' +
+        '  // Wait until user presses and releases exit button before continuing loop\n' +
+        '  while(!(ButtonPressed(BTNEXIT, 0)));\n' +
+        '  while(ButtonPressed(BTNEXIT, 0));</small>'], 
+    ['ButtonState', 'ButtonState()', '<small><b>ButtonState (<span foreground="brown">btn</span>)</b>\n\n' +
+        'Get the state of the specified button.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">btn</span>    The button to check.\n' +
+        '<b>Returns</b>\n' +
+        '  The button state.\n' +
+        '<b>Examples:</b>\n' +
+        '  value = ButtonState(BTNLEFT);</small>'],
+    ['ClearScreen', 'ClearScreen()', '<small><b>ClearScreen ()</b>\n\n' +
+        'Clear LCD screen. This function lets you clear\n' +
+        'the NXT LCD to a blank screen.\n\n' +
+        '<b>Example:</b>\n' +
+        '  ClearScreen();</small>'], 
+    ['ClearSensor', 'ClearSensor()', '<small><b>ClearSensor (<span foreground="brown">port</span>)</b>\n\n' +
+        'Clear the value of a sensor - only affects sensors that are\n' +
+        'configured to measure a cumulative quantity such as rotation\n' +
+        'or a pulse count.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">port</span>  The Input port to clear.\n' +
+        '<b>Examples:</b>\n' +
+        '  ClearSensor(IN_1);</small>'],
+    ['CircleOut', 'CircleOut(,,)', '<small><b>CircleOut (<span foreground="brown">x</span>,' +
+        ' <span foreground="brown">y</span>, <span foreground="brown">radius</span>,' +
+        ' <span foreground="brown">options</span> = DRAW_OPT_NORMAL)</b>\n\n' +
+        'Draw a circle on the screen with its center at the specified\n' +
+        'x and y location, using the specified radius. Optionally specify\n' +
+        'drawing options. If this argument is not specified it defaults\n' +
+        'to DRAW_OPT_NORMAL.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">x</span>        The x value for the center of the circle.\n' +
+        '  <span foreground="brown">y</span>        The y value for the center of the circle.\n' +
+        '  <span foreground="brown">radius</span>   The radius of the circle.\n' +
+        '  <span foreground="brown">options</span>  The optional drawing options.\n' +
+        '           <b><span foreground="red">Warning:</span></b> These options require the\n' +
+        '           enhanced NBC/NXC firmware\n' +
+        '<b>Examples:</b>\n' +
+        '  CircleOut(20, 50, 20);</small>'], 
             ['Coast', 'Coast()', '<small><b>Coast (<span foreground="brown">outputs</span>)</b>\n\n' +
                 'Coast motors. Turn off the specified outputs, making them coast to a stop.\n\n' +
                 '<b>Parameters</b>\n' +
@@ -273,7 +281,26 @@ nxc_funcs = [
                 '  <span foreground="brown">duration</span>   The desired tone duration, in ms.\n' + 
                 '<b>Examples:</b>\n' +
                 '  PlayTone(440, 500);     // Play Tone A for one half second</small>'], 
-            ['PlayTones', 'PlayTones()', ''],
+            ['PlayTones', 'PlayTones()', '<small><b>PlayTones (<span foreground="brown">tones[]</span>)</b>\n\n' +
+                'Play a series of tones contained in the tones array. Each element\n' +
+                'in the array is an instance of the Tone  structure, containing a \n' +
+                'frequency and a duration.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">tones[]</span>    The array of tones to play.\n' +
+                '<b>Examples:</b>\n' +
+                '  Tone sweepUp[] = {\n' +
+                '  TONE_C4, MS_50, \n' +
+                '  TONE_E4, MS_50, \n' +
+                '  TONE_G4, MS_50,\n' +
+                '  TONE_C5, MS_50, \n' +
+                '  TONE_E5, MS_50, \n' +
+                '  TONE_G5, MS_50, \n' +
+                '  TONE_C6, MS_200\n' +
+                '};\n' +
+                'task main(){\n' +
+                '  PlayTones(sweepUp);\n' +
+                '  Wait(SEC_1);\n' +
+                '}</small>'],
             ['PlayToneEx', 'PlayToneEx()', ''],
             ['PlayFile', 'PlayFile()', '<small><b>PlayFile (<span foreground="brown">filename</span> )</b>\n\n' +
                 'Play the specified file. The sound file can either be\n' +
@@ -351,9 +378,30 @@ nxc_funcs = [
                 'the standard NXT running program screen.\n\n' +
                 '<b>Examples:</b>\n' +
                 '  ResetScreen();</small>'], 
-            ['ResetSensor', 'ResetSensor()', ''], 
-            ['ResetRotationCount', 'ResetRotationCount()', ''], 
-            ['ResetTachoCount', 'ResetTachoCount()', ''], 
+            ['ResetSensor', 'ResetSensor()', '<small><b>ResetSensor (<span foreground="brown">port</span>)</b>\n\n' +
+                'Reset the sensor port. Sets the invalid data flag on the specified\n' +
+                'port and waits for it to become valid again. After changing the type\n' +
+                'or the mode of a sensor port you must call this function to give the\n' +
+                'firmware time to reconfigure the sensor port.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">port</span>     The port to reset.\n' +
+                '<b>Examples:</b>\n' +
+                '  ResetSensor(S1);</small>'], 
+            ['ResetRotationCount', 'ResetRotationCount()', '<small><b>ResetRotationCount (' +
+                '<span foreground="brown">outputs</span>)</b>\n\n' +
+                'Reset the program-relative position counter for the specified outputs.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">outputs</span>    Desired output ports.\n' +
+                '<b>Examples:</b>\n' +
+                '  ResetRotationCount(OUT_AB);</small>'], 
+            ['ResetTachoCount', 'ResetTachoCount()', '<small><b>ResetTachoCount (' +
+                '<span foreground="brown">outputs</span>)</b>\n\n' +
+                'Reset the tachometer count and tachometer limit goal for the\n' +
+                'specified outputs.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">outputs</span>    Desired output ports.\n' +
+                '<b>Examples:</b>\n' +
+                '  ResetTachoCount(OUT_AB);</small>'], 
             ['ResetAllTachoCounts', 'ResetAllTachoCounts()', ''],
             ['RotateMotor', 'RotateMotor(,,)', '<small><b>RotateMotor (<span foreground="brown">outputs</span>,' +
                 ' <span foreground="brown">pwr</span>, <span foreground="brown">angle</span>)</b>\n\n' +
@@ -394,7 +442,7 @@ nxc_funcs = [
                 'If the local mailbox is empty and this NXT is the master then\n' +
                 'it attempts to poll one of its slave NXTs for a message from\n' +
                 'the response mailbox that corresponds to the specified local\n' +
-                'mailbox number.\n' +
+                'mailbox number.\n\n' +
                 '<b>Parameters</b>\n' +
                 '  <span foreground="brown">queue</span>    The mailbox number.\n' +
                 '  <span foreground="brown">clear</span>    A flag indicating whether to remove the message from\n' +
@@ -411,7 +459,7 @@ nxc_funcs = [
                 'If the local mailbox is empty and this NXT is the master then\n' +
                 'it attempts to poll one of its slave NXTs for a message from\n' +
                 'the response mailbox that corresponds to the specified local\n' +
-                'mailbox number.\n' +
+                'mailbox number.\n\n' +
                 '<b>Parameters</b>\n' +
                 '  <span foreground="brown">queue</span>    The mailbox number.\n' +
                 '  <span foreground="brown">clear</span>    A flag indicating whether to remove the message from\n' +
@@ -488,15 +536,53 @@ nxc_funcs = [
                 '  SetSensor(IN_1, SENSOR_TOUCH);</small>'], 
             ['SetSensorColorFull', 'SetSensorColorFull()', '<small><b>SetSensorColorFull (' +
                 '<span foreground="brown">port</span>)</b>\n\n' +
-                'Configure an NXT 2.0 full color sensor on the\n' +
-                'specified port in full color mode.\n\n' +
+                'Configure an NXT 2.0 full color sensor on the specified\n' +
+                'port in full color mode.\n\n' +
+                '<b><span foreground="red">Warning</span></b>\n'
+                '  This function requires an NXT 2.0 compatible firmware.\n' +
                 '<b>Parameters</b>\n' +
                 '  <span foreground="brown">port</span>        The port to configure.\n' +
                 '<b>Examples:</b>\n  SetSensorColorFull(IN_1);</small>'], 
-            ['SetSensorColorBlue', 'SetSensorColorBlue()', ''], 
-            ['SetSensorColorGreen', 'SetSensorColorGreen()', ''],
-            ['SetSensorColorRed', 'SetSensorColorRed()', ''], 
-            ['SetSensorColorNone', 'SetSensorColorNone()', ''], 
+            ['SetSensorColorBlue', 'SetSensorColorBlue()', '<small><b>SetSensorColorBlue (' +
+                '<span foreground="brown">port</span>)</b>\n\n' +
+                'Configure an NXT 2.0 full color sensor on the specified\n' +
+                'port in blue light mode.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">port</span>    The port to configure.\n' +
+                '<b><span foreground="red">Warning</span></b>\n' +
+                '  This function requires an NXT 2.0 compatible firmware.\n' +
+                '<b>Examples:</b>\n' +
+                '  SetSensorColorBlue(IN_1);</small>'], 
+            ['SetSensorColorGreen', 'SetSensorColorGreen()', '<small><b>SetSensorColorGreen (' +
+                '<span foreground="brown">port</span>)</b>\n\n' +
+                'Configure an NXT 2.0 full color sensor on the specified\n' +
+                'port in green light mode.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">port</span>    The port to configure.\n' +
+                '<b><span foreground="red">Warning</span></b>\n' +
+                '  This function requires an NXT 2.0 compatible firmware.\n' +
+                '<b>Examples:</b>\n' +
+                '  SetSensorColorGreen(IN_1);</small>'],
+            ['SetSensorColorRed', 'SetSensorColorRed()', '<small><b>SetSensorColorRed (' +
+                '<span foreground="brown">port</span>)</b>\n\n' +
+                'Configure an NXT 2.0 full color sensor on the specified\n' +
+                'port in red light mode.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">port</span>    The port to configure.\n' +
+                '<b><span foreground="red">Warning</span></b>\n' +
+                '  This function requires an NXT 2.0 compatible firmware.\n' +
+                '<b>Examples:</b>\n' +
+                '  SetSensorColorRed(IN_1);</small>'], 
+            ['SetSensorColorNone', 'SetSensorColorNone()', '<small><b>SetSensorColorNone (' +
+                '<span foreground="brown">port</span>)</b>\n\n' +
+                'Configure an NXT 2.0 full color sensor on the specified\n' +
+                'port in no light mode.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">port</span>    The port to configure.\n' +
+                '<b><span foreground="red">Warning</span></b>\n' +
+                '  This function requires an NXT 2.0 compatible firmware.\n' +
+                '<b>Examples:</b>\n' +
+                '  SetSensorColorNone(IN_1);</small>'], 
             ['SetSensorMode', 'SetSensorMode(,)', '<small><b>SetSensorMode (<span foreground="brown">port</span>,' +
                 ' <span foreground="brown">mode</span>)</b>\n\n' +
                 'Set a sensor\'s mode, which should be one of the predefined\n' +
@@ -518,11 +604,73 @@ nxc_funcs = [
                 '          SENSOR_MODE_ROTATION     RCX rotation sensor (16 ticks per revolution)\n' +
                 '<b>Examples:</b>\n' +
                 '  SetSensorMode(IN_1, SENSOR_MODE_RAW); // raw mode</small>'], 
-            ['SetSensorType', 'SetSensorType()', ''], 
-            ['SendRemoteNumber', 'SendRemoteNumber()', ''], 
-            ['SendRemoteString', 'SendRemoteString()', ''], 
-            ['SendResponseNumber', 'SendResponseNumber()', ''], 
-            ['SendResponseString', 'SendResponseString()', ''],
+            ['SetSensorType', 'SetSensorType(,)', '<small><b>SetSensorType (' +
+                '<span foreground="brown">port</span>, <span foreground="brown">type</span>)</b>\n\n'+
+                'Set a sensor\'s type, which must be one of the predefined sensor\n' +
+                'type constants. After changing the type or the mode of a sensor port\n' +
+                'you must call ResetSensor to give the firmware time to reconfigure\n' +
+                'the sensor port.\n\n' +
+                '<b>See Also</b>\n' +
+                '  SetSensorMode(), SetSensor()\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">port</span>    The port to configure.\n' +
+                '  <span foreground="brown">type</span>    The desired sensor type.\n' +
+                '<b>Examples:</b>\n' +
+                '  SetSensorType(S1, SENSOR_TYPE_TOUCH);</small>'], 
+            ['SendRemoteNumber', 'SendRemoteNumber(,,)', '<small><b>SendRemoteNumber (' +
+                '<span foreground="brown">conn</span>, <span foreground="brown">queue</span>, ' +
+                '<span foreground="brown">val</span>)</b>\n\n' +
+                'Send a numeric value on the specified connection to the specified\n' +
+                'remote mailbox number. Use RemoteConnectionIdle to determine when\n' +
+                'this write request is completed.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">conn</span>     The connection slot (0..4). Connections 0 through 3 are\n' +
+                '           for bluetooth connections. Connection 4 refers to the RS485\n' +
+                '           hi-speed port.\m' +
+                '  <span foreground="brown">queue</span>    The mailbox number.\n' +
+                '  <span foreground="brown">val</span>      The numeric value to send.\n' +
+                '<b>Returns</b>\n' +
+                '  A char value indicating whether the function call succeeded or not.\n' +
+                '<b>Examples:</b>\n' +
+                '  x = SendRemoteNumber(1, MAILBOX1, 123);</small>'], 
+            ['SendRemoteString', 'SendRemoteString(,,)', '<small><b>SendRemoteString (' +
+                '<span foreground="brown">conn</span>, <span foreground="brown">queue</span>, ' +
+                '<span foreground="brown">str</span>)</b>\n\n' +
+                'Send a string value on the specified connection to the specified\n' +
+                'remote mailbox number. Use RemoteConnectionIdle to determine when\n' +
+                'this write request is completed.\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">conn</span>     The connection slot (0..4). Connections 0 through 3 are\n' +
+                '           for bluetooth connections. Connection 4 refers to the RS485\n' +
+                '           hi-speed port.\m' +
+                '  <span foreground="brown">queue</span>    The mailbox number.\n' +
+                '  <span foreground="brown">str</span>      The string value to send.\n' +
+                '<b>Returns</b>\n' +
+                '  A char value indicating whether the function call succeeded or not.\n' +
+                '<b>Examples:</b>\n' +
+                '  x = SendRemoteString(1, MAILBOX1, "hello world");</small>'], 
+            ['SendResponseNumber', 'SendResponseNumber(,)', '<small><b>SendResponseNumber (' +
+                '<span foreground="brown">queue</span>, <span foreground="brown">val</span>)</b>\n\n' +
+                'Write a numeric value to a response mailbox (the mailbox number + 10).\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">queue</span>    The mailbox number. This function shifts the specified\n' +
+                '           value into the range of response mailbox numbers by adding 10.\n' +
+                '  <span foreground="brown">val</span>      The numeric value to write.\n' +
+                '<b>Returns</b>\n' +
+                '  A char value indicating whether the function call succeeded or not.\n' +
+                '<b>Examples:</b>\n' +
+                '  x = SendResponseNumber(MAILBOX1, 123);</small>'], 
+            ['SendResponseString', 'SendResponseString()', '<small><b>SendResponseString (' +
+                '<span foreground="brown">queue</span>, <span foreground="brown">str</span>)</b>\n\n' +
+                'Write a string value to a response mailbox (the mailbox number + 10).\n\n' +
+                '<b>Parameters</b>\n' +
+                '  <span foreground="brown">queue</span>    The mailbox number. This function shifts the specified\n' +
+                '           value into the range of response mailbox numbers by adding 10.\n' +
+                '  <span foreground="brown">str</span>      The string value to write.\n' +
+                '<b>Returns</b>\n' +
+                '  A char value indicating whether the function call succeeded or not.\n' +
+                '<b>Examples:</b>\n' +
+                '  x = SendResponseString(MAILBOX1, "hello world");</small>'],
             ['StartTask', 'StartTask()', '<small><b>StartTask (<span foreground="brown">task</span>)</b>\n\n' +
                 'Start the specified task.\n\n' +
                 '<b>Parameters</b>\n' +
@@ -593,4 +741,69 @@ nxc_funcs = [
             ['WriteBytes', 'WriteBytes()', ''], 
             ['WriteLn', 'WriteLn()', ''], 
             ['WriteLnString', 'WriteLnString()', '']
-            ]
+]
+
+nxc_consts = [
+    ['BTNEXIT','BTNEXIT'],
+    ['BTNRIGHT', 'BTNRIGHT'],
+    ['BTNLEFT', 'BTNLEFT'],
+    ['BTNCENTER', 'BTNCENTER'],
+    ['BTN1', 'BTN1'],
+    ['BTN2', 'BTN2'],
+    ['BTN3', 'BTN3'],
+    ['BTN4', 'BTN4'],
+    ['DISPLAY_WIDTH', 'DISPLAY_WIDTH'],
+    ['DISPLAY_HEIGHT', 'DISPLAY_HEIGHT'],
+    ['IN_1', 'IN_1'],
+    ['IN_2', 'IN_2'],
+    ['IN_3', 'IN_3'],
+    ['IN_4', 'IN_4'],
+    ['LCD_LINE1', 'LCD_LINE1'],
+    ['LCD_LINE2', 'LCD_LINE2'],
+    ['LCD_LINE3', 'LCD_LINE3'],
+    ['LCD_LINE4', 'LCD_LINE4'],
+    ['LCD_LINE5', 'LCD_LINE5'],
+    ['LCD_LINE6', 'LCD_LINE6'],
+    ['LCD_LINE7', 'LCD_LINE7'],
+    ['LCD_LINE8', 'LCD_LINE8'],
+    ['OUT_A', 'OUT_A'],
+    ['OUT_B', 'OUT_B'],
+    ['OUT_C', 'OUT_C'],
+    ['OUT_AB', 'OUT_AB'],
+    ['OUT_AC', 'OUT_AC'],
+    ['OUT_BC', 'OUT_BC'],
+    ['OUT_ABC', 'OUT_ABC'],
+    ['SENSOR_1', 'SENSOR_1'],
+    ['SENSOR_2', 'SENSOR_2'],
+    ['SENSOR_3', 'SENSOR_3'],
+    ['SENSOR_4', 'SENSOR_4'],
+    ['SENSOR_LIGHT', 'SENSOR_LIGHT'],
+    ['SENSOR_TOUCH', 'SENSOR_TOUCH'],
+    ['SENSOR_SOUND', 'SENSOR_SOUND'],
+    ['SENSOR_MODE_RAW', 'SENSOR_MODE_RAW'],
+    ['SENSOR_MODE_EDGE', 'SENSOR_MODE_EDGE'],
+    ['SENSOR_MODE_PULSE', 'SENSOR_MODE_PULSE'],
+    ['SENSOR_MODE_PERCENT', 'SENSOR_MODE_PERCENT'],
+    ['SENSOR_MODE_CELSIUS', 'SENSOR_MODE_CELSIUS'],
+    ['SENSOR_MODE_FAHRENHEIT', 'SENSOR_MODE_FAHRENHEIT'],
+    ['SENSOR_MODE_ROTATION', 'SENSOR_MODE_ROTATION'],
+    ['SENSOR_TYPE_NONE', 'SENSOR_TYPE_NONE'],
+    ['SENSOR_TYPE_TOUCH', 'SENSOR_TYPE_TOUCH'],
+    ['SENSOR_TYPE_TEMPERATURE', 'SENSOR_TYPE_TEMPERATURE'],
+    ['SENSOR_TYPE_LIGHT', 'SENSOR_TYPE_LIGHT'],
+    ['SENSOR_TYPE_ROTATION', 'SENSOR_TYPE_ROTATION'],
+    ['SENSOR_TYPE_LIGHT_ACTIVE', 'SENSOR_TYPE_LIGHT_ACTIVE'],
+    ['SENSOR_TYPE_LIGHT_INACTIVE', 'SENSOR_TYPE_LIGHT_INACTIVE'],
+    ['SENSOR_TYPE_SOUND_DB', 'SENSOR_TYPE_SOUND_DB'],
+    ['SENSOR_TYPE_SOUND_DBA', 'SENSOR_TYPE_SOUND_DBA'],
+    ['SENSOR_TYPE_CUSTOM', 'SENSOR_TYPE_CUSTOM'],
+    ['SENSOR_TYPE_LOWSPEED', 'SENSOR_TYPE_LOWSPEED'],
+    ['SENSOR_TYPE_LOWSPEED_9V', 'SENSOR_TYPE_LOWSPEED_9V'],
+    ['SENSOR_TYPE_HIGHSPEED', 'SENSOR_TYPE_HIGHSPEED'],
+    ['SENSOR_TYPE_COLORFULL', 'SENSOR_TYPE_COLORFULL'],
+    ['SENSOR_TYPE_COLORRED', 'SENSOR_TYPE_COLORRED'],
+    ['SENSOR_TYPE_COLORGREEN', 'SENSOR_TYPE_COLORGREEN'],
+    ['SENSOR_TYPE_COLORBLUE', 'SENSOR_TYPE_COLORBLUE'],
+    ['SENSOR_TYPE_COLORNONE', 'SENSOR_TYPE_COLORNONE']
+]
+

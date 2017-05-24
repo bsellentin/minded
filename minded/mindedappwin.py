@@ -779,9 +779,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 buffer.set_language(this_lang)
                 if this_lang.get_name() == 'NXC':
                     editor.custom_completion_provider.funcs = nxc_funcs.nxc_funcs
+                    editor.custom_completion_provider.consts = nxc_funcs.nxc_consts
+                    editor.custom_completion_provider.lang = 'NXC'
                     editor.document.set_shortname(root + '.nxc')
                 if this_lang.get_name() == 'EVC':
                     editor.custom_completion_provider.funcs = evc_funcs.evc_funcs
+                    editor.custom_completion_provider.consts = evc_funcs.evc_consts
+                    editor.custom_completion_provider.lang = 'EVC'
                     editor.document.set_shortname(root + '.evc')
                 logger.debug("changed extension: " + editor.document.get_url())
                 buffer.set_modified(True)

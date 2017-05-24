@@ -281,6 +281,10 @@
                     <keyword>OUT_AC</keyword>
                     <keyword>OUT_BC</keyword>
                     <keyword>OUT_ABC</keyword>
+                    <keyword>S1</keyword>
+                    <keyword>S2</keyword>
+                    <keyword>S3</keyword>
+                    <keyword>S4</keyword>
                     <keyword>SENSOR_1</keyword>
                     <keyword>SENSOR_2</keyword>
                     <keyword>SENSOR_3</keyword>
@@ -295,6 +299,24 @@
                     <keyword>SENSOR_MODE_CELSIUS</keyword>
                     <keyword>SENSOR_MODE_FAHRENHEIT</keyword>
                     <keyword>SENSOR_MODE_ROTATION</keyword>
+                    <keyword>SENSOR_TYPE_NONE</keyword>
+                    <keyword>SENSOR_TYPE_TOUCH</keyword>
+                    <keyword>SENSOR_TYPE_TEMPERATURE</keyword>
+                    <keyword>SENSOR_TYPE_LIGHT</keyword>
+                    <keyword>SENSOR_TYPE_ROTATION</keyword>
+                    <keyword>SENSOR_TYPE_LIGHT_ACTIVE</keyword>
+                    <keyword>SENSOR_TYPE_LIGHT_INACTIVE</keyword>
+                    <keyword>SENSOR_TYPE_SOUND_DB</keyword>
+                    <keyword>SENSOR_TYPE_SOUND_DBA</keyword>
+                    <keyword>SENSOR_TYPE_CUSTOM</keyword>
+                    <keyword>SENSOR_TYPE_LOWSPEED</keyword>
+                    <keyword>SENSOR_TYPE_LOWSPEED_9V</keyword>
+                    <keyword>SENSOR_TYPE_HIGHSPEED</keyword>
+                    <keyword>SENSOR_TYPE_COLORFULL</keyword>
+                    <keyword>SENSOR_TYPE_COLORRED</keyword>
+                    <keyword>SENSOR_TYPE_COLORGREEN</keyword>
+                    <keyword>SENSOR_TYPE_COLORBLUE</keyword>
+                    <keyword>SENSOR_TYPE_COLORNONE</keyword>
                 </context>
 
                 <context id="common-defines" style-ref="common-defines" class="common-defines">
