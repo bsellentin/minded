@@ -360,7 +360,27 @@ evc_funcs = [
         '  };\n' +
         '  PlayTones(melody);</small>'],
     ['PointOut', 'PointOut(,)', '<small><b>PointOut(x, y)</b></small>'],
-    ['RectOut', 'RectOut(,,,)', '<small><b>RectOut(x, y, w, h)</b></small>'],
+    ['ReadSensor', 'ReadSensor()', '<small><b>ReadSensor(' +
+        '<span foreground="brown">input</span>)</b>\n\n' +
+        'Readout of the actual sensor data\n' +
+        '<b>Example</b>\n' +
+        '  int touched;\n' +
+        '  touched = ReadSensor(IN_1);</small>'],
+    ['ReadSensorData', 'ReadSensorData()', ''],
+    ['RectOut', 'RectOut(,,,)', '<small><b>RectOut(' +
+        '<span foreground="brown">x</span>, ' 
+        '<span foreground="brown">y</span>, ' +
+        '<span foreground="brown">w</span>, ' +
+        '<span foreground="brown">h</span>)</b>\n\n' +
+        'This function lets you draw a rectangle on the screen at x, y with\n' +
+        'the specified width and height.\n\n' +
+        '<b>Parameters:</b>\n' +
+        '  <span foreground="brown">x</span>       The x value for the lower left corner of the rectangle.\n' +
+        '  <span foreground="brown">y</span>       The y value for the lower left corner of the rectangle.\n' +
+        '  <span foreground="brown">width</span>   The width of the rectangle.\n' +
+        '  <span foreground="brown">height</span>  The height of the rectangle.\n' +
+        '<b>Example:</b>\n' +
+        '  RectOut(5,5,168,118);</small>'],
     ['ResetGyro', 'ResetGyro()', '<small><b>ResetGyro()</b>\n\n' +
         'Reset the angle of the gyrosensor to 0 by changing modes back and forth.\n' +
         'This will take 2 seconds and is NOT SURE to work as expected.\n' +
@@ -502,10 +522,6 @@ evc_funcs = [
         '<span foreground="brown">pattern</span>)</b></small>'],
     ['SetLedWarning', 'SetLedWarning()', '<small><b>SetLedWarning(' +
         '<span foreground="brown">value</span>)</b></small>'],
-    ['ReadSensor', 'ReadSensor()', '<small><b>ReadSensor(' +
-        '<span foreground="brown">input</span>)</b>\n\n' +
-        'Readout of the actual sensor data</small>'],
-    ['ReadSensorData', 'ReadSensorData()', ''],
     ['Wait', 'Wait()', '<small><b>Wait(<span foreground="brown">time_ms</span>)</b>\n\n' +
         'Make code sleep for specified amount of time.\n\n' + 
         '<b>Parameters</b>\n' +
@@ -519,5 +535,98 @@ evc_consts = [
     ['BTNLEFT', 'BTNLEFT'],
     ['BTNCENTER', 'BTNCENTER'],
     ['BTNUP', 'BTNUP'],
-    ['BTNDOWN', 'BTNDOWN']
+    ['BTNDOWN', 'BTNDOWN'],
+    ['LCD_WIDTH', 'LCD_WIDTH'],
+    ['LCD_HEIGHT', 'LCD_HEIGHT'],
+    ['IN_1', 'IN_1'],
+    ['IN_2', 'IN_2'],
+    ['IN_3', 'IN_3'],
+    ['IN_4', 'IN_4'],
+    ['LCD_LINE1', 'LCD_LINE1'],
+    ['LCD_LINE2', 'LCD_LINE2'],
+    ['LCD_LINE3', 'LCD_LINE3'],
+    ['LCD_LINE4', 'LCD_LINE4'],
+    ['LCD_LINE5', 'LCD_LINE5'],
+    ['LCD_LINE6', 'LCD_LINE6'],
+    ['LCD_LINE7', 'LCD_LINE7'],
+    ['LCD_LINE8', 'LCD_LINE8'],
+    ['LED_BLACK', 'LED_BLACK'],
+    ['LED_GREEN', 'LED_GREEN'],
+    ['LED_RED', 'LED_RED'], 
+    ['LED_ORANGE', 'LED_ORANGE'],
+    ['LED_GREEN_FLASH', 'LED_GREEN_FLASH'],
+    ['LED_RED_FLASH', 'LED_RED_FLASH'],
+    ['LED_ORANGE_FLASH', 'LED_ORANGE_FLASH'],
+    ['LED_GREEN_PULSE', 'LED_GREEN_PULSE'],
+    ['LED_RED_PULSE', 'LED_RED_PULSE'],
+    ['LED_ORANGE_PULSE', 'LED_ORANGE_PULSE'],
+    ['NUM_LED_PATTERNS', 'NUM_LED_PATTERNS'],
+    ['OUT_A', 'OUT_A'],
+    ['OUT_B', 'OUT_B'],
+    ['OUT_C', 'OUT_C'],
+    ['OUT_D', 'OUT_D'],
+    ['OUT_AB', 'OUT_AB'],
+    ['OUT_AC', 'OUT_AC'],
+    ['OUT_AD', 'OUT_AD'],
+    ['OUT_BC', 'OUT_BC'],
+    ['OUT_BD', 'OUT_BD'],
+    ['OUT_CD', 'OUT_CD'],
+    ['OUT_ABC', 'OUT_ABC'],
+    ['OUT_ABD', 'OUT_ABD'],
+    ['OUT_ACD', 'OUT_ACD'],
+    ['OUT_BCD', 'OUT_BCD'],
+    ['OUT_ALL', 'OUT_ALL'],
+    ['RESET_NONE', 'RESET_NONE'],
+    ['RESET_COUNT', 'RESET_COUNT'],
+    ['RESET_BLOCK_COUNT', 'RESET_BLOCK_COUNT'],
+    ['RESET_ROTATION_COUNT', 'RESET_ROTATION_COUNT'],
+    ['RESET_BLOCKANDTACHO', 'RESET_BLOCKANDTACHO'],
+    ['RESET_ALL', 'RESET_ALL'],
+    ['SENSOR_1', 'SENSOR_1'],
+    ['SENSOR_2', 'SENSOR_2'],
+    ['SENSOR_3', 'SENSOR_3'],
+    ['SENSOR_4', 'SENSOR_4'],
+    ['TOUCH', 'TOUCH'],
+    ['COL_REFLECT', 'COL_REFLECT'],
+    ['COL_AMBIENT', 'COL_AMBIENT'],
+    ['COL_COLOR', 'COL_COLOR'],
+    ['US_DIST_CM', 'US_DIST_CM'],
+    ['US_DIST_IN', 'US_DIST_IN'],
+    ['GYRO_ANG', 'GYRO_ANG'],
+    ['GYRO_RATE', 'GYRO_RATE'],
+    ['IR_PROX', 'IR_PROX'],
+    ['IR_REMOTE', 'IR_REMOTE'],
+    ['IR_SEEK', 'IR_SEEK'],
+    ['NXT_TEMP_C', 'NXT_TEMP_C'],
+    ['NXT_TEMP_F', 'NXT_TEMP_F'],
+    ['NXT_SND_DB', 'NXT_SND_DB'],
+    ['NXT_SND_DBA', 'NXT_SND_DBA'],
+    ['NXT_TOUCH', 'NXT_TOUCH'],
+    ['NXT_REFLECT', 'NXT_REFLECT'],
+    ['NXT_AMBIENT', 'NXT_AMBIENT'],
+    ['NXT_COL_REF', 'NXT_COL_REF'],
+    ['NXT_COL_AMB', 'NXT_COL_AMB'],
+    ['NXT_COL_COL', 'NXT_COL_COL'],
+    ['NXT_US_CM', 'NXT_US_CM'],
+    ['HT_DIR_DC', 'HT_DIR_DC'],
+    ['SEC_1', 'SEC_1'], 
+    ['SEC_2', 'SEC_2'],
+    ['SEC_3', 'SEC_3'],
+    ['SEC_4', 'SEC_4'],
+    ['SEC_5', 'SEC_5'],
+    ['SEC_6', 'SEC_6'],
+    ['SEC_7', 'SEC_7'],
+    ['SEC_8', 'SEC_8'],
+    ['SEC_9', 'SEC_9'],
+    ['SEC_10', 'SEC_10'],
+    ['SEC_15', 'SEC_15'],
+    ['SEC_20', 'SEC_20'],
+    ['SEC_30', 'SEC_30'],
+    ['MIN_1', 'MIN_1'],
+    ['SOUND_CLICK', 'SOUND_CLICK'],
+    ['SOUND_DOUBLE_BEEP', 'SOUND_DOUBLE_BEEP'],
+    ['SOUND_UP', 'SOUND_UP'],
+    ['SOUND_DOWN', 'SOUND_DOWN'],
+    ['SOUND_LOW_BEEP', 'SOUND_LOW_BEEP'],
+    ['SOUND_FAST_UP', 'SOUND_FAST_UP']
 ]
