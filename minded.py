@@ -5,11 +5,10 @@
 - EV3 with EV3-Python
 '''
 
-import os
 import sys
 import argparse
 import logging
-import pathlib
+from pathlib import Path
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -29,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 def make_option(long_name, short_name=None, flags=0, arg=GLib.OptionArg.NONE,
                 arg_data=None, description=None, arg_description=None):
-    
+
     option = GLib.OptionEntry()
     option.long_name = long_name
     option.short_name = 0 if not short_name else short_name
@@ -53,44 +52,45 @@ class MindEdApp(Gtk.Application):
         # New in Gio.Application version 2.42. Older in Ubuntu Trusty
         #self.add_main_option("debug", ord("d"), GLib.OptionFlags.NONE,
         #                     GLib.OptionArg.NONE, "debugging info", None)
-        
-        # For Gio.Application 2.40 -> Trusty     
+
+        # For Gio.Application 2.40 -> Trusty
         self.win = None
-        
+        self.version = "0.7.4"
+
         self.add_main_option_entries([
             make_option("debug", description="print a lot info")
             ])
-        
+
     def do_startup(self):    
         Gtk.Application.do_startup(self)
 
         self.args = ()
         self.filelist = []
         # look for ui-files
-        srcdir = os.path.abspath(os.path.dirname(__file__))
-        if os.path.exists(os.path.join(srcdir, 'data')):
+        srcdir = Path(__file__).parent
+        if Path(srcdir, 'data').exists():
             logger.warn('Running from source tree, using local ui-files')
-            pkgdatadir = os.path.join(srcdir, 'data')
+            pkgdatadir = Path(srcdir, 'data')
         else:
             pkgdatadir = '/usr/share/minded'
-                
-        resource_path = os.path.join(pkgdatadir, 'minded.gresource')
-        resource = Gio.Resource.load(resource_path)
+
+        resource_path = Path(pkgdatadir, 'minded.gresource')
+        resource = Gio.Resource.load(str(resource_path))
         Gio.Resource._register(resource)
-        
+
         action = Gio.SimpleAction.new("preferences", None)
         action.connect("activate", self.on_preferences)
         self.add_action(action)
-        
+
         action = Gio.SimpleAction.new("quit", None)
         action.connect("activate", self.on_quit)
         self.add_action(action)
-        
+
         builder = Gtk.Builder()
         builder.add_from_resource('/org/gge-em/MindEd/app-menu.ui')
         self.set_app_menu(builder.get_object("appmenu"))
-        
-    def do_activate(self):    
+
+    def do_activate(self):
         # Listen to uevent
         self.client = GUdev.Client(subsystems=["usb"])
         self.client.connect("uevent", self.on_uevent)
@@ -98,7 +98,8 @@ class MindEdApp(Gtk.Application):
         # Look for brick
         for device in self.client.query_by_subsystem("usb"):
             # NXT
-            if device.get_property('ID_VENDOR') == '0694' and device.get_property('ID_MODEL') == '0002':
+            if (device.get_property('ID_VENDOR') == '0694' and
+                device.get_property('ID_MODEL') == '0002'):
                 if logger.isEnabledFor(logging.DEBUG):
                     for device_key in device.get_property_keys():
                         logger.debug("   device property %s: %s"  % (device_key, 
@@ -109,7 +110,8 @@ class MindEdApp(Gtk.Application):
                 except:
                     logger.warn('nxt-python failure')
             # EV3
-            if device.get_property('ID_VENDOR_ID') == '0694' and device.get_property('ID_MODEL_ID') == '0005':
+            if (device.get_property('ID_VENDOR_ID') == '0694' and
+                device.get_property('ID_MODEL_ID') == '0005'):
                 if logger.isEnabledFor(logging.DEBUG):
                     for device_key in device.get_property_keys():
                         logger.debug("   device property %s: %s"  % (device_key, 
@@ -118,26 +120,27 @@ class MindEdApp(Gtk.Application):
                     self.ev3brick = ev3.EV3()
                     self.ev3brick.do_nothing()
                 except:
-                    logger.warn('ev3-python failure')              
+                    logger.warn('ev3-python failure')
 
         if not self.win:
             logger.debug("NXT-lib: %s" % nxt.locator.__file__)
             self.win = MindEdAppWin(self.filelist, application=self )
         else:
             '''MindEd already running, brick file in file browser clicked'''
-            #if len(self.filelist)>1:
             for nth_file in self.filelist[1:]:
-                if os.path.isfile(nth_file):
-                    self.win.load_file_in_editor(pathlib.Path(nth_file).as_uri())
+                if Path(nth_file).is_file():
+                    self.win.load_file_in_editor(Path(nth_file).resolve().as_uri())
 
     def do_command_line(self, command_line):
 
         options = command_line.get_options_dict()
         if options.contains("debug"):
             self.args += ("debug",)
-            logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s', level=logging.DEBUG)
+            logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s',
+                                level=logging.DEBUG)
         else:
-            logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s', level=logging.WARN)
+            logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s',
+                                level=logging.WARN)
 
         self.filelist = command_line.get_arguments()
         logger.debug("Filelist: %s" % self.filelist)
@@ -151,7 +154,8 @@ class MindEdApp(Gtk.Application):
         #    print("   device property %s: %s"  % (device_key, device.get_property(device_key)))
 
         # only LEGO-devices
-        if (device.get_property('ID_VENDOR') == '0694' or device.get_property('ID_VENDOR_ID') == '0694'):
+        if (device.get_property('ID_VENDOR') == '0694' or
+            device.get_property('ID_VENDOR_ID') == '0694'):
             # NXT
             if device.get_property('ID_MODEL') == '0002':
 

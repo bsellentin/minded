@@ -5,10 +5,9 @@
 - EV3 with EV3-Python
 '''
 
-import os
 import subprocess
 # requires package python-pathlib
-import pathlib
+from pathlib import Path
 from urllib.parse import urlparse, unquote
 import shlex
 import struct
@@ -44,13 +43,15 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         logger.debug("Filelist : %s" % files)
         
         # look for settings
-        srcdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) 
+        srcdir = Path(__file__).parents[1]
         logger.debug('srcdir: %s' % srcdir)
-        if os.path.exists(os.path.join(srcdir, 'data')):
+        if Path(srcdir, 'data').exists():
             logger.warn('Running from source tree, using local settings')
-            schema_source=Gio.SettingsSchemaSource.new_from_directory(os.path.join(srcdir, 'data'), 
+            schema_source = Gio.SettingsSchemaSource.new_from_directory(
+                str(Path(srcdir, 'data')),
                 Gio.SettingsSchemaSource.get_default(), False)
-            schema=Gio.SettingsSchemaSource.lookup(schema_source, 'org.gge-em.MindEd', False)
+            schema = Gio.SettingsSchemaSource.lookup(
+                schema_source, 'org.gge-em.MindEd', False)
             logger.debug('Gsettings schema: %s' % schema.get_path())
             if not schema:
                 raise Exception("Cannot get GSettings schema")
@@ -59,33 +60,33 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             self.settings = Gio.Settings('org.gge-em.MindEd')
 
         if not self.settings.get_string('nbcpath'):
-            if os.path.isfile('/usr/bin/nbc'):
+            if Path('/usr/bin/nbc').is_file():
                 self.settings.set_string('nbcpath', '/usr/bin/nbc')
-            elif os.path.isfile('/usr/local/bin/nbc'):
+            elif Path('/usr/local/bin/nbc').is_file():
                 self.settings.set_string('nbcpath','/usr/local/bin/nbc')
             else:
                 logger.warn('no nbc executable found')
 
         if not self.settings.get_string('armgcc'):
-            if os.path.isfile('/usr/bin/arm-linux-gnueabi-gcc-6'):              # Debian-stretch
+            if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():              # Debian-stretch
                 self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-6')   # package gcc-6-arm-linux-gnueabi
-            elif os.path.isfile('/usr/bin/arm-linux-gnueabi-gcc'):              # Ubuntu xenial
+            elif Path('/usr/bin/arm-linux-gnueabi-gcc').is_file():              # Ubuntu xenial
                 self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc')
             else:
                 logger.warn('no arm-gcc executable found')
         # check for development first
-        if os.path.isfile(os.path.abspath('./EV3-API/API/libev3api.a')):
-            self.settings.set_string('ldflags', ' -L' + os.path.abspath('./EV3-API/API'))
+        if Path('./EV3-API/API/libev3api.a').is_file():
+            self.settings.set_string('ldflags', ' -L' + str(Path('./EV3-API/API').resolve()))
         # systemwide installation
         elif not self.settings.get_string('ldflags'):
-            if os.path.isfile('/usr/lib/c4ev3/libev3api.a'):
+            if Path('/usr/lib/c4ev3/libev3api.a').is_file():
                 self.settings.set_string('ldflags', ' -L/usr/lib/c4ev3')
             else:
                 logger.warn('EV3 library not found')
-        if os.path.isdir(os.path.abspath('./EV3-API/API')):  
-            self.settings.set_string('incs', ' -I' + os.path.abspath('./EV3-API/API'))
+        if Path('./EV3-API/API').is_dir():
+            self.settings.set_string('incs', ' -I' + str(Path('./EV3-API/API').resolve()))
         elif not self.settings.get_string('incs'):
-            if os.path.isdir('/usr/lib/c4ev3'):
+            if Path('/usr/lib/c4ev3').is_dir():
                 self.settings.set_string('incs', ' -I/usr/lib/c4ev3')
             else:
                 logger.warn('EV3 headers not found')
@@ -128,10 +129,12 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         # Look for Brick
         for device in self.application.client.query_by_subsystem("usb"):
-            if device.get_property('ID_VENDOR') == '0694' and device.get_property('ID_MODEL') == '0002':
+            if (device.get_property('ID_VENDOR') == '0694' and
+                    device.get_property('ID_MODEL') == '0002'):
                 self.brick_status.push(self.brick_status_id, "NXT")
                 self.btn_transmit.set_sensitive(True)
-            if device.get_property('ID_VENDOR_ID') == '0694' and device.get_property('ID_MODEL_ID') == '0005':
+            if (device.get_property('ID_VENDOR_ID') == '0694' and
+                    device.get_property('ID_MODEL_ID') == '0005'):
                 self.brick_status.push(self.brick_status_id, "EV3")
                 self.btn_transmit.set_sensitive(True)
 
@@ -140,8 +143,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.untitledDocCount = 0
         if len(files)>1:
             for nth_file in files[1:]:
-                if os.path.isfile(nth_file):
-                    self.load_file_in_editor(pathlib.Path(nth_file).as_uri())
+                if Path(nth_file).is_file():
+                    self.load_file_in_editor(Path(nth_file).resolve().as_uri())
         else:
             self.open_new()
 
@@ -257,13 +260,16 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         page_num = self.notebook.get_current_page()
         editor = self.notebook.get_nth_page(page_num)
         if editor.get_buffer().get_modified():
-            self.dlg_something_wrong("You have to save first!", "The compiler works on the real file.")
+            self.dlg_something_wrong(
+                "You have to save first!",
+                "The compiler works on the real file.")
         else:
-            ext = os.path.splitext(editor.document.get_shortname())[1]
+            ext = Path(editor.document.get_shortname()).suffix
             if ext == '.nxc':
-                nbcout = os.path.splitext(editor.document.get_filename())[0]+".rxe"
+                nbcout = str(Path(editor.document.get_filename()).stem + ".rxe")
                 logger.debug("File to compile: %s" % editor.document.get_filename())
                 nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout), shlex.quote(editor.document.get_filename())))
+                logger.debug("nbc optionen: %s" % nbc_opts)
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
                 self.window.get_window().set_cursor(watch_cursor)
@@ -289,9 +295,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         page_num = self.notebook.get_current_page()
         editor = self.notebook.get_nth_page(page_num)
         if editor.get_buffer().get_modified():
-            self.dlg_something_wrong("You have to save first!", "The compiler works on the real file.")
+            self.dlg_something_wrong(
+                "You have to save first!",
+                "The compiler works on the real file.")
         else:
-            ext = os.path.splitext(editor.document.get_shortname())[1]
+            ext = Path(editor.document.get_shortname()).suffix
             if ext == '.nxc':
                 nbc_opts = (' -d %s' % (shlex.quote(editor.document.get_filename())))
                 logger.debug('Transmit: %s' % nbc_opts)
@@ -319,9 +327,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         logger.debug('building starter for: %s' % document.get_filename())
 
-        prjname = os.path.splitext(document.get_shortname())[0]
+        prjname = Path(document.get_shortname()).stem
         prjsstore = '/home/root/lms2012/prjs'
-        prjpath = os.path.join(prjsstore, prjname, prjname)
+        prjpath = str(Path(prjsstore, prjname, prjname))
         logger.debug('EV3-path: %s' % prjpath)
 
         magic = b'LEGO'
@@ -338,10 +346,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             after
             ])
 
-        starter  = os.path.join(document.get_filepath(), prjname + '.rbf')
-        fhandle = open(starter, 'wb')
-        fhandle.write(cmd)
-        fhandle.close()
+        starter  = Path(document.get_filepath(), prjname + '.rbf')
+        starter.write_bytes(cmd)
 
         msg = self.compilerview.get_buffer()
         enditer = msg.get_end_iter()
@@ -369,7 +375,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         logger.debug('use enhancedfw: %s' % enhancedfw)
 
         if not nbc_exec:
-            dlg_something_wrong('No NBC-executable found!', 'not in /usr/bin, not in /usr/local/bin')
+            dlg_something_wrong(
+                'No NBC-executable found!',
+                'not in /usr/bin, not in /usr/local/bin')
         else:
             nbc_proc = subprocess.Popen(('%s %s' % (nbc_exec, nbc_opts)),
                                         shell=True, stdout=subprocess.PIPE,
@@ -389,7 +397,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         compile and upload file to EV3 brick
         '''
-        prjname = os.path.splitext(document.get_shortname())[0]
+        prjname = Path(document.get_shortname()).stem
 
         compiled = 0
         starter = 0
@@ -399,8 +407,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             if compiled:
                 starter = self.mkstarter(document)
             if starter:
-                suca = self.ev3_upload(os.path.join(document.get_filepath(), prjname + '.rbf'))
-                sucb = self.ev3_upload(os.path.join(document.get_filepath(), prjname))
+                suca = self.ev3_upload(Path(document.get_filepath(), prjname + '.rbf'))
+                sucb = self.ev3_upload(Path(document.get_filepath(), prjname))
                 if suca and sucb:
                     self.window.get_application().ev3brick.play_sound('./ui/DownloadSucces')
 
@@ -414,9 +422,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         logger.debug('file to compile: %s' % infile)
 
         # check for non-alphanumeric characters in filename, won't run on bricks
-        if re.match('^[a-zA-Z0-9_.]+$', os.path.split(infile)[1]) is not None:
-        
-            outfile = os.path.splitext(document.get_filename())[0]
+        if re.match('^[a-zA-Z0-9_.]+$', Path(infile).name) is not None:
+            outfile = Path(document.get_filename()).stem
             logger.debug('executable to write: %s' % outfile)
 
             arm_exec = self.settings.get_string('armgcc')
@@ -466,24 +473,21 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             logger.info('no app.ev3brick')
             upload = False
 
-        #filename = pathlib.Path(infile).name
-        filename = os.path.split(infile)[1]
-
         if upload:
             if brick.usb_ready():
 
-                prjname = os.path.splitext(filename)[0]
+                prjname = infile.stem
                 prjsstore = '/home/root/lms2012/prjs'
-                outfile = os.path.join(prjsstore, prjname, filename)
+                outfile = str(Path(prjsstore, prjname, infile.name))
 
-                data = open(infile, 'rb').read()
+                data = infile.read_bytes()
                 brick.write_file(outfile, data)
 
-                content = brick.list_dir(os.path.join(prjsstore, prjname))
+                content = brick.list_dir(str(Path(prjsstore, prjname)))
 
                 success = 0
                 for afile in content['files']:
-                    if afile['name'] == filename:
+                    if afile['name'] == infile.name:
                         if afile['md5'] == hashlib.md5(data).hexdigest().upper():
                             success = 1
                             msg = self.compilerview.get_buffer()
@@ -531,7 +535,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         aboutdlg.set_program_name("MindEd")
         aboutdlg.set_comments("An Editor for LEGO Mindstorms Bricks")
         aboutdlg.set_authors(authors)
-        aboutdlg.set_version("0.7.3")
+        aboutdlg.set_version(self.application.version)
         #image = GdkPixbuf.Pixbuf()
         #image.new_from_file("/home/selles/pyGtk/minded/minded.png")
         #aboutdlg.set_logo_icon_name(image)
@@ -545,21 +549,19 @@ class MindEdAppWin(Gtk.ApplicationWindow):
     def open_new(self):
 
         self.untitledDocCount += 1
-        
-        dirname = os.path.expanduser("~")
+
+        dirname = Path.home()
         filename = 'untitled' + str(self.untitledDocCount)
-        newfile = os.path.join(dirname, filename)
+        newfile = Path(dirname, filename)
 
         # make empty file to avoid error on loading
         try:
-            #os.mknod(newfile)
-            with open(newfile, 'a'):
-                os.utime(newfile, None)
+            newfile.touch(exist_ok=True)
         except OSError:
             logger.debug('Could not make node for new file')
             pass
 
-        self.load_file_in_editor(pathlib.Path(newfile).as_uri())
+        self.load_file_in_editor(Path(newfile).as_uri())
 
     def load_file_in_editor(self, file):
 
@@ -639,7 +641,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                     logger.debug("func save_file_as_response: %s on tab %s, " % (editor.document.get_url(), page_num))
                 self.save_file(editor, close_tab)
             else:
-                self.dlg_something_wrong("Filename unvalid!", "Filename contains non-alphanumeric characters.")
+                self.dlg_something_wrong(
+                    "Filename unvalid!",
+                    "Filename contains non-alphanumeric characters.")
         elif response == Gtk.ResponseType.CANCEL:
             logger.debug("cancelled: SAVE AS")
         dialog.destroy()
@@ -837,7 +841,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         select.connect("changed", self.on_languageselect_changed)    
 
     def on_notebook_switch_page(self, notebook, page, page_num):
-
+        '''change headerbar and language selection accordingly'''
         editor = self.notebook.get_nth_page(page_num)
         self.change_language_selection(editor)    
         self.set_title(editor.document)
@@ -847,13 +851,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.headerbar.set_subtitle(document.get_filepath())
 
     def on_btn_nxtinfo_clicked(self, button):
-        '''new window with brick information like name, firmware...'''
+        '''open new window with brick information like name, firmware...'''
         if self.menupop.get_visible():
             self.menupop.hide()
         self.nxt_info = NXTInfo(self.window.get_application())
 
     def on_btn_nxtfiler_clicked(self, button):
-        '''new window with brick file browser...'''
+        '''open new window with brick file browser...'''
         if self.menupop.get_visible():
             self.menupop.hide()
         self.nxt_filer = NXTFiler(self.window.get_application())
