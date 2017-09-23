@@ -258,6 +258,11 @@
                     <keyword>BTNDOWN</keyword>
                     <keyword>LCD_WIDTH</keyword>
                     <keyword>LCD_HEIGHT</keyword>
+                    <keyword>ICONTYPE_NORMAL</keyword>
+                    <keyword>ICONTYPE_SMALL</keyword>
+                    <keyword>ICONTYPE_LARGE</keyword>
+                    <keyword>ICONTYPE_MENU</keyword>
+                    <keyword>ICONTYPE_ARROW</keyword>
                     <keyword>IN_1</keyword>
                     <keyword>IN_2</keyword>
                     <keyword>IN_3</keyword>
@@ -368,11 +373,14 @@
                     <keyword>ButtonWaitForPress</keyword>
                     <keyword>ButtonWaitForAnyPress</keyword>
                     <keyword>CircleOut</keyword>
+                    <keyword>EllipseOut</keyword>
                     <keyword>LcdText</keyword>
                     <keyword>LcdTextf</keyword>
+                    <keyword>LcdBmpFile</keyword>
                     <keyword>TextOut</keyword>
                     <keyword>NumOut</keyword>
                     <keyword>LcdClean</keyword>
+                    <keyword>LcdIcon</keyword>
                     <keyword>LcdSelectFont</keyword>
                     <keyword>LcdInit</keyword>
                     <keyword>LcdExit</keyword>
@@ -404,6 +412,7 @@
                     <keyword>PlayToneEx</keyword>
                     <keyword>PlayTones</keyword>
                     <keyword>PlaySound</keyword>
+                    <keyword>PlayFile</keyword>
                     <keyword>PointOut</keyword>
                     <keyword>RectOut</keyword>
                     <keyword>ResetGyro</keyword>
