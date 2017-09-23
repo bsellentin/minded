@@ -22,10 +22,10 @@ class SysCmdError(Exception):
     pass
 
 class EV3():
-    
+
     _msg_cnt = 41
     _lock = threading.Lock()
-    
+
     def __init__(self):
         self.device = usb.core.find(idVendor=ID_VENDOR_LEGO, idProduct=ID_PRODUCT_EV3)
         if self.device is None:
@@ -37,12 +37,12 @@ class EV3():
         #self.device.read(EP_IN, 1024, EV3_USB_TIMEOUT)
 
     def __del__(self): pass
-    
+
     def close(self):
-        
+
         self.device = None
         logger.debug('USB connection closed.')
-            
+
     def do_nothing(self):
         cmd = opNop
         self.send_direct_cmd(cmd)
@@ -56,16 +56,16 @@ class EV3():
             opCom_Ready,
             LCX(1),         # USB
             LCS('0')        # own adapter
-            ])
+        ])
         self.send_direct_cmd(cmd)
-        
+
     def usb_ready(self):
         '''opCOM_TEST
         TEST can be used to test a resource: if it is busy it will block
         the calling object by setting the dispatch status to "BUSYBREAK"
         until not busy.
         Waits until USB busy-flag is 0 = Ready, then returns True'''
-        
+
         self._lock.acquire()
         if self._msg_cnt < 65535:
             self._msg_cnt += 1
@@ -73,7 +73,7 @@ class EV3():
             self._msg_cnt = 1
         msg_cnt = self._msg_cnt
         self._lock.release()
-        
+
         ops = b''.join([
             opCom_Test,
             LCX(1),         # USB
@@ -86,7 +86,7 @@ class EV3():
             DIRECT_COMMAND_REPLY,
             struct.pack('<h', 1),
             ops
-            ])
+        ])
 
         self.device.write(EP_OUT, cmd, EV3_USB_TIMEOUT)
 
@@ -123,7 +123,7 @@ class EV3():
             opCom_Set,
             SET_BRICKNAME,
             LCS(name)
-            ])
+        ])
         self.send_direct_cmd(cmd)
 
     def get_brickname(self):
@@ -132,20 +132,35 @@ class EV3():
             GET_BRICKNAME,
             LCX(16),
             GVX(0)
-            ])
-        reply = self.send_direct_cmd(cmd, global_mem=16)
-        (brickname,) = struct.unpack('16s', reply[5:])
-        brickname = brickname.split(b'\x00')[0]
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=16)  # global_mem: needed
+        (brickname,) = struct.unpack('16s', reply[5:])    # size in bytes for
+        brickname = brickname.split(b'\x00')[0]           # return values
         brickname = brickname.decode('utf-8')
         return brickname
 
+    def get_hw_version(self):
+        '''read the hardware version on the given hardware'''
+        cmd = b''.join([
+            opUI_Read,
+            GET_HW_VERS,
+            LCX(16),
+            GVX(0)
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=16)
+        (hw_version,) = struct.unpack('16s', reply[5:])
+        hw_version = hw_version.split(b'\x00')[0]
+        hw_version = hw_version.decode('utf-8')
+        return hw_version
+
     def get_fw_version(self):
+        '''read the firmware version currently on the EV3 brick'''
         cmd = b''.join([
             opUI_Read,
             GET_FW_VERS,
             LCX(16),
             GVX(0)
-            ])
+        ])
         reply = self.send_direct_cmd(cmd, global_mem=16)
         (fw_version,) = struct.unpack('16s', reply[5:])
         fw_version = fw_version.split(b'\x00')[0]
@@ -153,40 +168,88 @@ class EV3():
         return fw_version
 
     def get_vbatt(self):
+        '''(DataF) Value – Battery voltage [V]'''
         cmd = b''.join([
             opUI_Read,
-            GET_VBATT,      # return DATAF 32bits
-            LCX(0),
-            GVX(0)
-            ])
-        reply = self.send_direct_cmd(cmd, global_mem=16)
+            GET_VBATT,
+            GVX(0),
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=4)
         (vbatt,) = struct.unpack('<f', reply[5:])
-        return '{:f}'.format(vbatt)
-        #return vbatt
+        return str(vbatt)[:4]
 
     def get_lbatt(self):
+        '''(Data8) PCT – Battery level in percentage [0 - 100]'''
         cmd = b''.join([
             opUI_Read,
-            GET_LBATT,      # return DATA8
-            LCX(0),
+            GET_LBATT,
             GVX(0)
-            ])
-        reply = self.send_direct_cmd(cmd, global_mem=1)
-        (lbatt,) = struct.unpack('<f', reply[5:])
-        return '{:f}'.format(batt)
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=2)
+        (lbatt,) = struct.unpack('<H', reply[5:])
+        return lbatt
 
     def get_os_version(self):
+        '''get OS version string'''
         cmd = b''.join([
             opUI_Read,
             GET_OS_VERS,
             LCX(18),
             GVX(0)
-            ])
-        reply = self.send_direct_cmd(cmd, global_mem=18)   
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=18)
         (os_version,) = struct.unpack('18s', reply[5:])
         os_version = os_version.split(b'\x00')[0]
         os_version = os_version.decode('utf-8')
         return os_version
+
+    def get_os_build(self):
+        '''read the OS build info currently on the EV3 brick'''
+        cmd = b''.join([
+            opUI_Read,
+            GET_OS_BUILD,
+            LCX(18),
+            GVX(0)
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=18)
+        (os_build,) = struct.unpack('18s', reply[5:])
+        os_build = os_build.split(b'\x00')[0]
+        os_build = os_build.decode('utf-8')
+        return os_build
+
+    def get_free_mem(self):
+        '''get the free internal memory on the brick'''
+        # (Data32) TOTAL – Total amount of internal memory [KB]
+        # (Data32) FREE – Free memory [KB]
+        cmd = b''.join([
+            opMemory_Usage,     # returns 4 bytes, rest is garbage
+            LCX(0),
+            GVX(0),
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=4)
+        (total,) = struct.unpack('<I', reply[5:])
+        return total
+
+    def get_sdcard(self):
+        # GET_SDCARD= 0x1D
+        # Return
+        # (Data8) STATE – SD Card present, [0: No, 1: Present]
+        # (Data32) TOTAL – SD Card memory size [KB]
+        # (Data32) FREE – Amount of free memory [KB]
+        pass
+
+    def get_type_mode(self):
+        cmd = b''.join([
+            opInput_Device,
+            GET_TYPEMODE,
+            LCX(0),
+            LCX(0),    # port A
+            GVX(0),
+            GVX(1)
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=2)
+        typemode = struct.unpack('BB', reply[5:])
+        return typemode
 
     def get_folders(self, directory):
         '''
@@ -210,7 +273,7 @@ class EV3():
             LCX(index + 1),     # ITEM
             LCX(64),            # LENGTH
             GVX(0)              # NAME
-        ])        
+        ])
         reply = self.send_direct_cmd(cmd, global_mem=64)
         subdir = struct.unpack('64s', reply[5:])[0]
         subdir = subdir.split(b'\x00')[0]
@@ -224,7 +287,7 @@ class EV3():
             LCX(100),
             LCS(name)
             ])
-        self.send_direct_cmd(cmd)    
+        self.send_direct_cmd(cmd)
 
     def list_dir(self, path: str) -> dict:
         cmd = b''.join([
@@ -333,12 +396,12 @@ class EV3():
         self.send_system_cmd(cmd)
 
     def send_direct_cmd(self, ops: bytes, local_mem: int=0, global_mem: int=0) -> bytes:
-        
+
         if global_mem > 0:
             cmd_type = DIRECT_COMMAND_REPLY
         else:
             cmd_type = DIRECT_COMMAND_NO_REPLY
-        
+
         self._lock.acquire()
         if self._msg_cnt < 65535:
             self._msg_cnt += 1
@@ -353,14 +416,14 @@ class EV3():
             cmd_type,
             struct.pack('<h', local_mem*1024 + global_mem),
             ops
-            ])
+        ])
         self.device.write(EP_OUT, cmd, EV3_USB_TIMEOUT)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(print_hex('Sent', cmd))
-        
+
         if cmd[4:5] == DIRECT_COMMAND_NO_REPLY:
             return msg_cnt
-        else:  
+        else:
             while True:
                 reply = bytes(self.device.read(EP_IN, 1024, EV3_USB_TIMEOUT))
                 reply_counter = reply[2:4]
@@ -385,23 +448,23 @@ class EV3():
             cmd_type = SYSTEM_COMMAND_REPLY
         else:
             cmd_type = SYSTEM_COMMAND_NO_REPLY
-        
-        self._lock.acquire()    
+
+        self._lock.acquire()
         if self._msg_cnt < 65535:
             self._msg_cnt += 1
         else:
             self._msg_cnt = 1
         msg_cnt = self._msg_cnt
         self._lock.release()
-        
+
         cmd = b''.join([
             struct.pack('<hh', len(ops) + 3, msg_cnt),
             cmd_type,
             ops
-            ])
-        
+        ])
+
         self.device.write(EP_OUT, cmd, EV3_USB_TIMEOUT)
-        
+
         counter = struct.unpack('<H', cmd[2:4])[0]
         logger.debug('msg_cnt: %s, counter: %s' % (msg_cnt, counter))
         if not reply:
@@ -414,7 +477,7 @@ class EV3():
             rpl_cnt = struct.unpack('<H', reply_counter)[0]
             if msg_cnt != struct.unpack('<H', reply_counter)[0]:
                 logger.debug('not for me, want %s, got %s' % (msg_cnt, rpl_cnt))
-            else:    
+            else:
                 #print("sysreply: ", reply[4:5], "SYSTEM_REPLY", SYSTEM_REPLY)
                 if reply[4:5] != SYSTEM_REPLY:  # ! reply = bytes(read)
                     raise SysCmdError("SysCmdError: {:02X}".format(reply[6]))
@@ -475,12 +538,10 @@ def GVX(value: int) -> bytes:
         return b'\xe2' + struct.pack('<h', value)
     else:
         return b'\xe3' + struct.pack('<i', value)
-            
+
 def print_hex(desc: str, data: bytes) -> None:
     print(desc + ' 0x|' + ':'.join('{:02X}'.format(byte) for byte in data) + '|')
 
-
-    
 ID_VENDOR_LEGO              = 0x0694
 ID_PRODUCT_EV3              = 0x0005
 EP_IN                       = 0x81
@@ -533,18 +594,23 @@ DIRECT_REPLY_ERROR          = b'\x04'
 opNop                       = b'\x01'
 opCom_Ready                 = b'\xD0'
 opCom_Get                   = b'\xD3'
-opCom_Test                  = b'\xD5'
 GET_BRICKNAME               = b'\x0D'
+opCom_Test                  = b'\xD5'
 opCom_Set                   = b'\xD4'
 SET_BRICKNAME               = b'\x08'
 opFile                      = b'\xC0'
 GET_FOLDERS                 = b'\x0D'
 GET_SUBFOLDER_NAME          = b'\x0F'
+opInput_Device              = b'\x99'
+GET_TYPEMODE                = b'\x05'
 opUI_Read                   = b'\x81'
+GET_HW_VERS                 = b'\x09'
 GET_FW_VERS                 = b'\x0A'
+GET_FW_BUILD                = b'\x0B'
 GET_VBATT                   = b'\x01'   # (DataF) Value – Battery voltage [V]
 GET_LBATT                   = b'\x12'   # (Data8) PCT – Battery level in percentage [0 - 100]
 GET_OS_VERS                 = b'\x03'   # get OS version string
+GET_OS_BUILD                = b'\x0C'
 opMemory_Usage              = b'\xC5'   # ((Data32) TOTAL – Total amount of internal memory [KB],
                                         #  (Data32) FREE – Free memory [KB])
 opSound                     = b'\x94'
