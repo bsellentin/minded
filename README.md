@@ -13,7 +13,7 @@ MindEd also compiles and uploads your programs to your brick over USB.
 
 For Debian-based systems MindEd requires the following packages to run:
 
-1. python3
+1. python3.5
 1. gir1.2-gtk-3.0 (>=3.18)
 1. gir1.2-gudev-1.0
 1. python3-usb
@@ -38,7 +38,7 @@ MindEd looks for the NBC compiler in `/usr/bin` and in `/usr/local/bin`. GCC cro
 in `/usr/bin` as `arm-linux-gnueabi-gcc-6` (Debian) or `arm-linux-gnueabi-gcc` (Ubuntu). Other
 names and paths can be set using dconf-editor -> org -> gge-em -> minded.
 
-EV3 brick needs firmware > 1.01.
+EV3 brick needs firmware >= 1.03.
 
 ## Documentation
 
