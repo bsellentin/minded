@@ -141,11 +141,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.window.show_all()
 
         self.untitledDocCount = 0
+        loadedFiles = 0
         if len(files)>1:
             for nth_file in files[1:]:
                 if Path(nth_file).is_file():
-                    self.load_file_in_editor(Path(nth_file).resolve().as_uri())
-        else:
+                    loadedFiles += self.load_file_in_editor(Path(nth_file).resolve().as_uri())
+                    logger.debug("%d files loaded" % loadedFiles)
+        if not loadedFiles:
             self.open_new()
 
     def gtk_main_quit(self, *args):
@@ -423,7 +425,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         # check for non-alphanumeric characters in filename, won't run on bricks
         if re.match('^[a-zA-Z0-9_.]+$', Path(infile).name) is not None:
-            outfile = Path(document.get_filename()).stem
+            outfile = str(Path(document.get_filepath(), Path(document.get_shortname()).stem))
             logger.debug('executable to write: %s' % outfile)
 
             arm_exec = self.settings.get_string('armgcc')
@@ -591,6 +593,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.change_language_selection(editor)
 
         logger.debug("file %s loaded in buffer, modified %s" % (file, buffer.get_modified()))
+        return 1
 
     def is_untitled(self, editor, close_tab):
         """looks if file is new with default name
@@ -631,7 +634,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         save_dialog = dialog
         if response == Gtk.ResponseType.ACCEPT:
             # check for valid filename
-            testname = os.path.split(save_dialog.get_filename())[1]
+            testname = Path(save_dialog.get_filename()).stem
             valid = re.match('^[a-zA-Z0-9_.]+$', testname) is not None
             logger.debug("%s is valid: %s" % (testname, valid))
             if valid:
@@ -793,7 +796,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             page_num = self.notebook.get_current_page()
             editor = self.notebook.get_nth_page(page_num)
 
-            root, ext = os.path.splitext(editor.document.get_shortname())
+            root = Path(editor.document.get_shortname()).stem
 
             this_lang = editor.lm.get_language(model[treeiter][0])
             buffer = editor.get_buffer()
