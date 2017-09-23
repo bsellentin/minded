@@ -120,87 +120,87 @@ nxc_funcs = [
         '           enhanced NBC/NXC firmware\n' +
         '<b>Examples:</b>\n' +
         '  CircleOut(20, 50, 20);</small>'], 
-            ['Coast', 'Coast()', '<small><b>Coast (<span foreground="brown">outputs</span>)</b>\n\n' +
-                'Coast motors. Turn off the specified outputs, making them coast to a stop.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
-                '<b>Examples:</b>\n' +
-                '  Coast(OUT_A); // coast output A</small>'], 
-            ['CurrentTick', 'CurrentTick()', '<small><b>CurrentTick ()</b>\n\n' +
-                'Read the current system tick.\n\n' +
-                '<b>Returns</b>\n' +
-                '  The current system tick count.\n' +
-                '<b>Examples:</b>\n' +
-                '  long tick;\n' +
-                '  tick = CurrentTick();</small>'], 
-            ['CreateFile', 'CreateFile()', ''], 
-            ['CloseFile', 'CloseFile()', ''],
-            ['DeleteFile', 'DeleteFile()', ''],
-            ['Float', 'Float()', '<small><b>Float (<span foreground="brown">outputs</span>)</b>\n\n' +
-                'Float motors. Make outputs float. Float is an alias for Coast.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
-                '<b>Examples:</b>\n' +
-                '  Float(OUT_A); // float output A</small>'],
-            ['GraphicOut', 'GraphicOut(,,)', '<small><b>GraphicOut (<span foreground="brown">x</span>,' +
-                ' <span foreground="brown">y</span>, <span foreground="brown">filename</span>,' +
-                ' <span foreground="brown">options</span> = DRAW_OPT_NORMAL)</b>\n\n' + 
-                'Draw a graphic image file on the screen at the specified\n' +
-                'x and y location. Optionally specify drawing options. If\n' +
-                'this argument is not specified it defaults to DRAW_OPT_NORMAL.\n\n' + 
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">x</span>         The x value for the position\n' +
-                '  <span foreground="brown">y</span>         The y value for the position\n' +
-                '  <span foreground="brown">filename</span>  The filename of the RIC graphic image.\n' +
-                '  <span foreground="brown">options</span>   The optional drawing options.\n' +
-                '            <b>Warning:</b> These options require the\n' +
-                '            enhanced NBC/NXC firmware\n' +
-                '<b>Examples:</b>\n' +
-                '  GraphicOut(40, 40, "image.ric");</small>'],
-            ['LineOut', 'LineOut(,,,)', '<small><b>LineOut (<span foreground="brown">x1</span>,' +
-                ' <span foreground="brown">y1</span>, <span foreground="brown">x2</span>,' +
-                ' <span foreground="brown">y2</span>, <span foreground="brown">options</span> = DRAW_OPT_NORMAL)</b>\n\n' +
-                'This function lets you draw a line on the screen from x1, y1\n' +
-                'to x2, y2. Optionally specify drawing options. If this argument\n' +
-                'is not specified it defaults to DRAW_OPT_NORMAL.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">x1</span>       The x value for the start of the line.\n' +
-                '  <span foreground="brown">y1</span>       The y value for the start of the line.\n' +
-                '  <span foreground="brown">x2</span>       The x value for the end of the line.\n' +
-                '  <span foreground="brown">y2</span>       The y value for the end of the line.\n' +
-                '  <span foreground="brown">options</span>  The optional drawing options.\n' +
-                '           <b>Warning:</b> These options require the\n' +
-                '           enhanced NBC/NXC firmware\n' +
-                '<b>Examples:</b>\n' +
-                '    LineOut(0, 0, <span foreground="green">DISPLAY_WIDTH</span>,' +
-                ' <span foreground="green">DISPLAY_HEIGHT</span>);</small>'],
-            ['MotorRotationCount', 'MotorRotationCount()', '<small><b>MotorRotationCount' +
-                ' (<span foreground="brown">output</span>)</b>\n\n' +
-                'Get the program-relative position counter value of the specified output.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">output</span>  Desired output port. Can be OUT_A, OUT_B, OUT_C.\n' +
-                '<b>Returns</b>\n' +
-                '  The program-relative position counter value of the specified output.\n' +
-                '<b>Examples:</b>\n' +
-                '  long deg = MotorRotationCount(OUT_A);</small>'],
-            ['NumOut', 'NumOut(,,)', '<small><b>NumOut (<span foreground="brown">x</span>,' +
-                ' <span foreground="brown">y</span>,  <span foreground="brown">value</span>)</b>\n\n' +
-                'Draw a numeric value on the screen at the ' +
-                'specified x and y location.\n' +
-                'The y value must be a multiple of 8.\n\n<b>Parameters</b>\n' +
-                '  <span foreground="brown">x</span>      The x value for the start of the number output.\n' +
-                '  <span foreground="brown">y</span>      The text line number for the number output.\n' +
-                '  <span foreground="brown">value</span>  The value to output to the LCD screen. Any numeric\n' +
-                '         type is supported.\n' +
-                '<b>Examples:</b>\n  NumOut(0, <span foreground="green">LCD_LINE1</span>, x);</small>'], 
-            ['NumToStr', 'NumToStr()', '<small><b>NumToStr (<span foreground="brown">num</span>)</b>\n\n' +
-                'Return the string representation of the specified numeric value.\n\n' +
-                '<b>Parameters</b>\n' +
-                '  <span foreground="brown">num</span>   A number.\n' +
-                '<b>Returns</b>\n' +
-                '  The string representation of the parameter num.\n' +
-                '<b>Examples:</b>\n' +
-                '  msg = NumToStr(-2); // returns "-2" in a string</small>'],
+    ['Coast', 'Coast()', '<small><b>Coast (<span foreground="brown">outputs</span>)</b>\n\n' +
+        'Coast motors. Turn off the specified outputs, making them coast to a stop.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
+        '<b>Examples:</b>\n' +
+        '  Coast(OUT_A); // coast output A</small>'], 
+    ['CurrentTick', 'CurrentTick()', '<small><b>CurrentTick ()</b>\n\n' +
+        'Read the current system tick.\n\n' +
+        '<b>Returns</b>\n' +
+        '  The current system tick count.\n' +
+        '<b>Examples:</b>\n' +
+        '  long tick;\n' +
+        '  tick = CurrentTick();</small>'], 
+    ['CreateFile', 'CreateFile()', ''], 
+    ['CloseFile', 'CloseFile()', ''],
+    ['DeleteFile', 'DeleteFile()', ''],
+    ['Float', 'Float()', '<small><b>Float (<span foreground="brown">outputs</span>)</b>\n\n' +
+        'Float motors. Make outputs float. Float is an alias for Coast.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
+        '<b>Examples:</b>\n' +
+        '  Float(OUT_A); // float output A</small>'],
+    ['GraphicOut', 'GraphicOut(,,)', '<small><b>GraphicOut (<span foreground="brown">x</span>,' +
+        ' <span foreground="brown">y</span>, <span foreground="brown">filename</span>,' +
+        ' <span foreground="brown">options</span> = DRAW_OPT_NORMAL)</b>\n\n' + 
+        'Draw a graphic image file on the screen at the specified\n' +
+        'x and y location. Optionally specify drawing options. If\n' +
+        'this argument is not specified it defaults to DRAW_OPT_NORMAL.\n\n' + 
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">x</span>         The x value for the position\n' +
+        '  <span foreground="brown">y</span>         The y value for the position\n' +
+        '  <span foreground="brown">filename</span>  The filename of the RIC graphic image.\n' +
+        '  <span foreground="brown">options</span>   The optional drawing options.\n' +
+        '            <b>Warning:</b> These options require the\n' +
+        '            enhanced NBC/NXC firmware\n' +
+        '<b>Examples:</b>\n' +
+        '  GraphicOut(40, 40, "image.ric");</small>'],
+    ['LineOut', 'LineOut(,,,)', '<small><b>LineOut (<span foreground="brown">x1</span>,' +
+        ' <span foreground="brown">y1</span>, <span foreground="brown">x2</span>,' +
+        ' <span foreground="brown">y2</span>, <span foreground="brown">options</span> = DRAW_OPT_NORMAL)</b>\n\n' +
+        'This function lets you draw a line on the screen from x1, y1\n' +
+        'to x2, y2. Optionally specify drawing options. If this argument\n' +
+        'is not specified it defaults to DRAW_OPT_NORMAL.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">x1</span>       The x value for the start of the line.\n' +
+        '  <span foreground="brown">y1</span>       The y value for the start of the line.\n' +
+        '  <span foreground="brown">x2</span>       The x value for the end of the line.\n' +
+        '  <span foreground="brown">y2</span>       The y value for the end of the line.\n' +
+        '  <span foreground="brown">options</span>  The optional drawing options.\n' +
+        '           <b>Warning:</b> These options require the\n' +
+        '           enhanced NBC/NXC firmware\n' +
+        '<b>Examples:</b>\n' +
+        '    LineOut(0, 0, <span foreground="green">DISPLAY_WIDTH</span>,' +
+        ' <span foreground="green">DISPLAY_HEIGHT</span>);</small>'],
+    ['MotorRotationCount', 'MotorRotationCount()', '<small><b>MotorRotationCount' +
+        ' (<span foreground="brown">output</span>)</b>\n\n' +
+        'Get the program-relative position counter value of the specified output.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">output</span>  Desired output port. Can be OUT_A, OUT_B, OUT_C.\n' +
+        '<b>Returns</b>\n' +
+        '  The program-relative position counter value of the specified output.\n' +
+        '<b>Examples:</b>\n' +
+        '  long deg = MotorRotationCount(OUT_A);</small>'],
+    ['NumOut', 'NumOut(,,)', '<small><b>NumOut (<span foreground="brown">x</span>,' +
+        ' <span foreground="brown">y</span>,  <span foreground="brown">value</span>)</b>\n\n' +
+        'Draw a numeric value on the screen at the ' +
+        'specified x and y location.\n' +
+        'The y value must be a multiple of 8.\n\n<b>Parameters</b>\n' +
+        '  <span foreground="brown">x</span>      The x value for the start of the number output.\n' +
+        '  <span foreground="brown">y</span>      The text line number for the number output.\n' +
+        '  <span foreground="brown">value</span>  The value to output to the LCD screen. Any numeric\n' +
+        '         type is supported.\n' +
+        '<b>Examples:</b>\n  NumOut(0, <span foreground="green">LCD_LINE1</span>, x);</small>'], 
+    ['NumToStr', 'NumToStr()', '<small><b>NumToStr (<span foreground="brown">num</span>)</b>\n\n' +
+        'Return the string representation of the specified numeric value.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">num</span>   A number.\n' +
+        '<b>Returns</b>\n' +
+        '  The string representation of the parameter num.\n' +
+        '<b>Examples:</b>\n' +
+        '  msg = NumToStr(-2); // returns "-2" in a string</small>'],
             ['OnFwd', 'OnFwd(,)', '<small><b>OnFwd (<span foreground="brown">outputs</span>, ' +
                 '<span foreground="brown">pwr</span>)</b>\n\n' +
                 'Run motors forward. Set outputs to forward direction and turn them on.\n\n' +
