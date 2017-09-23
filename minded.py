@@ -46,19 +46,14 @@ class MindEdApp(Gtk.Application):
                          #flags=Gio.ApplicationFlags.FLAGS_NONE,            # argparse in main
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,   # do_commandline
                          **kwargs)
-        #GLib.set_application_name("MindEd")
-        #GLib.set_prgname('minded.py')
-        
-        # New in Gio.Application version 2.42. Older in Ubuntu Trusty
-        #self.add_main_option("debug", ord("d"), GLib.OptionFlags.NONE,
-        #                     GLib.OptionArg.NONE, "debugging info", None)
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
         self.version = "0.7.4"
 
         self.add_main_option_entries([
-            make_option("debug", description="print a lot info")
+            make_option("debug", description="Show debug information on the console"),
+            make_option("version", description = "Print the version number and exit")
             ])
 
     def do_startup(self):    
@@ -78,11 +73,11 @@ class MindEdApp(Gtk.Application):
         resource = Gio.Resource.load(str(resource_path))
         Gio.Resource._register(resource)
 
-        action = Gio.SimpleAction.new("preferences", None)
+        action = Gio.SimpleAction.new('preferences', None)
         action.connect("activate", self.on_preferences)
         self.add_action(action)
 
-        action = Gio.SimpleAction.new("quit", None)
+        action = Gio.SimpleAction.new('quit', None)
         action.connect("activate", self.on_quit)
         self.add_action(action)
 
@@ -134,6 +129,9 @@ class MindEdApp(Gtk.Application):
     def do_command_line(self, command_line):
 
         options = command_line.get_options_dict()
+        if options.contains("version"):
+            print("MindEd %s" % self.version)
+            return 0
         if options.contains("debug"):
             self.args += ("debug",)
             logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s',
@@ -182,7 +180,7 @@ class MindEdApp(Gtk.Application):
                     try:
                         self.win.nxt_filer.nxt_model.clear()
                     except AttributeError:
-                        pass    
+                        pass
 
             # EV3
             elif device.get_property('ID_MODEL_ID') == '0005':
