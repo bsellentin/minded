@@ -64,6 +64,10 @@ evc_funcs = [
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>, ' +
         '<span foreground="brown">r</span>)</b></small>'],
+    ['EllipseOut','EllipseOut(,,,)','<small><b>EllipseOut(x, y, radiusX, radiusY)</b>\n\n' +
+        'This function lets you draw an ellipse on the screen\n' +
+        'with its center at the specified x and y location,\n' +
+        'using the specified radii.</small>'],
     ['LcdText', 'LcdText(,,,)', '<small><b>LcdText(' +
         '<span foreground="brown">color</span>, ' +
         '<span foreground="brown">x</span>, <span foreground="brown">y</span>, ' +
@@ -100,6 +104,7 @@ evc_funcs = [
         '<b>Examples:</b>\n' +
         '  int x = 1234567890;\n' +
         '  LcdTextf(1, 10, LCD_LINE7, "Variable: %d", x);</small>'],
+    ['LcdBmpFile', 'LcdBmpFile(,,,)', '<small>LcdBmpFile(color, x, y, name)</small'],
     ['NumOut', 'NumOut(,,)', '<small><b>NumOut(' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>,  <span foreground="brown">value</span>)</b>\n\n' +
@@ -121,7 +126,14 @@ evc_funcs = [
         '            2 large\n' +
         '            3 tiny</small>'],
     ['LcdClearDisplay', 'LcdClearDisplay()',''],
-    ['LcdIcon', 'LcdIcon(,,,,)', '<small>LcdIcon(color, x, y, IconType, IconNum)</small>'],
+    ['LcdIcon', 'LcdIcon(,,,,)', '<small><b>LcdIcon(color, x, y, IconType, IconNum)</b>\n\n' +
+        'Draw a icon on the screen at the specified location\n' +
+        '<b>Parameters:</b>\n' +
+        'IconType   ICONTYPE_NORMAL 0   IconNum 0..34\n' +
+        '           ICONTYPE_SMALL  1           0..21\n' +
+        '           ICONTYPE_LARGE  2           0..27\n' +
+        '           ICONTYPE_MENU   3           0..10\n' +
+        '           ICONTYPE_ARROW  4           0..2</small>'],
     ['LcdUpdate', 'LcdUpdate()', ''],
     ['LcdInit', 'LcdInit()', ''],
     ['LcdExit', 'LcdExit()', ''],
@@ -129,7 +141,9 @@ evc_funcs = [
         '<span foreground="brown">x1</span>, ' +
         '<span foreground="brown">y1</span>, ' +
         '<span foreground="brown">x2</span>, ' +
-        '<span foreground="brown">y2</span>)</b></small>'],
+        '<span foreground="brown">y2</span>)</b>\n\n' +
+        'This function lets you draw a line on the screen\n' +
+        'from x1, y1 to x2, y2.</small>'],
     ['MotorBusy', 'MotorBusy()', '<small><b>MotorBusy(' +
         '<span foreground="brown">output</span>)</b>\n\n' +
         'Returns 1 if motor is busys, 0 if not.\n\n' +
@@ -359,6 +373,7 @@ evc_funcs = [
         '    {TONE_D4, 750}\n' +
         '  };\n' +
         '  PlayTones(melody);</small>'],
+    ['PlayFile', 'PlayFile()', 'PlayFile(name)'],
     ['PointOut', 'PointOut(,)', '<small><b>PointOut(x, y)</b></small>'],
     ['ReadSensor', 'ReadSensor()', '<small><b>ReadSensor(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
@@ -538,6 +553,11 @@ evc_consts = [
     ['BTNDOWN', 'BTNDOWN'],
     ['LCD_WIDTH', 'LCD_WIDTH'],
     ['LCD_HEIGHT', 'LCD_HEIGHT'],
+    ['ICONTYPE_NORMAL', 'ICONTYPE_NORMAL'],
+    ['ICONTYPE_SMALL', 'ICONTYPE_SMALL'],
+    ['ICONTYPE_LARGE', 'ICONTYPE_LARGE'],
+    ['ICONTYPE_MENU', 'ICONTYPE_MENU'],
+    ['ICONTYPE_ARROW', 'ICONTYPE_ARROW'],
     ['IN_1', 'IN_1'],
     ['IN_2', 'IN_2'],
     ['IN_3', 'IN_3'],
