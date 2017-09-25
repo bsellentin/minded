@@ -194,11 +194,11 @@ class EV3():
         cmd = b''.join([
             opUI_Read,
             GET_OS_VERS,
-            LCX(18),
+            LCX(16),
             GVX(0)
         ])
-        reply = self.send_direct_cmd(cmd, global_mem=18)
-        (os_version,) = struct.unpack('18s', reply[5:])
+        reply = self.send_direct_cmd(cmd, global_mem=16)
+        (os_version,) = struct.unpack('16s', reply[5:])
         os_version = os_version.split(b'\x00')[0]
         os_version = os_version.decode('utf-8')
         return os_version
@@ -229,6 +229,32 @@ class EV3():
         reply = self.send_direct_cmd(cmd, global_mem=4)
         (total,) = struct.unpack('<I', reply[5:])
         return total
+
+    def get_brickinfo(self):
+        '''return (str hw_version, str fw_version, str os_version, int free_mem)'''
+        cmd = b''.join([
+            opUI_Read,
+            GET_HW_VERS,
+            LCX(16),
+            GVX(0),
+            opUI_Read,
+            GET_FW_VERS,
+            LCX(16),
+            GVX(16),
+            opUI_Read,
+            GET_OS_VERS,
+            LCX(16),
+            GVX(32),
+            opMemory_Usage,
+            LCX(0),
+            GVX(48)
+        ])
+        reply = self.send_direct_cmd(cmd, global_mem=52)
+        (hw_version, fw_version, os_version, total) = struct.unpack('<16s16s16sI', reply[5:])
+        hw_version = hw_version.split(b'\x00')[0].decode('utf-8')
+        fw_version = fw_version.split(b'\x00')[0].decode('utf-8')
+        os_version = os_version.split(b'\x00')[0].decode('utf-8')
+        return (hw_version, fw_version, os_version, total)
 
     def get_sdcard(self):
         # GET_SDCARD= 0x1D
