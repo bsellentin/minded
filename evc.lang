@@ -42,7 +42,7 @@
         <style id="keyword"           _name="Keyword"             map-to="def:keyword"/>
         <style id="type"              _name="Data Type"           map-to="def:type"/>
         <style id="storage-class"     _name="Storage Class"       map-to="def:type"/>
-        <style id="nxt-ios"	          _name="NXT IOs"             map-to="def:type"/>
+        <style id="ev3-ios"           _name="EV3 IOs"             map-to="def:type"/>
         <style id="printf"            _name="printf Conversion"   map-to="def:special-char"/>
         <style id="escaped-character" _name="Escaped Character"   map-to="def:special-char"/>
         <style id="floating-point"    _name="Floating point number" map-to="def:floating-point"/>
@@ -249,7 +249,7 @@
                     <keyword>restrict</keyword>
                 </context>
 
-                <context id="nxt-ios" style-ref="nxt-ios" class="nxt-ios">
+                <context id="ev3-ios" style-ref="ev3-ios" class="ev3-ios">
                     <keyword>BTNEXIT</keyword>
                     <keyword>BTNRIGHT</keyword>
                     <keyword>BTNLEFT</keyword>
@@ -354,6 +354,102 @@
                     <keyword>SOUND_DOWN</keyword>
                     <keyword>SOUND_LOW_BEEP</keyword>
                     <keyword>SOUND_FAST_UP</keyword>
+                    <keyword>S_ICON_CHARGING</keyword>
+                    <keyword>S_ICON_BATT_4</keyword>
+                    <keyword>S_ICON_BATT_3</keyword>
+                    <keyword>S_ICON_BATT_2</keyword>
+                    <keyword>S_ICON_BATT_1</keyword>
+                    <keyword>S_ICON_BATT_0</keyword>
+                    <keyword>S_ICON_WAIT1</keyword>
+                    <keyword>S_ICON_WAIT2</keyword>
+                    <keyword>S_ICON_BT_ON</keyword>
+                    <keyword>S_ICON_BT_VISIBLE</keyword>
+                    <keyword>S_ICON_BT_CONNECTED</keyword>
+                    <keyword>S_ICON_BT_CONNVISIB</keyword>
+                    <keyword>S_ICON_WIFI_3</keyword>
+                    <keyword>S_ICON_WIFI_2</keyword>
+                    <keyword>S_ICON_WIFI_1</keyword>
+                    <keyword>S_ICON_WIFI_CONNECTED</keyword>
+                    <keyword>S_ICON_USB</keyword>
+                    <keyword>NUM_S_ICONS</keyword>
+                    <keyword>N_ICON_NONE</keyword>
+                    <keyword>N_ICON_RUN</keyword>
+                    <keyword>N_ICON_FOLDER</keyword>
+                    <keyword>N_ICON_FOLDER2</keyword>
+                    <keyword>N_ICON_USB</keyword>
+                    <keyword>N_ICON_SD</keyword>
+                    <keyword>N_ICON_SOUND</keyword>
+                    <keyword>N_ICON_IMAGE</keyword>
+                    <keyword>N_ICON_SETTINGS</keyword>
+                    <keyword>N_ICON_ONOFF</keyword>
+                    <keyword>N_ICON_SEARCH</keyword>
+                    <keyword>N_ICON_WIFI</keyword>
+                    <keyword>N_ICON_CONNECTIONS</keyword>
+                    <keyword>N_ICON_ADD_HIDDEN</keyword>
+                    <keyword>N_ICON_TRASHBIN</keyword>
+                    <keyword>N_ICON_VISIBILITY</keyword>
+                    <keyword>N_ICON_KEY</keyword>
+                    <keyword>N_ICON_CONNECT</keyword>
+                    <keyword>N_ICON_DISCONNECT</keyword>
+                    <keyword>N_ICON_UP</keyword>
+                    <keyword>N_ICON_DOWN</keyword>
+                    <keyword>N_ICON_WAIT1</keyword>
+                    <keyword>N_ICON_WAIT2</keyword>
+                    <keyword>N_ICON_BLUETOOTH</keyword>
+                    <keyword>N_ICON_INFO</keyword>
+                    <keyword>N_ICON_TEXT</keyword>
+                    <keyword>N_ICON_QUESTIONMARK</keyword>
+                    <keyword>N_ICON_INFO_FILE</keyword>
+                    <keyword>N_ICON_DISC</keyword>
+                    <keyword>N_ICON_CONNECTED</keyword>
+                    <keyword>N_ICON_OBP</keyword>
+                    <keyword>N_ICON_OBD</keyword>
+                    <keyword>N_ICON_OPENFOLDER</keyword>
+                    <keyword>N_ICON_BRICK1</keyword>
+                    <keyword>NUM_N_ICONS</keyword>
+                    <keyword>L_ICON_YES_NOTSEL</keyword>
+                    <keyword>L_ICON_YES_SEL</keyword>
+                    <keyword>L_ICON_NO_NOTSEL</keyword>
+                    <keyword>L_ICON_NO_SEL</keyword>
+                    <keyword>L_ICON_OFF</keyword>
+                    <keyword>L_ICON_WAIT_VERT</keyword>
+                    <keyword>L_ICON_WAIT_HORZ</keyword>
+                    <keyword>L_ICON_TO_MANUAL</keyword>
+                    <keyword>L_ICON_WARNSIGN</keyword>
+                    <keyword>L_ICON_WARN_BATT</keyword>
+                    <keyword>L_ICON_WARN_POWER</keyword>
+                    <keyword>L_ICON_WARN_TEMP</keyword>
+                    <keyword>L_ICON_NO_USBSTICK</keyword>
+                    <keyword>L_ICON_TO_EXECUTE</keyword>
+                    <keyword>L_ICON_TO_BRICK</keyword>
+                    <keyword>L_ICON_TO_SDCARD</keyword>
+                    <keyword>L_ICON_TO_USBSTICK</keyword>
+                    <keyword>L_ICON_TO_BLUETOOTH</keyword>
+                    <keyword>L_ICON_TO_WIFI</keyword>
+                    <keyword>L_ICON_TO_TRASH</keyword>
+                    <keyword>L_ICON_TO_COPY</keyword>
+                    <keyword>L_ICON_TO_FILE</keyword>
+                    <keyword>L_ICON_CHAR_ERROR</keyword>
+                    <keyword>L_ICON_COPY_ERROR</keyword>
+                    <keyword>L_ICON_PROGRAM_ERROR</keyword>
+                    <keyword>L_ICON_WARN_MEMORY</keyword>
+                    <keyword>NUM_L_ICONS</keyword>
+                    <keyword>M_ICON_STAR</keyword>
+                    <keyword>M_ICON_LOCKSTAR</keyword>
+                    <keyword>M_ICON_LOCK</keyword>
+                    <keyword>M_ICON_PC</keyword>
+                    <keyword>M_ICON_PHONE</keyword>
+                    <keyword>M_ICON_BRICK</keyword>
+                    <keyword>M_ICON_UNKNOWN</keyword>
+                    <keyword>M_ICON_FROM_FOLDER</keyword>
+                    <keyword>M_ICON_CHECKBOX</keyword>
+                    <keyword>M_ICON_CHECKED</keyword>
+                    <keyword>M_ICON_XED</keyword>
+                    <keyword>NUM_M_ICONS</keyword>
+                    <keyword>A_ICON_LEFT</keyword>
+                    <keyword>A_ICON_RIGHT</keyword>
+                    <keyword>A_ICON_STAR</keyword>
+                    <keyword>NUM_A_ICONS</keyword>
                 </context>
 
                 <context id="common-defines" style-ref="common-defines" class="common-defines">
