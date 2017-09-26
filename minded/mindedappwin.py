@@ -268,9 +268,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         else:
             ext = Path(editor.document.get_shortname()).suffix
             if ext == '.nxc':
-                nbcout = str(Path(editor.document.get_filename()).stem + ".rxe")
+                nbcout = str(Path(editor.document.get_filepath(),
+                                  Path(editor.document.get_shortname()).stem + ".rxe"))
                 logger.debug("File to compile: %s" % editor.document.get_filename())
-                nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout), shlex.quote(editor.document.get_filename())))
+                nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout),
+                                           shlex.quote(editor.document.get_filename())))
                 logger.debug("nbc optionen: %s" % nbc_opts)
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
