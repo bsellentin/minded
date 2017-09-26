@@ -15,10 +15,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-import os
 import urllib.request
 import sys
-import pathlib
+from pathlib import Path
 from urllib.parse import urlparse, unquote
 import logging
 
@@ -42,9 +41,9 @@ logger = logging.getLogger(__name__)
 DRAG_ACTION = Gdk.DragAction.COPY
 
 def read_file(brick, file_uri):
-
+    '''read file from NXT brick'''
     file_path = urlparse(unquote(file_uri))
-    file_name = pathlib.Path(file_path.path).name
+    file_name = Path(file_path.path).name
 
     with FileReader(brick, file_name) as r:
         with open(file_path.path, 'wb') as f:
@@ -52,6 +51,7 @@ def read_file(brick, file_uri):
                 f.write(data)
 
 def write_file(brick, file_name, data):
+    '''write one file to NXT brick'''
     w = FileWriter(brick, file_name, len(data))
     logger.debug('Pushing %s (%d bytes) ...' % (file_name, w.size)) 
     sys.stdout.flush()
@@ -60,12 +60,13 @@ def write_file(brick, file_name, data):
     w.close()
 
 def write_files(brick, file_uris):
+    '''write multiple files to NXT brick'''
     wnames = []
     for file_uri in file_uris:
         if file_uri:
             logger.debug('File: %s Type %s' % (file_uri, type(file_uri)))
             file_path = urlparse(unquote(file_uri))
-            file_name = pathlib.Path(file_path.path).name
+            file_name = Path(file_path.path).name
 
             url = urllib.request.urlopen(file_uri)
             try:
@@ -94,19 +95,17 @@ class BrickListing(Gtk.ListStore):
     def populate(self, brick, path):
 
         if self.brick_type == 'nxt':
-
             self.clear()
-
             filelist = []
 
             f = FileFinder(brick, path)
             for (fname, size) in f:
                 # exclude NVconfig.sys?
-                if os.path.splitext(fname)[-1] == ".rso":
+                if Path(fname).suffix == ".rso":
                     filelist.append([fname, AUDIOICON, str(size), False])
-                elif os.path.splitext(fname)[-1] == ".ric":
+                elif Path(fname).suffix == ".ric":
                     filelist.append([fname, GRAPHICICON, str(size), False])
-                elif os.path.splitext(fname)[-1] in [".rxe", ".rtm"]:
+                elif Path(fname).suffix in [".rxe", ".rtm"]:
                     filelist.append([fname, EXECICON, str(size), False])
                 else:
                     filelist.append([fname, FILEICON, str(size), False])
@@ -120,9 +119,7 @@ class BrickListing(Gtk.ListStore):
                     logger.debug(row[COLUMN_PATH,COLUMN_SIZE])
 
         elif self.brick_type == 'ev3':
-
             self.clear()
-
             dirlist = []
             filelist = []
             '''
@@ -143,7 +140,9 @@ class BrickListing(Gtk.ListStore):
                     else:
                         dirlist.append([folder, DIRICON, '0', True])
                 for file in content['files']:
-                    if os.path.splitext(file['name'])[-1] in [".rsf", ".rmd", ".wav", ".rso"]:
+                    if Path(file['name']).suffix == ".rgf":
+                        filelist.append([file['name'], GRAPHICICON, str(file['size']), False])
+                    elif Path(file['name']).suffix in [".rsf", ".rmd", ".wav", ".rso"]:
                         filelist.append([file['name'], AUDIOICON, str(file['size']), False])
                     else:
                         filelist.append([file['name'], FILEICON, str(file['size']), False])
@@ -175,24 +174,25 @@ class HostListing(Gtk.ListStore):
         dirlist = []
         filelist = []
 
-        for fl in os.listdir(path):
-            if not fl[0] == '.':
-                if os.path.isdir(os.path.join(path, fl)):
-                    dirlist.append([fl, DIRICON, 
-                            str(len([name for name in os.listdir(os.path.join(path, fl))])), True])
-                elif os.path.isfile(os.path.join(path, fl)):
-                    if os.path.splitext(os.path.join(path, fl))[1] == '.rso':
-                        filelist.append([fl, AUDIOICON,
-                            str(os.stat(os.path.join(path, fl)).st_size), False])
-                    elif os.path.splitext(os.path.join(path, fl))[1] == ".ric":
-                        filelist.append([fl, GRAPHICICON,
-                            str(os.stat(os.path.join(path, fl)).st_size), False])
-                    elif os.path.splitext(os.path.join(path, fl))[1] == ".rxe":
-                        filelist.append([fl, EXECICON,
-                            str(os.stat(os.path.join(path, fl)).st_size), False])
+        for fl in Path(path).iterdir():
+            # don't list hidden files
+            if not str(fl.stem)[0] == '.':
+                if fl.is_dir():
+                    dirlist.append([str(fl.name), DIRICON, 
+                                    str(len([name for name in fl.iterdir()])), True])
+                elif fl.is_file():
+                    if fl.suffix == '.rso':
+                        filelist.append([str(fl.name), AUDIOICON,
+                                         str(fl.stat().st_size), False])
+                    elif fl.suffix == '.ric':
+                        filelist.append([str(fl.name), GRAPHICICON,
+                                         str(fl.stat().st_size), False])
+                    elif fl.suffix == ".rxe":
+                        filelist.append([str(fl.name), EXECICON,
+                                         str(fl.stat().st_size), False])
                     else:
-                        filelist.append([fl, FILEICON, 
-                            str(os.stat(os.path.join(path, fl)).st_size), False])
+                        filelist.append([str(fl.name), FILEICON, 
+                                         str(fl.stat().st_size), False])
                 else:
                     pass
 
@@ -231,7 +231,8 @@ class FileInfoBar(Gtk.Frame):
         self.set_valign(Gtk.Align.END)
         self.set_halign(Gtk.Align.END)
         infobox = Gtk.Box()
-        infobox.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1.0,1.0,1.0,1.0))
+        infobox.override_background_color(Gtk.StateType.NORMAL,
+                                          Gdk.RGBA(1.0,1.0,1.0,1.0))
 
         self.selected = Gtk.Label("selected")
         self.selected.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
@@ -290,14 +291,14 @@ class NXTFiler(object):
             logger.info('got app.nxtbrick')
             self.brick_type = 'nxt'
         except AttributeError:
-            logger.info('no app.nxtbrick')   
+            logger.info('no app.nxtbrick')
 
         try:
             brick = self.app.ev3brick
             logger.info('got app.ev3brick')
             self.brick_type = 'ev3'
         except AttributeError:
-            logger.info('no app.ev3brick')   
+            logger.info('no app.ev3brick')
 
         if self.brick_type == 'nxt':
             self.nxt_model = BrickListing(self.app.nxtbrick, self.brick_type, '*.*')
@@ -310,7 +311,7 @@ class NXTFiler(object):
             self.nxt_model = BrickListing(None, None, None)
             hpaned.add1(self.make_brickfile_panel('No brick', self.nxt_model))
 
-        self.current_directory = os.path.expanduser("~")
+        self.current_directory = str(Path.home())
         self.host_model = HostListing(self.current_directory)
         hpaned.add2(self.make_hostfile_panel(self.host_model))
 
@@ -428,7 +429,7 @@ class NXTFiler(object):
         if not isDir:
             return
 
-        self.current_directory = os.path.join(self.current_directory, path)
+        self.current_directory = str(Path(self.current_directory, path))
         self.location.set_text(self.current_directory)
         self.host_model.populate(self.current_directory)
         self.upButton.set_sensitive(True)
@@ -440,7 +441,7 @@ class NXTFiler(object):
         isDir = model[item][COLUMN_ISDIR]
 
         if self.brick_type == 'ev3':
-            self.current_ev3_directory = os.path.join(self.current_ev3_directory, path)
+            self.current_ev3_directory = str(Path(self.current_ev3_directory, path))
             self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
 
             if not self.EV3upButton.get_sensitive():
@@ -461,11 +462,11 @@ class NXTFiler(object):
             self.brickinfoframe.show()
         except:
             self.brickinfoframe.hide()        
-            
+
     def on_prev_dir_clicked(self, widget):
         '''walk one directory higher'''
 
-        self.current_directory = os.path.dirname(self.current_directory)
+        self.current_directory = str(Path(self.current_directory).parent)
         self.location.set_text(self.current_directory)
         self.host_model.populate(self.current_directory)
         sensitive = True
@@ -473,7 +474,7 @@ class NXTFiler(object):
         self.upButton.set_sensitive(sensitive)
 
     def on_EV3_prev_dir_clicked(self, widget):
-        self.current_ev3_directory = os.path.dirname(self.current_ev3_directory)
+        self.current_ev3_directory = str(Path(self.current_ev3_directory).parent)
         self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
         sensitive = True
         if self.current_ev3_directory == "/": sensitive = False
@@ -500,9 +501,10 @@ class NXTFiler(object):
         selected_path = iconview.get_selected_items()[0]
         selected_iter = iconview.get_model().get_iter(selected_path)
         name = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
-        file_name = os.path.join(self.current_directory, name)
-        logger.debug(file_name)
-        file_uris = [pathlib.Path(file_name).as_uri()]
+        #file_name = os.path.join(self.current_directory, name)
+        #logger.debug(file_name)
+        #file_uris = [Path(file_name).as_uri()]
+        file_uris = [Path(self.current_directory, name).as_uri()]
         logger.debug('dragged: %s' % file_uris)
         success = selection.set_uris(file_uris)
         if logger.isEnabledFor(logging.DEBUG):
@@ -548,8 +550,8 @@ class NXTFiler(object):
                 for f in file_uris:
                     # TODO: which files will we accept?
                     file_path = urlparse(unquote(f))
-                    file_name = pathlib.Path(file_path.path).name
-                    infile = os.path.join(self.current_ev3_directory, file_name)
+                    file_name = Path(file_path.path).name
+                    infile = str(Path(self.current_ev3_directory, Path(file_path.path).name))
                     outfile = file_path.path
                     logger.debug('dropped: %s' % outfile)
                     logger.debug('write to: %s' % infile)
@@ -573,8 +575,9 @@ class NXTFiler(object):
             logger.debug(context.get_actions())
             logger.debug(selection.get_text())
             logger.debug(self.current_directory)
-            file_path = os.path.join(self.current_directory, file_name)
-            file_uri = pathlib.Path(file_path).as_uri()
+            #file_path = os.path.join(self.current_directory, file_name)
+            #file_uri = Path(file_path).as_uri()
+            file_uri = Path(self.current_directory, file_name).as_uri()
             nxtfile = read_file(self.app.nxtbrick, file_uri)
             self.host_model.populate(self.current_directory)
             context.finish(True, False, etime)
@@ -632,12 +635,14 @@ class NXTFiler(object):
         # needed! Else Window disappears, but App lives still.
         return True
 
-DIRICON = Gtk.IconTheme.get_default().load_icon('folder', 64, 0)
-FILEICON = Gtk.IconTheme.get_default().load_icon('ascii', 64, 0)
-AUDIOICON = Gtk.IconTheme.get_default().load_icon('sound', 64, 0)
-GRAPHICICON = Gtk.IconTheme.get_default().load_icon('image', 64, 0)
+#iconsizes = Gtk.IconTheme.get_for_screen(Gdk.Screen.get_default()).get_icon_sizes('folder')
+#print('Iconsizes', iconsizes)
+DIRICON = Gtk.IconTheme.get_default().load_icon('folder', 48, 0)
+FILEICON = Gtk.IconTheme.get_default().load_icon('ascii', 48, 0)
+AUDIOICON = Gtk.IconTheme.get_default().load_icon('sound', 48, 0)
+GRAPHICICON = Gtk.IconTheme.get_default().load_icon('image', 48, 0)
 if Gtk.IconTheme.get_default().has_icon('exec'):
-    EXECICON = Gtk.IconTheme.get_default().load_icon('exec', 64, 0)
+    EXECICON = Gtk.IconTheme.get_default().load_icon('exec', 48, 0)
 else:
-    EXECICON = Gtk.IconTheme.get_default().load_icon('application-x-executable', 64, 0)    
-ERRORICON = Gtk.IconTheme.get_default().load_icon('error', 64, 0)
+    EXECICON = Gtk.IconTheme.get_default().load_icon('application-x-executable', 48, 0)
+ERRORICON = Gtk.IconTheme.get_default().load_icon('error', 48, 0)
