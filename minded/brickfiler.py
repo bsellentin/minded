@@ -264,7 +264,7 @@ class FileInfoBar(Gtk.Frame):
             size = size/1024.0
         return "%.*f %s"%(precision, size, suffixes[suffixIndex])
 
-class NXTFiler(object):
+class BrickFiler(object):
     TARGETS = []
 
     def __init__(self, application, *args, **kwargs):
@@ -301,11 +301,14 @@ class NXTFiler(object):
             logger.info('no app.ev3brick')
 
         if self.brick_type == 'nxt':
-            self.nxt_model = BrickListing(self.app.nxtbrick, self.brick_type, '*.*')
-            hpaned.add1(self.make_brickfile_panel(str(self.app.nxtbrick.sock), self.nxt_model))
+            self.nxt_model = BrickListing(self.app.nxtbrick, self.brick_type,
+                                          '*.*')
+            hpaned.add1(self.make_brickfile_panel(str(self.app.nxtbrick.sock),
+                                                  self.nxt_model))
         elif self.brick_type == 'ev3':
             self.current_ev3_directory = '/home/root/lms2012/'
-            self.ev3_model = BrickListing(self.app.ev3brick, self.brick_type, self.current_ev3_directory)
+            self.ev3_model = BrickListing(self.app.ev3brick, self.brick_type,
+                                          self.current_ev3_directory)
             hpaned.add1(self.make_brickfile_panel('EV3', self.ev3_model))
         else:
             self.nxt_model = BrickListing(None, None, None)
@@ -403,6 +406,11 @@ class NXTFiler(object):
             self.EV3upButton.add(image)
             self.EV3upButton.connect("clicked", self.on_EV3_prev_dir_clicked)
             tool_bar.attach(self.EV3upButton, 1, 0, 1, 1,)
+            self.ev3location = Gtk.Entry()
+            self.ev3location.set_hexpand(True)
+            self.ev3location.set_text(self.current_ev3_directory)
+            self.ev3location.set_icon_from_icon_name(0, 'folder-symbolic')
+            tool_bar.attach(self.ev3location,2 , 0, 1, 1)
         v.pack_start(tool_bar, False, False, 0)
 
         self.brick_view = self.make_brickfile_list(model)
@@ -435,7 +443,7 @@ class NXTFiler(object):
         self.upButton.set_sensitive(True)
 
     def on_brick_item_activated(self, widget, item):
-
+        '''double click on EV3 directory opens it'''
         model = widget.get_model()
         path = model[item][COLUMN_PATH]
         isDir = model[item][COLUMN_ISDIR]
@@ -443,7 +451,7 @@ class NXTFiler(object):
         if self.brick_type == 'ev3':
             self.current_ev3_directory = str(Path(self.current_ev3_directory, path))
             self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
-
+            self.ev3location.set_text(self.current_ev3_directory)
             if not self.EV3upButton.get_sensitive():
                 self.EV3upButton.set_sensitive(True)
 
@@ -464,8 +472,7 @@ class NXTFiler(object):
             self.brickinfoframe.hide()        
 
     def on_prev_dir_clicked(self, widget):
-        '''walk one directory higher'''
-
+        '''walk one host directory higher'''
         self.current_directory = str(Path(self.current_directory).parent)
         self.location.set_text(self.current_directory)
         self.host_model.populate(self.current_directory)
@@ -474,14 +481,16 @@ class NXTFiler(object):
         self.upButton.set_sensitive(sensitive)
 
     def on_EV3_prev_dir_clicked(self, widget):
+        '''walk one EV3 directory higher'''
         self.current_ev3_directory = str(Path(self.current_ev3_directory).parent)
         self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
+        self.ev3location.set_text(self.current_ev3_directory)
         sensitive = True
         if self.current_ev3_directory == "/": sensitive = False
         self.EV3upButton.set_sensitive(sensitive)
-    
+
     def drag_data_get_data(self, iconview, context, selection, target_id,
-        etime):
+                           etime):
         '''set the selected NXT-file to copy to host'''
         
         selected_path = iconview.get_selected_items()[0]
@@ -495,15 +504,12 @@ class NXTFiler(object):
                 logger.debug('selection set text NOT okay')
 
     def drag_data_get_hostdata(self, iconview, context, selection, target_id,
-        etime):
+                               etime):
         '''set the selected uri to copy to NXT-brick'''
 
         selected_path = iconview.get_selected_items()[0]
         selected_iter = iconview.get_model().get_iter(selected_path)
         name = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
-        #file_name = os.path.join(self.current_directory, name)
-        #logger.debug(file_name)
-        #file_uris = [Path(file_name).as_uri()]
         file_uris = [Path(self.current_directory, name).as_uri()]
         logger.debug('dragged: %s' % file_uris)
         success = selection.set_uris(file_uris)
@@ -514,7 +520,7 @@ class NXTFiler(object):
                 logger.debug('selection set uris NOT okay')
 
     def drag_data_received_data(self, iconview, context, x, y, selection,
-        info, etime):
+                                info, etime):
         '''write file to brick from host '''
         file_uris = selection.get_uris()
 
@@ -575,8 +581,6 @@ class NXTFiler(object):
             logger.debug(context.get_actions())
             logger.debug(selection.get_text())
             logger.debug(self.current_directory)
-            #file_path = os.path.join(self.current_directory, file_name)
-            #file_uri = Path(file_path).as_uri()
             file_uri = Path(self.current_directory, file_name).as_uri()
             nxtfile = read_file(self.app.nxtbrick, file_uri)
             self.host_model.populate(self.current_directory)
@@ -611,7 +615,6 @@ class NXTFiler(object):
                 iter_path = self.brick_view.get_selected_items()[0]
                 model = self.brick_view.get_model()
                 selected_iter = model.get_iter(iter_path)
-                #if iter_path is not None:
                 if selected_iter is not None:
                     file_name = model.get_value(selected_iter, 0)
                     logger.debug('selected to delete: %s' % file_name)
@@ -625,18 +628,29 @@ class NXTFiler(object):
                     logger.debug('No file selected')
 
         if self.brick_type == 'ev3':
-            #TODO: delete file on EV3-brick
-            logger.debug('delete not yet implemented')
+            if len(self.ev3_model) != 0:
+                iter_path = self.brick_view.get_selected_items()[0]
+                model = self.brick_view.get_model()
+                selected_iter = model.get_iter(iter_path)
+                if selected_iter is not None:
+                    file_name = str(Path(self.current_ev3_directory,
+                                         model.get_value(selected_iter, 0)))
+                    logger.debug('selected to delete: %s' % file_name)
+                    try:
+                        self.app.ev3brick.del_file(file_name)
+                        logger.debug('deleted: %s' % file_name)
+                        model.remove(selected_iter)
+                    except:
+                        logger.debug('File not deleted')
+                else:
+                    logger.debug('No file selected')
 
     def quit(self, *args):
         'Quit the program'
-        #self.brick.sock.close()
         self.window.destroy()
         # needed! Else Window disappears, but App lives still.
         return True
 
-#iconsizes = Gtk.IconTheme.get_for_screen(Gdk.Screen.get_default()).get_icon_sizes('folder')
-#print('Iconsizes', iconsizes)
 DIRICON = Gtk.IconTheme.get_default().load_icon('folder', 48, 0)
 FILEICON = Gtk.IconTheme.get_default().load_icon('ascii', 48, 0)
 AUDIOICON = Gtk.IconTheme.get_default().load_icon('sound', 48, 0)

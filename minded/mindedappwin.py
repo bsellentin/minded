@@ -29,7 +29,7 @@ from minded.editorapp import EditorApp
 import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
 from minded.nxtinfo import NXTInfo
-from minded.nxtfiler import NXTFiler
+from minded.brickfiler import BrickFiler
 
 class MindEdAppWin(Gtk.ApplicationWindow):
     '''The Main Application Window'''
@@ -865,7 +865,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''open new window with brick file browser...'''
         if self.menupop.get_visible():
             self.menupop.hide()
-        self.nxt_filer = NXTFiler(self.window.get_application())
+        self.brick_filer = BrickFiler(self.window.get_application())
 
 class PrintingApp:
     '''
