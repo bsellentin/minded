@@ -493,14 +493,16 @@
                     <keyword>OnFor</keyword>
                     <keyword>OnRev</keyword>
                     <keyword>OnRevReg</keyword>
-                    <keyword>OnRevSyncEx</keyword>
                     <keyword>OnRevSync</keyword>
+                    <keyword>OnRevSyncEx</keyword>
                     <keyword>OutputPower</keyword>
                     <keyword>OutputSpeed</keyword>
                     <keyword>OutputStart</keyword>
                     <keyword>OutputStop</keyword>
+                    <keyword>OutputStepPower</keyword>
                     <keyword>OutputStepSpeed</keyword>
                     <keyword>OutputStepSync</keyword>
+                    <keyword>OutputTimePower</keyword>
                     <keyword>OutputTimeSpeed</keyword>
                     <keyword>OutputTimeSync</keyword>
                     <keyword>Off</keyword>

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 evc_funcs = [
-    ['InitEV3', 'InitEV3()', '<small><b>InitEV3()</b>\n\n' +
+    ['InitEV3', 'InitEV3()', '<b>InitEV3()</b>\n\n' +
         'Initialization of all EV3-Functions.\n' +
-        'Should be the first command in main.</small>'],
-    ['CloseEV3', 'CloseEV3()', ''],
-    ['ExitEV3', '', 'ExitEV3()'],
-    ['FreeEV3', 'FreeEV3()', '<small><b>FreeEV3()</b>\n\n' +
-        'Close and exit of all EV3-Functions</small>'],
-    ['ButtonIsDown', 'ButtonIsDown()','<small><b>ButtonIsDown(' +
+        'Should be the first command in main.', 'General'],
+    ['CloseEV3', 'CloseEV3()', '', 'General'],
+    ['ExitEV3', '', 'ExitEV3()', 'General'],
+    ['FreeEV3', 'FreeEV3()', '<b>FreeEV3()</b>\n\n' +
+        'Close and exit of all EV3-Functions', 'General'],
+    ['ButtonIsDown', 'ButtonIsDown()','<b>ButtonIsDown(' +
         '<span foreground="brown">button</span>)</b>\n\n' +
         'Check if button is pressed or not.\n' + 
         'Returns 1: true, 0: false\n\n' +
@@ -19,8 +19,8 @@ evc_funcs = [
         '           BTNUP     BTN5 The up button.\n' +
         '           BTNDOWN   BTN6 The down button.\n' +
         '<b>Example:</b>\n' +
-        '  while(!ButtonIsDown(BTNCENTER)){ //do something }</small>'],
-    ['ButtonIsUp', 'ButtonIsUp()', '<small><b>ButtonIsUp(' +
+        '  while(!ButtonIsDown(BTNCENTER)){ //do something }', 'Button'],
+    ['ButtonIsUp', 'ButtonIsUp()', '<b>ButtonIsUp(' +
         '<span foreground="brown">button</span>)</b>\n\n' +
         'Check if button is not pressed or not.\n' +
         'Returns 1: true, 0: false\n\n'+ 
@@ -32,16 +32,16 @@ evc_funcs = [
         '           BTNUP     BTN5 The up button.\n' +
         '           BTNDOWN   BTN6 The down button.\n' +
         '<b>Example:</b>\n' +
-        '  while(ButtonIsUp(BTNCENTER)){ //do something }</small>'],
+        '  while(ButtonIsUp(BTNCENTER)){ //do something }', 'Button'],
     ['ButtonWaitForAnyPress', 'ButtonWaitForAnyPress()', 
-        '<small><b>ButtonWaitForAnyPress(<span foreground="brown">time</span>)</b>\n\n' +
+        '<b>ButtonWaitForAnyPress(<span foreground="brown">time</span>)</b>\n\n' +
         'Waiting for button press for given time.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">time</span>  Time in milliseconds\n' +
         '<b>Example:</b>\n' +
-        '  ButtonWaitForAnyPress(10000);  // waits max 10 seconds</small>'],
+        '  ButtonWaitForAnyPress(10000);  // waits max 10 seconds', 'Button'],
     ['ButtonWaitForPress', 'ButtonWaitForPress()',
-        '<small><b>ButtonWaitForPress(<span foreground="brown">button</span>)</b>\n\n' +
+        '<b>ButtonWaitForPress(<span foreground="brown">button</span>)</b>\n\n' +
         'Wait till a specific button is pressed.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">button</span>   BTNEXIT   BTN1 The exit (escape) button.\n' +
@@ -49,9 +49,9 @@ evc_funcs = [
         '           BTNLEFT   BTN3 The left button.\n' +
         '           BTNCENTER BTN4 The enter button.\n' +
         '           BTNUP     BTN5 The up button.\n' +
-        '           BTNDOWN   BTN6 The down button.</small>'],
+        '           BTNDOWN   BTN6 The down button.', 'Button'],
     ['ButtonWaitForPressAndRelease', 'ButtonWaitForPressAndRelease',
-        '<small><b>ButtonWaitForPressAndRelease(<span foreground="brown">button</span>)</b>\n\n' +
+        '<b>ButtonWaitForPressAndRelease(<span foreground="brown">button</span>)</b>\n\n' +
         'Wait till a specific button is pressed and released.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">button</span>   BTNEXIT   BTN1 The exit (escape) button.\n' +
@@ -59,16 +59,16 @@ evc_funcs = [
         '           BTNLEFT   BTN3 The left button.\n' +
         '           BTNCENTER BTN4 The enter button.\n' +
         '           BTNUP     BTN5 The up button.\n' +
-        '           BTNDOWN   BTN6 The down button.</small>'],
-    ['CircleOut', 'CircleOut(,,)', '<small><b>CircleOut(' +
+        '           BTNDOWN   BTN6 The down button.', 'Button'],
+    ['CircleOut', 'CircleOut(,,)', '<b>CircleOut(' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>, ' +
-        '<span foreground="brown">r</span>)</b></small>'],
-    ['EllipseOut','EllipseOut(,,,)','<small><b>EllipseOut(x, y, radiusX, radiusY)</b>\n\n' +
+        '<span foreground="brown">r</span>)</b>', 'Display'],
+    ['EllipseOut','EllipseOut(,,,)','<b>EllipseOut(x, y, radiusX, radiusY)</b>\n\n' +
         'This function lets you draw an ellipse on the screen\n' +
         'with its center at the specified x and y location,\n' +
-        'using the specified radii.</small>'],
-    ['LcdText', 'LcdText(,,,)', '<small><b>LcdText(' +
+        'using the specified radii.', 'Display'],
+    ['LcdText', 'LcdText(,,,)', '<b>LcdText(' +
         '<span foreground="brown">color</span>, ' +
         '<span foreground="brown">x</span>, <span foreground="brown">y</span>, ' +
         '<span foreground="brown">str</span>)</b>\n\n' +
@@ -78,9 +78,9 @@ evc_funcs = [
         '  <span foreground="brown">x</span>      The x value for the start of the number output.\n' +
         '  <span foreground="brown">y</span>      The text line number for the number output.\n' +
         '  <span foreground="brown">str</span>    The text to output to the LCD screen.\n' +
-        '<b>Examples:</b>\n' +
-        '  LcdText(1, 0, <span foreground="green">LCD_LINE1</span>, "Hello World!");</small>'],
-    ['TextOut', 'TextOut(,,)', '<small><b>TextOut (' +
+        '<b>Example:</b>\n' +
+        '  LcdText(1, 0, <span foreground="green">LCD_LINE1</span>, "Hello World!");', 'Display'],
+    ['TextOut', 'TextOut(,,)', '<b>TextOut (' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>, ' +
         '<span foreground="brown">str</span>)</b>\n\n' +
@@ -89,9 +89,9 @@ evc_funcs = [
         '  <span foreground="brown">x</span>      The x value for the start of the number output.\n' +
         '  <span foreground="brown">y</span>      The text line number for the number output.\n' +
         '  <span foreground="brown">str</span>    The text to output to the LCD screen.\n' +
-        '<b>Examples:</b>\n' +
-        '  TextOut(0, <span foreground="green">LCD_LINE1</span>, "Hello World!");</small>'],
-    ['LcdTextf', 'LcdTextf(,,,,)', '<small><b>LcdTextf(' +
+        '<b>Example:</b>\n' +
+        '  TextOut(0, <span foreground="green">LCD_LINE1</span>, "Hello World!");', 'Display'],
+    ['LcdTextf', 'LcdTextf(,,,,)', '<b>LcdTextf(' +
         '<span foreground="brown">color</span>, ' +
         '<span foreground="brown">x</span>, <span foreground="brown">y</span>, ' +
         '<span foreground="brown">fmt</span>,...)</b>\n\n' +
@@ -101,11 +101,14 @@ evc_funcs = [
         '  <span foreground="brown">x</span>       The x value for the start of the number output.\n' +
         '  <span foreground="brown">y</span>       The text line number for the number output.\n' +
         '  <span foreground="brown">fmt</span>     The string to output to the LCD screen.\n' +
-        '<b>Examples:</b>\n' +
+        '<b>Example:</b>\n' +
         '  int x = 1234567890;\n' +
-        '  LcdTextf(1, 10, LCD_LINE7, "Variable: %d", x);</small>'],
-    ['LcdBmpFile', 'LcdBmpFile(,,,)', '<small>LcdBmpFile(color, x, y, name)</small'],
-    ['NumOut', 'NumOut(,,)', '<small><b>NumOut(' +
+        '  LcdTextf(1, 10, LCD_LINE7, "Variable: %d", x);', 'Display'],
+    ['LcdBmpFile', 'LcdBmpFile(,,,)', '<b>LcdBmpFile(' +
+        '<span foreground="brown">color</span>, ' +
+        '<span foreground="brown">x</span>, <span foreground="brown">y</span>, ' +
+        '<span foreground="brown">name)</b>\n\n', 'Display'],
+    ['NumOut', 'NumOut(,,)', '<b>NumOut(' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>,  <span foreground="brown">value</span>)</b>\n\n' +
         'Draw a numeric value on the screen at the ' +
@@ -115,86 +118,95 @@ evc_funcs = [
         '  <span foreground="brown">y</span>      The text line number for the number output.\n' +
         '  <span foreground="brown">value</span>  The value to output to the LCD screen. Any numeric\n' +
         '         type is supported.\n' +
-        '<b>Examples:</b>\n  NumOut(0, <span foreground="green">LCD_LINE1</span>, x);</small>'], 
-    ['LcdClean', 'LcdClean()', '<small><b>LcdClean()</b>\n\n' +
-        'Erase Display</small>'],
-    ['LcdSelectFont', 'LcdSelectFont()', '<small><b>LcdSelectFont(' +
+        '<b>Example:</b>\n  NumOut(0, <span foreground="green">LCD_LINE1</span>, x);', 'Display'], 
+    ['LcdClean', 'LcdClean()', '<b>LcdClean()</b>\n\n' +
+        'Erase Display', 'Display'],
+    ['LcdSelectFont', 'LcdSelectFont()', '<b>LcdSelectFont(' +
         '<span foreground="brown">FontType</span>)</b>\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">FontType</span>  0 normal\n' +
         '            1 small, bold\n' +
         '            2 large\n' +
-        '            3 tiny</small>'],
-    ['LcdClearDisplay', 'LcdClearDisplay()',''],
-    ['LcdIcon', 'LcdIcon(,,,,)', '<small><b>LcdIcon(color, x, y, IconType, IconNum)</b>\n\n' +
+        '            3 tiny', 'Display'],
+    ['LcdClearDisplay', 'LcdClearDisplay()','', 'Display'],
+    ['LcdIcon', 'LcdIcon(,,,,)', '<b>LcdIcon(color, x, y, IconType, IconNum)</b>\n\n' +
         'Draw a icon on the screen at the specified location\n' +
         '<b>Parameters:</b>\n' +
         'IconType   ICONTYPE_NORMAL 0   IconNum 0..34\n' +
         '           ICONTYPE_SMALL  1           0..21\n' +
         '           ICONTYPE_LARGE  2           0..27\n' +
         '           ICONTYPE_MENU   3           0..10\n' +
-        '           ICONTYPE_ARROW  4           0..2</small>'],
-    ['LcdUpdate', 'LcdUpdate()', ''],
-    ['LcdInit', 'LcdInit()', ''],
-    ['LcdExit', 'LcdExit()', ''],
-    ['LineOut', 'LineOut(,,,)', '<small><b>LineOut(' +
+        '           ICONTYPE_ARROW  4           0..2', 'Display'],
+    ['LcdUpdate', 'LcdUpdate()', '', 'Display'],
+    ['LcdInit', 'LcdInit()', '', 'General'],
+    ['LcdExit', 'LcdExit()', '', 'General'],
+    ['LineOut', 'LineOut(,,,)', '<b>LineOut(' +
         '<span foreground="brown">x1</span>, ' +
         '<span foreground="brown">y1</span>, ' +
         '<span foreground="brown">x2</span>, ' +
         '<span foreground="brown">y2</span>)</b>\n\n' +
         'This function lets you draw a line on the screen\n' +
-        'from x1, y1 to x2, y2.</small>'],
-    ['MotorBusy', 'MotorBusy()', '<small><b>MotorBusy(' +
+        'from x1, y1 to x2, y2.', 'Display'],
+    ['MotorBusy', 'MotorBusy()', '<b>MotorBusy(' +
         '<span foreground="brown">output</span>)</b>\n\n' +
-        'Returns 1 if motor is busys, 0 if not.\n\n' +
+        'Returns 1 if motor is busy, 0 if not.\n\n' +
         '<b>Example:</b>\n' +
-        '  while(MotorBusy(OUT_B));  // wait till motor finishes</small>'],
-    ['MotorRotationCount', 'MotorRotationCount()', '<small><b>MotorRotationCount(' +
+        ' while(MotorBusy(OUT_B));  // wait till motor finishes', 'Output'],
+    ['MotorRotationCount', 'MotorRotationCount()', '<b>MotorRotationCount(' +
         '<span foreground="brown">output</span>)</b>\n\n' +
         'This function enables the program to read the tacho count in degrees as\n' +
         'sensor input. This count is set to 0 at boot time, not at program start.\n' +
-        'See also: ResetRotationCount()</small>'],
-    ['MotorTachoCount', 'MotorTachoCount()', '<small><b>MotorTachoCount(' +
-        '<span foreground="brown"output</span>)</b>\n\n' +
+        'See also: ResetRotationCount()', 'Output'],
+    ['MotorTachoCount', 'MotorTachoCount()', '<b>MotorTachoCount(' +
+        '<span foreground="brown">output</span>)</b>\n\n' +
         'This function enables reading current output tacho count in degrees.\n' +
         'This count is set to 0 at program start.\n' +
-        'See also: ResetTachoCount()</small>'],
-    ['OutputInit', 'OutputInit()', ''],
-    ['OutputExit', 'OutputExit()', ''],
-    ['OnFwd', 'OnFwd(,)', '<small><b>OnFwd(' +
+        'See also: ResetTachoCount()', 'Output'],
+    ['OutputInit', 'OutputInit()', '', 'General'],
+    ['OutputExit', 'OutputExit()', '', 'General'],
+    ['OnFwd', 'OnFwd(,)', '<b>OnFwd(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
-        'Run motors forward with given power.\n' +
+        'Run motors forward with given power.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">outputs</span>   Desired output ports.\n' +
         '  <span foreground="brown">power</span>     Output power, 0 to 127.\n' +
         '            Can be negative to reverse direction.\n' +
         '<b>Example:</b>\n' +
-        '  OnFwd(OUT_BC, 127);</small>'],
-    ['OnFor', 'OnFor(,,)', '<small><b>OnFor(' +
+        ' OnFwd(OUT_BC, 127);', 'Output'],
+    ['OnFor', 'OnFor(,,)', '<b>OnFor(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">time</span>, <span foreground="brown">power</span>)</b>\n\n' +
-        'Run motors for given time with given power.\n' +
+        'Run motors for given time with given power.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">outputs</span>   Desired output ports.\n' + 
         '  <span foreground="brown">time</span>      Desired time in milliseconds.\n' +
         '  <span foreground="brown">power</span>     Output power, 0 to 127.\n' +
         '            Can be negative to reverse direction.\n' +
         '<b>Example:</b>\n' +
-        '  OnFor(OUT_BC, 1000, 50);</small>'],
-    ['OnFwdEx', 'OnFwdEx(,,)', '<small><b>OnFwdEx(' +
+        '  OnFor(OUT_BC, 1000, 50);', 'Output'],
+    ['OnFwdEx', 'OnFwdEx(,,)', '<b>OnFwdEx(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>, ' +
-        '<span foreground="brown">reset</span>)</b></small>'],
-    ['OnFwdReg', 'OnFwdReg(,)', '<small><b>OnFwdReg(' +
+        '<span foreground="brown">reset</span>)</b>\n\n' +
+        'Run motors forward and reset counters.\n\n'
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
+        '  <span foreground="brown">power</span>    Output power, 0 to 127.\n' +
+        '           Can be negative to reverse direction.\n' +
+        '  <span foreground="brown">reset</span>    constants to specify which of the three\n' +
+        '           tachometer counters should be reset.\n\n' +
+        '<b>Example:</b>\n' +
+        '  OnFwdEx(OUT_BC, 75, RESET_ALL);', 'Output'],
+    ['OnFwdReg', 'OnFwdReg(,)', '<b>OnFwdReg(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>)</b>\n\n' +
-        'Forwards with given speed</small>'],
-    ['OnFwdSync', 'OnFwdSync(,)', '<small><b>OnFwdSync(' +
+        'Forwards with given speed', 'Output'],
+    ['OnFwdSync', 'OnFwdSync(,)', '<b>OnFwdSync(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>)</b>\n\n' +
-        'Run two motors synchronized forwards with given speed.</small>'],
-    ['OnFwdSyncEx', 'OnFwdSyncEx(,,,)', '<small><b>OnFwdSyncEx(' +
+        'Run two motors synchronized forwards with given speed.', 'Output'],
+    ['OnFwdSyncEx', 'OnFwdSyncEx(,,,)', '<b>OnFwdSyncEx(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, <span foreground="brown">turn</span>, ' +
         '<span foreground="brown">reset</span>)</b>\n\n' +
@@ -217,40 +229,49 @@ evc_funcs = [
         '                                the block counter\n' +
         '           RESET_ALL            Reset all tachometer counters\n' +
         '<b>Example:</b>\n' +
-        '  OnFwdSyncEx(OUT_BC, 50, 30, RESET_NONE);</small>'],
-    ['OnForSync', 'OnForSync(,,)', '<small><b>OnForSync(' +
+        ' OnFwdSyncEx(OUT_BC, 50, 30, RESET_NONE);', 'Output'],
+    ['OnForSync', 'OnForSync(,,)', '<b>OnForSync(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">time</span>, ' +
-        '<span foreground="brown">speed</span>)</b></small>'],
-    ['OnForSyncEx', 'OnForSyncEx(,,,,)', '<small><b>OnForSyncEx(' +
+        '<span foreground="brown">speed</span>)</b>\n\n', 'Output'],
+    ['OnForSyncEx', 'OnForSyncEx(,,,,)', '<b>OnForSyncEx(' +
         '<span foreground="brown">Outputs</span>, ' +
         '<span foreground="brown">Time</span>, ' +
         '<span foreground="brown">Speed</span>, ' +
         '<span foreground="brown">Turn</span>, ' +
-        '<span foreground="brown">Stop</span>)</b></small>'],
-    ['OnRev', 'OnRev(,)', '<small><b>OnRev(' +
+        '<span foreground="brown">Stop</span>)</b>\n\n', 'Output'],
+    ['OnRev', 'OnRev(,)', '<b>OnRev(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
-        'Run motors backwards with given power.\n' +
+        'Run motors backwards with given power.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">outputs</span>   Desired output ports.\n' +
         '  <span foreground="brown">power</span>     Output power, 0 to 127.\n' +
         '            Can be negative to reverse direction.\n' +
         '<b>Example:</b>\n' +
-        '  OnRev(OUT_BC, 127);</small>'],
-    ['OnRevEx', 'OnRevEx(,,)', '<small><b>OnRevEx(' +
+        '  OnRev(OUT_BC, 127);', 'Output'],
+    ['OnRevEx', 'OnRevEx(,,)', '<b>OnRevEx(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>, ' +
-        '<span foreground="brown">reset</span>)</b></small>'],
-    ['OnRevReg', 'OnRevReg()', '<small><b>OnRevReg(' +
+        '<span foreground="brown">reset</span>)</b>\n\n' +
+        'Run motors backward and reset counters. \n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
+        '  <span foreground="brown">power</span>    Output power, 0 to 127.\n' +
+        '           Can be negative to reverse direction.\n' +
+        '  <span foreground="brown">reset</span>    constants to specify which of the three\n' +
+        '           tachometer counters should be reset.\n\n' +
+        '<b>Example:</b>\n' +
+        '  OnRevEx(OUT_BC, 75, RESET_ALL);', 'Output'],
+    ['OnRevReg', 'OnRevReg()', '<b>OnRevReg(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>)</b>\n\n' +
-        'Backwards with given speed</small>'],
-    ['OnRevSync', 'OnRevSync(,)', '<small><b>OnRevSync(' +
+        'Backwards with given speed', 'Output'],
+    ['OnRevSync', 'OnRevSync(,)', '<b>OnRevSync(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>)</b>\n\n' +
-        'Run two motors synchronized backwards with given speed.\n\n</small>'],
-    ['OnRevSyncEx', 'OnRevSyncEx(,,,)', '<small><b>OnRevSyncEx(' +
+        'Run two motors synchronized backwards with given speed.\n\n', 'Output'],
+    ['OnRevSyncEx', 'OnRevSyncEx(,,,)', '<b>OnRevSyncEx(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, <span foreground="brown">turn</span>, ' +
         '<span foreground="brown">reset</span>)</b>\n\n' +
@@ -274,27 +295,38 @@ evc_funcs = [
         '                                the block counter\n' +
         '           RESET_ALL            Reset all tachometer counters\n' +
         '<b>Example:</b>\n' +
-        '  OnRevSyncEx(OUT_BC, 50, 30, RESET_NONE);</small>'],
-    ['OutputPower', 'OutputPower(,)', '<small><b>OutputPower(' +
+        '  OnRevSyncEx(OUT_BC, 50, 30, RESET_NONE);', 'Output'],
+    ['OutputPower', 'OutputPower(,)', '<b>OutputPower(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
-        'This function enables setting the output percentage power on the output ports</small>'],
-    ['OutputSpeed', 'OutputSpeed(,)','<small><b>OutputSpeed(' +
+        'This function enables setting the output percentage power on the output ports', 'Output'],
+    ['OutputSpeed', 'OutputSpeed(,)','<b>OutputSpeed(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>)</b>\n\n' +
         'This function enables setting the output percentage speed on the output\n' +
         'ports. This modes automatically enables speed control, which means the\n' +
-        'system will automatically adjust the power to keep the specified speed.</small>'],
-    ['OutputStart', 'OutputStart()','<small><b>OutputStart(' +
+        'system will automatically adjust the power to keep the specified speed.', 'Output'],
+    ['OutputStart', 'OutputStart()','<b>OutputStart(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
-        'This function enables starting the specified output port.</small>'],
-    ['OutputStop', 'OutputStop(,)', '<small><b>OutputStop(' +
+        'This function enables starting the specified output port.', 'Output'],
+    ['OutputStop', 'OutputStop(,)', '<b>OutputStop(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">useBrake</span>)</b>\n\n' +
-        'This function enables stopping the specified output port.\n' +
+        'This function enables stopping the specified output port.\n\n' +
         '<b>Parameters</b>\n' +
-        '  <span foreground="brown">useBreak</span>   0: Float, 1: Break</small>'],
-    ['OutputStepSpeed','OutputStepSpeed(,,,,)','<small><b>OutputStepSpeed(' +
+        '  <span foreground="brown">useBreak</span>   0: Float, 1: Break', 'Output'],
+    ['OutputStepPower','OutputStepPower(,,,,)','<b>OutputStepPower(' +
+        '<span foreground="brown">outputs</span>, ' +
+        '<span foreground="brown">power</span>, ' +
+        '<span foreground="brown">step1</span>, ' +
+        '<span foreground="brown">step2</span>, ' +
+        '<span foreground="brown">step3</span>)</b>\n\n' +
+        'This function enables specifying a full motor power cycle in tacho counts.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">step1</span> specifyes the power ramp up periode in tacho counts, \n' +
+        '  <span foreground="brown">step2</span> specifyes the constant power period in tacho counts,\n' +
+        '  <span foreground="brown">step3</span> specifyes the power down period in tacho counts.', 'Output'],
+    ['OutputStepSpeed', 'OutputStepSpeed(,,,,)', '<b>OutputStepSpeed(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
         '<span foreground="brown">step1</span>, ' +
@@ -302,51 +334,71 @@ evc_funcs = [
         '<span foreground="brown">step3</span>)</b>\n\n' +
         'This function enables specifying a full motor power cycle in tacho counts.\n' +
         'The system will automatically adjust the power level to the motor to keep\n' +
-        'the specified output speed. Step1 specifyes the power ramp up periode in\n' +
-        'tacho counts, step2 specifyes the constant power period in tacho counts,\n' +
-        'step 3 specifyes the power down period in tacho counts.</small>'],
-    ['OutputStepSync', 'OutputStepSync(,,,)', '<small><b>OutputStepSync(' +
+        'the specified output speed.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">step1</span> specifyes the power ramp up periode in tacho counts,\n' +
+        '  <span foreground="brown">step2</span> specifyes the constant power period in tacho counts,\n' +
+        '  <span foreground="brown">step3</span> specifyes the power down period in tacho counts.', 'Output'],
+    ['OutputStepSync', 'OutputStepSync(,,,)', '<b>OutputStepSync(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
         '<span foreground="brown">turn</span>, ' +
         '<span foreground="brown">step</span>)</b>\n\n' +
-        'This function enables synchonizing two motors. Synchonization should be\n' +
+        'This function enables synchronizing two motors. Synchronization should be\n' +
         'used when motors should run as synchrone as possible, for example to\n' +
-        'archieve a model driving straight. Duration is specified in tacho counts.\n' +
+        'archieve a model driving straight. Duration is specified in tacho counts.\n\n' +
+        '<b>Parameters</b>\n' +
         '<span foreground="brown">turn</span>:  0  :  Motor will run with same power\n' +
         '       100:  One motor will run with specified power while the other will\n' +
         '             be close to zero\n' +
         '       200:  One motor will run with specified power forward while the other\n' +
         '             will run in the opposite direction at the same power level.\n' +
-        '<span foreground="brown">step</span>:  Tacho pulses, 0 = Infinite</small>'],
-    ['OutputTimePower', 'OutputTimePower(,,,,)', '<small><b>OutputTimePower(' +
+        '<span foreground="brown">step</span>:  Tacho pulses, 0 = Infinite', 'Output'],
+    ['OutputTimePower', 'OutputTimePower(,,,,)', '<b>OutputTimePower(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>, ' +
         '<span foreground="brown">time1</span>, ' +
         '<span foreground="brown">time2</span>, ' +
-        '<span foreground="brown">time3</span>)</b></small>'],
-    ['OutputTimeSpeed', 'OutputTimeSpeed(,,,,)', '<small><b>OutputTimeSpeed(' +
+        '<span foreground="brown">time3</span>)</b>\n\n' +
+        'This function enables specifying a full motor power cycle in time.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">time1</span> specifyes the power ramp up periode in milliseconds,\n' +
+        '  <span foreground="brown">time2</span> specifyes the constant power period in milliseconds,\n' +
+        '  <span foreground="brown">time3</span> specifyes the power down period in milliseconds.', 'Output'],
+    ['OutputTimeSpeed', 'OutputTimeSpeed(,,,,)', '<b>OutputTimePower(' +
         '<span foreground="brown">outputs</span>, ' +
-        '<span foreground="brown">speed</span>, ' +
+        '<span foreground="brown">power</span>, ' +
         '<span foreground="brown">time1</span>, ' +
         '<span foreground="brown">time2</span>, ' +
-        '<span foreground="brown">time3</span>)</b></small>'],
-    ['OutputTimeSync', 'OutputTimeSync(,,,)', '<small><b>OutputTimeSync('+ 
+        '<span foreground="brown">time3</span>)</b>\n\n' +
+        'This function enables specifying a full motor power cycle in time.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">time1</span> specifyes the power ramp up periode in milliseconds,\n' +
+        '  <span foreground="brown">time2</span> specifyes the constant power period in milliseconds,\n' +
+        '  <span foreground="brown">time3</span> specifyes the power down period in milliseconds.', 'Output'],
+    ['OutputTimeSync', 'OutputTimeSync(,,,)', '<b>OutputTimeSync('+ 
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
         '<span foreground="brown">turn</span>, ' +
-        '<span foreground="brown">time</span>)</b></small>'],
-    ['Off', 'Off()', '<small><b>Off(' +
+        '<span foreground="brown">time</span>)</b>\n\n' +
+        'This function enables synchronizing two motors. Synchronization should be\n' +
+        'used when motors should run as synchrone as possible, for example to\n' +
+        'archieve a model driving straight. Duration is specified in time.', 'Output'],
+    ['Off', 'Off()', '<b>Off(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
-        'Switch off motors</small>'],
-    ['PlayTone', 'PlayTone(,)', '<small><b>PlayTone(' +
+        'Turn the specified outputs off (with braking).\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n\n' +
+        '<b>Example:</b>\n' +
+        ' Off(OUT_A); // turn off output A', 'Output'],
+    ['PlayTone', 'PlayTone(,)', '<b>PlayTone(' +
         '<span foreground="brown">frequency</span>, ' +
-        '<span foreground="brown">duration</span>)</b></small>'],
-    ['PlayToneEx', 'PlayToneEx(,,)', '<small><b>PlayToneEx(' +
+        '<span foreground="brown">duration</span>)</b>\n\n', 'Sound'],
+    ['PlayToneEx', 'PlayToneEx(,,)', '<b>PlayToneEx(' +
         '<span foreground="brown">frequency</span>, ' +
         '<span foreground="brown">duration</span>, ' +
-        '<span foreground="brown">volume</span>)</b></small>'],
-    ['PlaySound', 'PlaySound()', '<small><b>PlaySound(' +
+        '<span foreground="brown">volume</span>)</b>\n\n', 'Sound'],
+    ['PlaySound', 'PlaySound()', '<b>PlaySound(' +
         '<span foreground="brown">aCode</span>)</b>\n\n' +
         'Play a sound that mimics the RCX system sounds using one of the RCXSoundConstants.\n\n' +
         '<b>Parameters</b>\n' +
@@ -357,14 +409,14 @@ evc_funcs = [
         '          SOUND_LOW_BEEP     error sound\n' +
         '          SOUND_FAST_UP      fast sweep up\n' +
         '<b>Example:</b>\n' +
-        '  PlaySound(SOUND_CLICK);</small>'],
-    ['PlayTones', 'PlayTones()', '<small><b>PlayTones(tones[])</b>\n\n' +
+        '  PlaySound(SOUND_CLICK);', 'Sound'],
+    ['PlayTones', 'PlayTones()', '<b>PlayTones(tones[])</b>\n\n' +
         'Play a series of tones contained in the tones array.  Each element in\n' +
         'the array is an instance of the Tone structure, containing a frequency\n' +
         'and a duration.\n' +
         '<b>Example:</b>\n' +
         '  unsigned short melody[7][2] = {' +
-        '    {TONE_D4, NOTE_QUARTER},   	// = 1000ms / 4\n' +
+        '    {TONE_D4, NOTE_QUARTER},       // = 1000ms / 4\n' +
         '    {TONE_E4, NOTE_EIGHT},\n' +
         '    {TONE_D4, NOTE_EIGHT},\n' +
         '    {TONE_F4, NOTE_EIGHT},\n' +
@@ -372,17 +424,18 @@ evc_funcs = [
         '    {TONE_E4, NOTE_EIGHT},\n' +
         '    {TONE_D4, 750}\n' +
         '  };\n' +
-        '  PlayTones(melody);</small>'],
-    ['PlayFile', 'PlayFile()', 'PlayFile(name)'],
-    ['PointOut', 'PointOut(,)', '<small><b>PointOut(x, y)</b></small>'],
-    ['ReadSensor', 'ReadSensor()', '<small><b>ReadSensor(' +
+        '  PlayTones(melody);', 'Sound'],
+    ['PlayFile', 'PlayFile()', '<b>PlayFile(<span foreground="brown">name</span>)</b>\n\n', 'Sound'],
+    ['PointOut', 'PointOut(,)', '<b>PointOut(' +
+        '<span foreground="brown">x</span>, <span foreground="brown">y</span>)</b>\n\n', 'Display'],
+    ['ReadSensor', 'ReadSensor()', '<b>ReadSensor(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Readout of the actual sensor data\n' +
-        '<b>Example</b>\n' +
+        '<b>Example:</b>\n' +
         '  int touched;\n' +
-        '  touched = ReadSensor(IN_1);</small>'],
-    ['ReadSensorData', 'ReadSensorData()', ''],
-    ['RectOut', 'RectOut(,,,)', '<small><b>RectOut(' +
+        '  touched = ReadSensor(IN_1);', 'Input'],
+    ['ReadSensorData', 'ReadSensorData()', '', 'Input'],
+    ['RectOut', 'RectOut(,,,)', '<b>RectOut(' +
         '<span foreground="brown">x</span>, ' 
         '<span foreground="brown">y</span>, ' +
         '<span foreground="brown">w</span>, ' +
@@ -395,30 +448,30 @@ evc_funcs = [
         '  <span foreground="brown">width</span>   The width of the rectangle.\n' +
         '  <span foreground="brown">height</span>  The height of the rectangle.\n' +
         '<b>Example:</b>\n' +
-        '  RectOut(5,5,168,118);</small>'],
-    ['ResetGyro', 'ResetGyro()', '<small><b>ResetGyro()</b>\n\n' +
+        '  RectOut(5,5,168,118);', 'Display'],
+    ['ResetGyro', 'ResetGyro()', '<b>ResetGyro()</b>\n\n' +
         'Reset the angle of the gyrosensor to 0 by changing modes back and forth.\n' +
-        'This will take 2 seconds and is NOT SURE to work as expected.\n' +
+        'This will take 2 seconds and is NOT SURE to work as expected.\n\n' +
         '<b>Example:</b>\n' +
-        '  ResetGyro();</small>'],
-    ['ResetTachoCount', 'ResetTachoCount()', '<small><b>ResetTachoCount(' +
+        '  ResetGyro();', 'Input'],
+    ['ResetTachoCount', 'ResetTachoCount()', '<b>ResetTachoCount(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
         'This function enables resetting the tacho count for the individual output\n' +
-        'ports. The tacho count is also resetted at program start.</small>'],
-    ['ResetRotationCount', 'ResetRotationCount()', '<small><b>ResetRotationCount(' +
+        'ports. The tacho count is also resetted at program start.', 'Input'],
+    ['ResetRotationCount', 'ResetRotationCount()', '<b>ResetRotationCount(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
         'This function enables the program to clear the tacho count used as sensor\n' +
-        'input. This rotation count is resetted at boot time, not at program start.</small>'],
-    ['ResetAllTachoCounts', 'ResetAllTachoCounts()', '<small><b>ResetAllTachoCounts(' +
+        'input. This rotation count is resetted at boot time, not at program start.', 'Input'],
+    ['ResetAllTachoCounts', 'ResetAllTachoCounts()', '<b>ResetAllTachoCounts(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
-        'Resets tacho and rotation count.</small>'],
-    ['RotateMotor', 'RotateMotor(,,)', '<small><b>RotateMotor(' +
+        'Resets tacho and rotation count.', 'Input'],
+    ['RotateMotor', 'RotateMotor(,,)', '<b>RotateMotor(' +
         '<span foreground="brown">output</span>, ' +
         '<span foreground="brown">speed</span>, ' +
         '<span foreground="brown">angle</span>)</b>\n\n' +
         'Rotate motor with given speed for a defined angle.\n' +
-        'Code stops till the angle is reached</small>'],
-    ['RotateMotorEx', 'RotateMotorEx(,,,,,)', '<small><b>RotateMotorEx(' +
+        'Code stops till the angle is reached', 'Output'],
+    ['RotateMotorEx', 'RotateMotorEx(,,,,,)', '<b>RotateMotorEx(' +
         '<span foreground="brown">outputs</span>, <span foreground="brown">speed</span>, ' +
         '<span foreground="brown">angle</span>, <span foreground="brown">turn</span>, ' +
         '<span foreground="brown">sync</span>, <span foreground="brown">stop</span>)</b>\n\n' +
@@ -440,78 +493,78 @@ evc_funcs = [
         '  <span foreground="brown">stop</span>     Specify whether the motor(s) should brake at the end\n' +
         '           of the rotation\n' +
         '<b>Example:</b>\n' +
-        '  RotateMotorEx(OUT_BC,50,720,200,TRUE,TRUE);   // drive pirouette</small>'],
-    ['RotateMotorNoWait', 'RotateMotorNoWait(,,)', '<small><b>RotateMotorNoWait(' +
+        '  RotateMotorEx(OUT_BC,50,720,200,TRUE,TRUE);   // drive pirouette', 'Output'],
+    ['RotateMotorNoWait', 'RotateMotorNoWait(,,)', '<b>RotateMotorNoWait(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
-        '<span foreground="brown">angle</span>)</b></small>'],
-    ['SetPower', 'SetPower(,)', '<small><b>SetPower(' +
+        '<span foreground="brown">angle</span>)</b>\n\n', 'Output'],
+    ['SetPower', 'SetPower(,)', '<b>SetPower(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
-        'Negative values forward, positive values backwards</small>'],
-    ['SetSensorTouch', 'SetSensorTouch()', '<small><b>SetSensorTouch(' +
+        'Negative values forward, positive values backwards', 'Output'],
+    ['SetSensorTouch', 'SetSensorTouch()', '<b>SetSensorTouch(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Touch Sensor to specified input port in TOUCH_PRESS mode.\n' +
         'Returns 0: not pressed, 1: pressed\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
-        '  SetSensorTouch(IN_1);</small>'],
-    ['SetSensorLight', 'SetSensorLight()', '<small><b>SetSensorLight(' +
+        '  SetSensorTouch(IN_1);', 'Input'],
+    ['SetSensorLight', 'SetSensorLight()', '<b>SetSensorLight(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Color Sensor to specified input port in COL_REFLECT mode.\n' +
         'Returns the reflected light intensities in % [0...100].\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
-        '  SetSensorLight(IN_1);</small>'],
-    ['SetSensorColor', 'SetSensorColor()', '<small><b>SetSensorColor(' +
-        '<span foreground="brown">input</span>)</b></small>'],
-    ['SetSensorUS', 'SetSensorUS()', '<small><b>SetSensorUS(' +
+        '  SetSensorLight(IN_1);', 'Input'],
+    ['SetSensorColor', 'SetSensorColor()', '<b>SetSensorColor(' +
+        '<span foreground="brown">input</span>)</b>\n\n', 'Input'],
+    ['SetSensorUS', 'SetSensorUS()', '<b>SetSensorUS(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Ultrasonic Sensor to specified input port in US_DIST_CM mode.\n' +
         'Returns distance in cm [1...250].\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
-        '  SetSensorUS(IN_1);</small>'],
-    ['SetSensorIR', 'SetSensorIR()', '<small><b>SetSensorIR(' +
+        '  SetSensorUS(IN_1);', 'Input'],
+    ['SetSensorIR', 'SetSensorIR()', '<b>SetSensorIR(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Infrared Sensor to specified input port in IR_PROX mode.\n' +
         'Returns distance in cm [1...250].\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
-        '  SetSensorIR(IN_1);</small>'],
-    ['SetSensorGyro', 'SetSensorGyro()', '<small><b>SetSensorGyro(' +
+        '  SetSensorIR(IN_1);', 'Input'],
+    ['SetSensorGyro', 'SetSensorGyro()', '<b>SetSensorGyro(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Gyro Sensor to specified input port in angle mode\n' +
         'The value read will return the angle in degrees from -32768 to 32767.\n\n' +
         '<b>Parameters</b>\n' +
-	    '  <span foreground="brown">input</span>  The Input port to configure.\n' +
-	    '<b>Example:</b>\n  SetSensorGyro(IN_1);</small>'],
-    ['SetSensorNXTTouch', 'SetSensorNXTTouch()', '<small><b>SetSensorNXTTouch(' +
+        '  <span foreground="brown">input</span>  The Input port to configure.\n' +
+        '<b>Example:</b>\n  SetSensorGyro(IN_1);', 'Input'],
+    ['SetSensorNXTTouch', 'SetSensorNXTTouch()', '<b>SetSensorNXTTouch(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Configure the sensor on the specified port as a NXT-touch sensor.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
-        '  SetSensorNXTTouch(IN_1);</small>'],
-    ['SetSensorNXTLight', 'SetSensorNXTLight()', '<small><b>SetSensorNXTLight(' +
+        '  SetSensorNXTTouch(IN_1);', 'Input'],
+    ['SetSensorNXTLight', 'SetSensorNXTLight()', '<b>SetSensorNXTLight(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Configure the sensor on the specified port as a NXT-light sensor.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
-        '  SetSensorNXTLight(IN_1);</small>'],
-    ['SetSensorNXTSound', 'SetSensorNXTSound()', '<small><b>SetSensorNXTSound(' +
+        '  SetSensorNXTLight(IN_1);', 'Input'],
+    ['SetSensorNXTSound', 'SetSensorNXTSound()', '<b>SetSensorNXTSound(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Configure the sensor on the specified port as a NXT-sound sensor.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
-        '  SetSensorNXTSound(IN_1);</small>'],
-    ['SetSensorMode', 'SetSensorMode()', '<small><b>SetSensorMode(' +
+        '  SetSensorNXTSound(IN_1);', 'Input'],
+    ['SetSensorMode', 'SetSensorMode()', '<b>SetSensorMode(' +
         '<span foreground="brown">input</span>, ' +
         '<span foreground="brown">mode</span>)</b>\n\n' +
         'Touch sensor TOUCH       Return of state (2 states possible)\n' +
@@ -530,19 +583,19 @@ evc_funcs = [
         '             GYRO_RATE  Return rotational speed in degrees per second\n' +
         'Infrared     IR_PROX    Return of distance in % (up to 70cm)\n' +
         '             IR_SEEK    Position of the Beacon\n' +
-        '             IR_REMOTE  Controlling EV3 with Beacon</small>'],
-    ['SetAllSensorMode', 'SetAllSensorMode()', 'obsolete'],
-    ['SetIRBeaconCH', 'SetIRBeaconCH()', ''],
-    ['SetLedPattern', 'SetLedPattern()', '<small><b>SetLedPattern(' +
-        '<span foreground="brown">pattern</span>)</b></small>'],
-    ['SetLedWarning', 'SetLedWarning()', '<small><b>SetLedWarning(' +
-        '<span foreground="brown">value</span>)</b></small>'],
-    ['Wait', 'Wait()', '<small><b>Wait(<span foreground="brown">time_ms</span>)</b>\n\n' +
+        '             IR_REMOTE  Controlling EV3 with Beacon', 'Input'],
+    ['SetAllSensorMode', 'SetAllSensorMode()', 'obsolete', 'Input'],
+    ['SetIRBeaconCH', 'SetIRBeaconCH()', '', 'Input'],
+    ['SetLedPattern', 'SetLedPattern()', '<b>SetLedPattern(' +
+        '<span foreground="brown">pattern</span>)</b>\n\n', 'Button'],
+    ['SetLedWarning', 'SetLedWarning()', '<b>SetLedWarning(' +
+        '<span foreground="brown">value</span>)</b>\n\n', 'Button'],
+    ['Wait', 'Wait()', '<b>Wait(<span foreground="brown">time_ms</span>)</b>\n\n' +
         'Make code sleep for specified amount of time.\n\n' + 
         '<b>Parameters</b>\n' +
-        '  <span foreground="brown">time_ms</span>   The number of milliseconds to sleep.\n' +
+        '  <span foreground="brown">time_ms</span>   The number of milliseconds to sleep.\n\n' +
         '<b>Example:</b>\n' +
-        '  Wait(1000);</small>']
+        ' Wait(1000);', 'General']
 ]
 evc_consts = [
     ['BTNEXIT', 'BTNEXIT'],
