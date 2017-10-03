@@ -306,6 +306,43 @@ class EV3():
         subdir = subdir.decode()
         return subdir
 
+    def del_file(self, path: str) -> None:
+        '''
+        deletes a file and empty directories
+        '''
+        cmd = b''.join([
+            DELETE_FILE,
+            str.encode(path) + b'\x00'  # Name
+        ])
+        self.send_system_cmd(cmd)
+
+    def del_dir(self, path: str) -> None:
+        '''deletes directorys which are not empty
+        DEL_SUBFOLDER
+        Arguments
+            (Data8) NAME – First character in folder name (Ex. “../prjs/”)
+            (Data8) ITEM – Sub folder index [1..ITEMS]
+        '''
+        parent = path.rsplit('/', 1)[0] + '/'
+        folder = path.rsplit('/', 1)[1]
+        num = self.get_folders(parent)
+        logger.debug('parentdir has {} folders'.format(num))
+        for i in range(num):
+            subdir = self.get_subfolder_name(parent, i)
+            if subdir == folder:
+                logger.debug('found subfolder {} num {}'.format(subdir, i))
+                found = True
+                cmd = b''.join([
+                    opFile,
+                    DEL_SUBFOLDER,
+                    LCS(parent),
+                    LCX(i+1)
+                ])
+                self.send_direct_cmd(cmd)
+                break
+        if not found:
+            raise DirCmdError("Directory {} doesn't exist".format(path))
+
     def play_sound(self, name):
         cmd = b''.join([
             opSound,
@@ -410,16 +447,6 @@ class EV3():
             if rest <= 0 and reply[6:7] != SYSTEM_END_OF_FILE:
                 raise SysCmdError("end of file not reached")
         return data
-
-    def del_file(self, path: str) -> None:
-        '''
-        deletes a file and empty directories
-        '''
-        cmd = b''.join([
-            DELETE_FILE,
-            str.encode(path) + b'\x00'  # Name
-        ])
-        self.send_system_cmd(cmd)
 
     def send_direct_cmd(self, ops: bytes, local_mem: int=0, global_mem: int=0) -> bytes:
 
@@ -627,6 +654,7 @@ SET_BRICKNAME               = b'\x08'
 opFile                      = b'\xC0'
 GET_FOLDERS                 = b'\x0D'
 GET_SUBFOLDER_NAME          = b'\x0F'
+DEL_SUBFOLDER               = b'\x18'
 opInput_Device              = b'\x99'
 GET_TYPEMODE                = b'\x05'
 opUI_Read                   = b'\x81'
