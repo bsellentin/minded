@@ -117,6 +117,59 @@ class MindEdApp(Gtk.Application):
                 except:
                     logger.warn('ev3-python failure')
 
+        # look for settings
+        srcdir = Path(__file__).parent
+        logger.debug('srcdir: %s' % srcdir)
+        if Path(srcdir, 'data').exists():
+            logger.warn('Running from source tree, using local settings')
+            schema_source = Gio.SettingsSchemaSource.new_from_directory(
+                str(Path(srcdir, 'data')),
+                Gio.SettingsSchemaSource.get_default(), False)
+            schema = Gio.SettingsSchemaSource.lookup(
+                schema_source, 'org.gge-em.MindEd', False)
+            logger.debug('Gsettings schema: %s' % schema.get_path())
+            if not schema:
+                raise Exception("Cannot get GSettings schema")
+            self.settings = Gio.Settings.new_full(schema, None, None)
+        else:
+            self.settings = Gio.Settings('org.gge-em.MindEd')
+
+        if not self.settings.get_string('nbcpath'):
+            if Path('/usr/bin/nbc').is_file():
+                self.settings.set_string('nbcpath', '/usr/bin/nbc')
+            elif Path('/usr/local/bin/nbc').is_file():
+                self.settings.set_string('nbcpath','/usr/local/bin/nbc')
+            else:
+                logger.warn('no nbc executable found')
+
+        if not self.settings.get_string('armgcc'):
+            if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():              # Debian-stretch
+                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-6')   # package gcc-6-arm-linux-gnueabi
+            elif Path('/usr/bin/arm-linux-gnueabi-gcc').is_file():              # Ubuntu xenial
+                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc')
+            else:
+                logger.warn('no arm-gcc executable found')
+        # check for development first
+        if Path('./EV3-API/API/libev3api.a').is_file():
+            self.settings.set_string('ldflags', ' -L' + str(Path('./EV3-API/API').resolve()))
+        # systemwide installation
+        elif not self.settings.get_string('ldflags'):
+            if Path('/usr/lib/c4ev3/libev3api.a').is_file():
+                self.settings.set_string('ldflags', ' -L/usr/lib/c4ev3')
+            else:
+                logger.warn('EV3 library not found')
+        if Path('./EV3-API/API').is_dir():
+            self.settings.set_string('incs', ' -I' + str(Path('./EV3-API/API').resolve()))
+        elif not self.settings.get_string('incs'):
+            if Path('/usr/lib/c4ev3').is_dir():
+                self.settings.set_string('incs', ' -I/usr/lib/c4ev3')
+            else:
+                logger.warn('EV3 headers not found')
+
+        if not self.settings.get_string('prjsstore'):
+            self.settings.set_string('prjsstore', '/home/root/lms2012/prjs')
+            #TODO: if SD-card, check avaibility
+
         if not self.win:
             logger.debug("NXT-lib: %s" % nxt.locator.__file__)
             self.win = MindEdAppWin(self.filelist, application=self )

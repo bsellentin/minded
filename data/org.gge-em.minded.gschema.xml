@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema path="/org/gge-em/MindEd/" id="org.gge-em.MindEd">
-    
     <key name="nbcpath" type="s">
       <default>""</default>
       <summary>Path to NBC-executable</summary>
@@ -37,7 +36,20 @@
         Set path to EV3 headers.
       </description>
     </key>
-    
+    <key name="developermode" type="b">
+      <default>false</default>
+      <summary>Use with care</summary>
+      <description>
+        Enables root mode
+      </description>
+    </key>
+    <key name="prjsstore" type="s">
+      <default>""</default>
+      <summary>folder for programs</summary>
+      <description>
+        wether internal or on SD-card
+      </description>
+    </key>
     <key name="fontname" type="s">
       <default>"Monospace 11"</default>
       <summary>Editor font</summary>
@@ -121,7 +133,7 @@
         Sets the width of tabulation in characters.
       </description>
     </key>
-   
+    
     
   </schema>
 </schemalist>

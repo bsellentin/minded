@@ -41,55 +41,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         #    print("%s : %s" % (key, kwargs[key]))
         self.application = kwargs["application"]
         logger.debug("Filelist : %s" % files)
-        
-        # look for settings
-        srcdir = Path(__file__).parents[1]
-        logger.debug('srcdir: %s' % srcdir)
-        if Path(srcdir, 'data').exists():
-            logger.warn('Running from source tree, using local settings')
-            schema_source = Gio.SettingsSchemaSource.new_from_directory(
-                str(Path(srcdir, 'data')),
-                Gio.SettingsSchemaSource.get_default(), False)
-            schema = Gio.SettingsSchemaSource.lookup(
-                schema_source, 'org.gge-em.MindEd', False)
-            logger.debug('Gsettings schema: %s' % schema.get_path())
-            if not schema:
-                raise Exception("Cannot get GSettings schema")
-            self.settings = Gio.Settings.new_full(schema, None, None)
-        else:
-            self.settings = Gio.Settings('org.gge-em.MindEd')
-
-        if not self.settings.get_string('nbcpath'):
-            if Path('/usr/bin/nbc').is_file():
-                self.settings.set_string('nbcpath', '/usr/bin/nbc')
-            elif Path('/usr/local/bin/nbc').is_file():
-                self.settings.set_string('nbcpath','/usr/local/bin/nbc')
-            else:
-                logger.warn('no nbc executable found')
-
-        if not self.settings.get_string('armgcc'):
-            if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():              # Debian-stretch
-                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-6')   # package gcc-6-arm-linux-gnueabi
-            elif Path('/usr/bin/arm-linux-gnueabi-gcc').is_file():              # Ubuntu xenial
-                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc')
-            else:
-                logger.warn('no arm-gcc executable found')
-        # check for development first
-        if Path('./EV3-API/API/libev3api.a').is_file():
-            self.settings.set_string('ldflags', ' -L' + str(Path('./EV3-API/API').resolve()))
-        # systemwide installation
-        elif not self.settings.get_string('ldflags'):
-            if Path('/usr/lib/c4ev3/libev3api.a').is_file():
-                self.settings.set_string('ldflags', ' -L/usr/lib/c4ev3')
-            else:
-                logger.warn('EV3 library not found')
-        if Path('./EV3-API/API').is_dir():
-            self.settings.set_string('incs', ' -I' + str(Path('./EV3-API/API').resolve()))
-        elif not self.settings.get_string('incs'):
-            if Path('/usr/lib/c4ev3').is_dir():
-                self.settings.set_string('incs', ' -I/usr/lib/c4ev3')
-            else:
-                logger.warn('EV3 headers not found')
 
         builder = Gtk.Builder()
         GObject.type_register(GtkSource.View)
@@ -332,7 +283,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         logger.debug('building starter for: %s' % document.get_filename())
 
         prjname = Path(document.get_shortname()).stem
-        prjsstore = '/home/root/lms2012/prjs'
+        prjsstore = self.application.settings.get_string('prjsstore')
         prjpath = str(Path(prjsstore, prjname, prjname))
         logger.debug('EV3-path: %s' % prjpath)
 
@@ -372,8 +323,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         compile and upload file to NXT brick
         '''
-        nbc_exec = self.settings.get_string('nbcpath')
-        enhancedfw = self.settings.get_boolean('enhancedfw')
+        nbc_exec = self.application.settings.get_string('nbcpath')
+        enhancedfw = self.application.settings.get_boolean('enhancedfw')
         if enhancedfw:
             nbc_exec = nbc_exec + ' -EF'
         logger.debug('use enhancedfw: %s' % enhancedfw)
@@ -430,10 +381,10 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             outfile = str(Path(document.get_filepath(), Path(document.get_shortname()).stem))
             logger.debug('executable to write: %s' % outfile)
 
-            arm_exec = self.settings.get_string('armgcc')
+            arm_exec = self.application.settings.get_string('armgcc')
 
-            ldflags = self.settings.get_string('ldflags')
-            incs = self.settings.get_string('incs')
+            ldflags = self.application.settings.get_string('ldflags')
+            incs = self.application.settings.get_string('incs')
 
             gcc_exec = arm_exec + ldflags + incs + ' -Os'
             gcc_opts = (' -o %s -x c %s -lev3api' % (shlex.quote(outfile), shlex.quote(infile)))
@@ -481,7 +432,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             if brick.usb_ready():
 
                 prjname = infile.stem
-                prjsstore = '/home/root/lms2012/prjs'
+                prjsstore = self.application.settings.get_string('prjsstore')
                 outfile = str(Path(prjsstore, prjname, infile.name))
 
                 data = infile.read_bytes()
