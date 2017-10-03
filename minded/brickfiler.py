@@ -82,7 +82,10 @@ def write_files(brick, file_uris):
     return wnames
 
 class BrickListing(Gtk.ListStore):
-
+    '''
+    get files and directories of given path from brick and
+    put them into a liststore
+    '''
     def __init__(self, brick = None, brick_type = None, path = None):
         Gtk.ListStore.__init__(self, str, Pixbuf, str, bool)
         #self.set_sort_column_id(0, 0)
@@ -265,6 +268,9 @@ class FileInfoBar(Gtk.Frame):
         return "%.*f %s"%(precision, size, suffixes[suffixIndex])
 
 class BrickFiler(object):
+    '''
+    file explorer for NXT- and EV3-bricks
+    '''
     TARGETS = []
 
     def __init__(self, application, *args, **kwargs):
@@ -306,7 +312,10 @@ class BrickFiler(object):
             hpaned.add1(self.make_brickfile_panel(str(self.app.nxtbrick.sock),
                                                   self.nxt_model))
         elif self.brick_type == 'ev3':
-            self.current_ev3_directory = '/home/root/lms2012/'
+            self.current_ev3_directory = self.app.settings.get_string('prjsstore')
+            #self.current_ev3_directory = self.window.get_application().settings.get_string('prjsstore')
+            #AttributeError: 'MindEdApp' object has no attribute 'settings'
+            #self.current_ev3_directory = '/home/root/lms2012/prjs'
             self.ev3_model = BrickListing(self.app.ev3brick, self.brick_type,
                                           self.current_ev3_directory)
             hpaned.add1(self.make_brickfile_panel('EV3', self.ev3_model))
@@ -388,16 +397,16 @@ class BrickFiler(object):
         v = Gtk.VBox()
         #v.pack_start(Gtk.Label(name), False, False, 0)
         tool_bar = Gtk.Grid()
-        button = Gtk.Button()
+        self.delButton = Gtk.Button()
         icon = Gio.ThemedIcon(name="user-trash-symbolic")
         image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
-        button.add(image)
-        button.set_tooltip_text("delete")
-        button.connect("clicked", self.on_delete_clicked)
-        button.drag_dest_set(Gtk.DestDefaults.ALL, [], DRAG_ACTION)
-        button.drag_dest_add_text_targets()
-        button.connect("drag_data_received", self.drag_data_received_nxtdeldata)
-        tool_bar.attach(button, 0, 0, 1, 1)
+        self.delButton.add(image)
+        self.delButton.set_tooltip_text("delete")
+        self.delButton.connect("clicked", self.on_delete_clicked)
+        self.delButton.drag_dest_set(Gtk.DestDefaults.ALL, [], DRAG_ACTION)
+        self.delButton.drag_dest_add_text_targets()
+        self.delButton.connect("drag_data_received", self.drag_data_received_nxtdeldata)
+        tool_bar.attach(self.delButton, 0, 0, 1, 1)
 
         if self.brick_type == 'ev3':
             self.EV3upButton = Gtk.Button()
@@ -447,13 +456,17 @@ class BrickFiler(object):
         model = widget.get_model()
         path = model[item][COLUMN_PATH]
         isDir = model[item][COLUMN_ISDIR]
-
-        if self.brick_type == 'ev3':
+        logger.debug('double click on {}, isDir {}'.format(path, isDir))
+        if self.brick_type == 'ev3' and isDir:
             self.current_ev3_directory = str(Path(self.current_ev3_directory, path))
             self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
             self.ev3location.set_text(self.current_ev3_directory)
             if not self.EV3upButton.get_sensitive():
                 self.EV3upButton.set_sensitive(True)
+            if self.current_ev3_directory.startswith('/home/root/lms2012/prjs'):
+                if not self.delButton.get_sensitive():
+                    self.delButton.set_sensitive(True)
+        # NXT has no directories
 
     def on_host_selection_changed(self, widget):
         try:
@@ -488,6 +501,9 @@ class BrickFiler(object):
         sensitive = True
         if self.current_ev3_directory == "/": sensitive = False
         self.EV3upButton.set_sensitive(sensitive)
+        if not self.current_ev3_directory.startswith('/home/root/lms2012/prjs'):
+            if self.delButton.get_sensitive():
+                self.delButton.set_sensitive(False)
 
     def drag_data_get_data(self, iconview, context, selection, target_id,
                            etime):
@@ -552,7 +568,8 @@ class BrickFiler(object):
                         #gtk.Label("What shall I do with this?"), False, False)
                         context.finish(False, False, etime)
                         return
-            if self.brick_type == 'ev3':
+            if (self.brick_type == 'ev3' and
+                self.current_ev3_directory.startswith('/home/root/lms2012/prjs')):
                 for f in file_uris:
                     # TODO: which files will we accept?
                     file_path = urlparse(unquote(f))
@@ -596,17 +613,22 @@ class BrickFiler(object):
         '''delete button as drag target'''
         file_name = selection.get_text()
         logger.debug('selected to delete: %s' % file_name)
-        if context.get_actions() == DRAG_ACTION:
-            try:
-                self.app.nxtbrick.delete(file_name)
-                logger.debug('deleted: %s' % file_name)
-                self.nxt_model.populate(self.app.nxtbrick, '*.*')
-                context.finish(True, False, etime)
-                return
-            except:
-                logger.debug('File not deleted')
-        else:
-            context.finish(False, False, etime)
+
+        if self.brick_type == 'nxt':
+            if context.get_actions() == DRAG_ACTION:
+                try:
+                    self.app.nxtbrick.delete(file_name)
+                    logger.debug('deleted: %s' % file_name)
+                    self.nxt_model.populate(self.app.nxtbrick, '*.*')
+                    context.finish(True, False, etime)
+                    return
+                except:
+                    logger.debug('File not deleted')
+            else:
+                context.finish(False, False, etime)
+
+        if self.brick_type == 'ev3':
+            logger.debug('Drag del EV3 TODO')
 
     def on_delete_clicked(self, button):
         ''' delete file on brick'''
@@ -628,20 +650,30 @@ class BrickFiler(object):
                     logger.debug('No file selected')
 
         if self.brick_type == 'ev3':
-            if len(self.ev3_model) != 0:
+            if len(self.ev3_model) != 0 and self.brick_view.get_selected_items():
                 iter_path = self.brick_view.get_selected_items()[0]
                 model = self.brick_view.get_model()
                 selected_iter = model.get_iter(iter_path)
                 if selected_iter is not None:
                     file_name = str(Path(self.current_ev3_directory,
-                                         model.get_value(selected_iter, 0)))
-                    logger.debug('selected to delete: %s' % file_name)
-                    try:
-                        self.app.ev3brick.del_file(file_name)
-                        logger.debug('deleted: %s' % file_name)
-                        model.remove(selected_iter)
-                    except:
-                        logger.debug('File not deleted')
+                                         model.get_value(selected_iter, COLUMN_PATH)))
+                    logger.debug('selected to delete: {}'.format(file_name))
+                    if model.get_value(selected_iter, COLUMN_ISDIR):
+                        # is Dir
+                        try:
+                            self.app.ev3brick.del_dir(file_name)
+                            logger.debug('Directory {} deleted'.format(file_name))
+                            model.remove(selected_iter)
+                        except:
+                            logger.debug('Directory not deleted')
+                    else:
+                        # is File
+                        try:
+                            self.app.ev3brick.del_file(file_name)
+                            logger.debug('deleted: %s' % file_name)
+                            model.remove(selected_iter)
+                        except:
+                            logger.debug('File not deleted')
                 else:
                     logger.debug('No file selected')
 
