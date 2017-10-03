@@ -19,7 +19,7 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
 
     def __init__(self, language):
         GObject.GObject.__init__(self)
-        
+
         if language:
             logger.debug('Completion for language: %s', language.get_name())
             if language.get_name() == 'NXC':
@@ -34,8 +34,8 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             logger.debug('No language - no completion')
             self.funcs = []
             self.consts = []
-            self.lang = ''   
-            
+            self.lang = ''
+
     def do_get_name(self):
         return ('%s' % self.lang)
 
@@ -66,18 +66,18 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
                 for func in self.funcs:
                     if func[0].startswith(left_text):
                         proposals.append(GtkSource.CompletionItem.new(
-                            func[0], func[1], None, func[2]))
+                            func[0], func[1], None, '<small>'+func[2]+'</small>'))
                 for const in self.consts:
                     if const[0].startswith(left_text):
                         proposals.append(GtkSource.CompletionItem.new(
                             const[0], const[1], None, None))
                 context.add_proposals(self, proposals, True)
             return
-    
+
     def do_activate_proposal(self, completion_item, text_iter):
         logger.debug('activate_proposal: %s', completion_item.get_text())
         buf = text_iter.get_buffer()
-                
+
         buf.begin_user_action()
         end_iter = text_iter.copy()
         if text_iter.backward_word_start():
@@ -94,6 +94,6 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
                 match_start.forward_char()
                 buf.place_cursor(match_start)
         buf.end_user_action()
-        
+
         return True
 
