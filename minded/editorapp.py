@@ -59,7 +59,9 @@ class MindEdDocument:
         self.update_documenturl()
 
     def update_documenturl(self):
-        self.documenturl = Path(self.filepath, self.shortname).as_uri() 
+        self.documenturl = Path(self.filepath, self.shortname).as_uri()
+
+
 
 class EditorApp(Gtk.ScrolledWindow):
 
@@ -69,7 +71,7 @@ class EditorApp(Gtk.ScrolledWindow):
 
         # look for settings
         srcdir = Path(__file__).parents[1]
-        logger.debug('SettingsDir: %s' % srcdir)
+        logger.debug('SettingsDir: {}'.format(srcdir))
         if Path(srcdir, 'data').exists():
             # this for developping only
             schema_source = Gio.SettingsSchemaSource.new_from_directory(
@@ -77,7 +79,7 @@ class EditorApp(Gtk.ScrolledWindow):
                 Gio.SettingsSchemaSource.get_default(), False)
             schema = Gio.SettingsSchemaSource.lookup(
                 schema_source, 'org.gge-em.MindEd', False)
-            logger.debug('Gsettings schema: %s' % schema.get_path())
+            logger.debug('Gsettings schema: {}'.format(schema.get_path()))
             if not schema:
                 raise Exception("Cannot get GSettings schema")
             self.settings = Gio.Settings.new_full(schema, None, None)
@@ -89,6 +91,8 @@ class EditorApp(Gtk.ScrolledWindow):
         self.set_vexpand(True)
 
         self.lm = GtkSource.LanguageManager.new()
+        self.this_lang = ()
+
         self.buffer = GtkSource.Buffer()
         self.codeview = GtkSource.View().new_with_buffer(self.buffer)
 
@@ -246,23 +250,25 @@ class EditorApp(Gtk.ScrolledWindow):
     def get_buffer(self):
         return self.codeview.get_buffer()
 
-    # bracket completion   
+    # bracket completion
     def on_key_press(self, view, event):
         handled = False
         doc = view.get_buffer()
         ch = self.to_char(event.keyval)
+
+        # auto_close_paren
         if self.is_opening_paren(ch):
-            logger.debug('opening_paren %s', ch)
+            logger.debug('opening_paren {}'.format(ch))
             if self.should_auto_close_paren(doc):
                 handled = self.auto_close_paren(doc, ch)
-
+        # autoindent in {}
         if not handled and event.keyval == Gdk.KEY_Return:
             iter1 = doc.get_iter_at_mark(doc.get_insert())
             rb = iter1.get_char()
             iter1.backward_char()
             lb = iter1.get_char()
             if lb == '{' and rb == '}':
-                logger.debug('Insert new line and indent %s',view.get_tab_width())
+                logger.debug('Insert new line and indent {}'.format(view.get_tab_width()))
                 text_to_insert = '\n' + self.get_current_line_indent(doc)
                 doc.begin_user_action()
                 mark = doc.get_insert()
@@ -276,10 +282,19 @@ class EditorApp(Gtk.ScrolledWindow):
                 doc.place_cursor(iter2)
                 doc.end_user_action()
                 handled = True
+        # don't insert comma if left of one, instead move right
+        if not handled and ch == ',':
+            logger.debug('KeyEvent: {}'.format(ch))
+            iter1 = doc.get_iter_at_mark(doc.get_insert())
+            rb = iter1.get_char()
+            if rb == ',':
+                iter1.forward_char()
+                doc.place_cursor(iter1)
+                handled = True
         return handled
 
     def to_char(self, keyval_or_char):
-        """Convert a event keyval or character to a character"""
+        '''Convert a event keyval or character to a character'''
         if isinstance(keyval_or_char, str):
             return keyval_or_char
         return chr(keyval_or_char) if 0 < keyval_or_char < 128 else None
@@ -305,7 +320,7 @@ class EditorApp(Gtk.ScrolledWindow):
         iter1.backward_char()
         doc.place_cursor(iter1)
         doc.end_user_action()
-        logger.debug('autoclosed by %s', closing_paren)
+        logger.debug('autoclosed by {}'.format(closing_paren))
         return True
 
     def get_matching_closing_paren(self,opener):
@@ -321,12 +336,12 @@ class EditorApp(Gtk.ScrolledWindow):
         it_end.forward_to_line_end()
         indentation = []
         while it_start.compare(it_end) < 0:
-          char = it_start.get_char()
-          if char == ' ' or char == '\t':
-            indentation.append(char)
-          else:
-            break
-          it_start.forward_char()
+            char = it_start.get_char()
+            if char == ' ' or char == '\t':
+                indentation.append(char)
+            else:
+                break
+            it_start.forward_char()
         return ''.join(indentation)
 
     def add_brackets(self):
@@ -338,6 +353,6 @@ class EditorApp(Gtk.ScrolledWindow):
             parens[1].append(brackets[i+1])
         self.opening_parens = parens[0]
         self.closing_parens = parens[1]
-        logger.debug('opening %s', self.opening_parens)
-        logger.debug('closing %s', self.closing_parens)
+        logger.debug('opening {}'.format(self.opening_parens))
+        logger.debug('closing {}'.format(self.closing_parens))
     # end bracket completion
