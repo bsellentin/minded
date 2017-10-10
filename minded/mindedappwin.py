@@ -452,19 +452,15 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                     if afile['name'] == infile.name:
                         if afile['md5'] == hashlib.md5(data).hexdigest().upper():
                             success = 1
-                            #msg = self.compilerview.get_buffer()
-                            #enditer = msg.get_end_iter()
                             enditer = buf.get_end_iter()
-                            msg.insert(enditer, ('Upload of %s successfull\n' % afile['name']))
+                            buf.insert(enditer, ('Upload of %s successfull\n' % afile['name']))
                 return success
             else:
-                #msg = self.compilerview.get_buffer()
-                #end_iter = msg.get_end_iter()
                 end_iter = buf.get_end_iter()
-                red = msg.create_tag(None, foreground = 'red', background='yellow')
-                msg.insert_with_tags(end_iter, 'ERROR:', red)
-                end_iter = msg.get_end_iter()
-                msg.insert(end_iter, (' Failed to upload %s, try again\n' % filename))
+                red = buf.create_tag(None, foreground = 'red', background='yellow')
+                buf.insert_with_tags(end_iter, 'ERROR:', red)
+                end_iter = buf.get_end_iter()
+                buf.insert(end_iter, (' Failed to upload %s, try again\n' % filename))
                 return 0
 
     def on_btn_menu_clicked(self, button):
