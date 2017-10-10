@@ -2,7 +2,15 @@
 evc_funcs = [
     ['InitEV3', 'InitEV3()', '<b>InitEV3()</b>\n\n' +
         'Initialization of all EV3-Functions.\n' +
-        'Should be the first command in main.', 'General'],
+        'Should be the first command in main.\n\n' +
+        '<b>Example:</b>\n' +
+        '  #include "ev3.h"\n' +
+        '  int main(){\n' +
+        '      InitEV3();\n' +
+        '      // do something\n' +
+        '      FreeEV3();\n' +
+        '      return 0;\n' +
+        '  }', 'General'],
     ['CloseEV3', 'CloseEV3()', '', 'General'],
     ['ExitEV3', '', 'ExitEV3()', 'General'],
     ['FreeEV3', 'FreeEV3()', '<b>FreeEV3()</b>\n\n' +
@@ -35,7 +43,7 @@ evc_funcs = [
         '  while(ButtonIsUp(BTNCENTER)){ //do something }', 'Button'],
     ['ButtonWaitForAnyPress', 'ButtonWaitForAnyPress()', 
         '<b>ButtonWaitForAnyPress(<span foreground="brown">time</span>)</b>\n\n' +
-        'Waiting for button press for given time.\n\n' +
+        'Waiting for any button press for given time.\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">time</span>  Time in milliseconds\n' +
         '<b>Example:</b>\n' +
@@ -63,8 +71,15 @@ evc_funcs = [
     ['CircleOut', 'CircleOut(,,)', '<b>CircleOut(' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>, ' +
-        '<span foreground="brown">r</span>)</b>', 'Display'],
-    ['EllipseOut','EllipseOut(,,,)','<b>EllipseOut(x, y, radiusX, radiusY)</b>\n\n' +
+        '<span foreground="brown">radius</span>)</b>\n\n' +
+        'This function lets you draw a circle on the screen\n' +
+        'with its center at the specified x and y location,\n' +
+        'using the specified radius.', 'Display'],
+    ['EllipseOut','EllipseOut(,,,)','<b>EllipseOut(' +
+        '<span foreground="brown">x</span>, ' +
+        '<span foreground="brown">y</span>, ' +
+        '<span foreground="brown">radiusX</span>, ' +
+        '<span foreground="brown">radiusY</span>)</b>\n\n' +
         'This function lets you draw an ellipse on the screen\n' +
         'with its center at the specified x and y location,\n' +
         'using the specified radii.', 'Display'],
@@ -430,9 +445,12 @@ evc_funcs = [
         '<span foreground="brown">x</span>, <span foreground="brown">y</span>)</b>\n\n', 'Display'],
     ['ReadSensor', 'ReadSensor()', '<b>ReadSensor(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
-        'Readout of the actual sensor data\n' +
+        'Readout of the actual sensor data.\n\n' +
+        '<b>Parameters:</b>\n' +
+        '  <span foreground="brown">input</span>        The port to read from.\n' +
         '<b>Example:</b>\n' +
         '  int touched;\n' +
+        '  SetSensorTouch(IN_1);\n'
         '  touched = ReadSensor(IN_1);', 'Input'],
     ['ReadSensorData', 'ReadSensorData()', '', 'Input'],
     ['RectOut', 'RectOut(,,,)', '<b>RectOut(' +
@@ -450,18 +468,21 @@ evc_funcs = [
         '<b>Example:</b>\n' +
         '  RectOut(5,5,168,118);', 'Display'],
     ['ResetGyro', 'ResetGyro()', '<b>ResetGyro()</b>\n\n' +
-        'Reset the angle of the gyrosensor to 0 by changing modes back and forth.\n' +
-        'This will take 2 seconds and is NOT SURE to work as expected.\n\n' +
+        'Reset the angle of the gyrosensor to 0 by changing modes back\n' +
+        'and forth. This will take 2 seconds and is NOT SURE to work\n' +
+        'as expected.\n\n' +
         '<b>Example:</b>\n' +
         '  ResetGyro();', 'Input'],
     ['ResetTachoCount', 'ResetTachoCount()', '<b>ResetTachoCount(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
-        'This function enables resetting the tacho count for the individual output\n' +
-        'ports. The tacho count is also resetted at program start.', 'Input'],
+        'This function enables resetting the tacho count for the\n' +
+        'individual output ports. The tacho count is also resetted\n' +
+        'at program start.\n', 'Input'],
     ['ResetRotationCount', 'ResetRotationCount()', '<b>ResetRotationCount(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
-        'This function enables the program to clear the tacho count used as sensor\n' +
-        'input. This rotation count is resetted at boot time, not at program start.', 'Input'],
+        'This function enables the program to clear the tacho count\n' +
+        'used as sensor input. This rotation count is resetted at\n' +
+        'boot time, not at program start.', 'Input'],
     ['ResetAllTachoCounts', 'ResetAllTachoCounts()', '<b>ResetAllTachoCounts(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
         'Resets tacho and rotation count.', 'Input'],
@@ -504,7 +525,8 @@ evc_funcs = [
         'Negative values forward, positive values backwards', 'Output'],
     ['SetSensorTouch', 'SetSensorTouch()', '<b>SetSensorTouch(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
-        'Allocate EV3 Touch Sensor to specified input port in TOUCH_PRESS mode.\n' +
+        'Allocate EV3 Touch Sensor to specified input port\n' +
+        'in TOUCH_PRESS mode.\n' +
         'Returns 0: not pressed, 1: pressed\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
@@ -512,7 +534,8 @@ evc_funcs = [
         '  SetSensorTouch(IN_1);', 'Input'],
     ['SetSensorLight', 'SetSensorLight()', '<b>SetSensorLight(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
-        'Allocate EV3 Color Sensor to specified input port in COL_REFLECT mode.\n' +
+        'Allocate EV3 Color Sensor to specified input port\n' +
+        'in COL_REFLECT mode.\n' +
         'Returns the reflected light intensities in % [0...100].\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
@@ -522,7 +545,8 @@ evc_funcs = [
         '<span foreground="brown">input</span>)</b>\n\n', 'Input'],
     ['SetSensorUS', 'SetSensorUS()', '<b>SetSensorUS(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
-        'Allocate EV3 Ultrasonic Sensor to specified input port in US_DIST_CM mode.\n' +
+        'Allocate EV3 Ultrasonic Sensor to specified input port\n' +
+        'in US_DIST_CM mode.\n' +
         'Returns distance in cm [1...250].\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
@@ -530,7 +554,8 @@ evc_funcs = [
         '  SetSensorUS(IN_1);', 'Input'],
     ['SetSensorIR', 'SetSensorIR()', '<b>SetSensorIR(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
-        'Allocate EV3 Infrared Sensor to specified input port in IR_PROX mode.\n' +
+        'Allocate EV3 Infrared Sensor to specified input port\n' +
+        'in IR_PROX mode.\n' +
         'Returns distance in cm [1...250].\n\n' +
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">input</span>        The port to configure.\n' +
