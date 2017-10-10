@@ -448,13 +448,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="btn_nxtinfo">
+          <object class="GtkButton" id="btn_brickinfo">
             <property name="label" translatable="yes">Brick-Info</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="on_btn_nxtinfo_clicked" swapped="no"/>
+            <signal name="clicked" handler="on_btn_brickinfo_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -463,13 +463,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="btn_nxtfiler">
+          <object class="GtkButton" id="btn_brickfiler">
             <property name="label" translatable="yes">Brick-Filer</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
-            <signal name="clicked" handler="on_btn_nxtfiler_clicked" swapped="no"/>
+            <signal name="clicked" handler="on_btn_brickfiler_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -555,6 +555,23 @@
             <property name="position">2</property>
           </packing>
         </child>
+
+        <child>
+          <object class="GtkButton" id="btn_apiviewer">
+            <property name="label" translatable="yes">API Browser</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <signal name="clicked" handler="on_btn_apiviewer_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+
         <child>
           <object class="GtkButton" id="btn_about">
             <property name="label" translatable="yes">About</property>
@@ -567,7 +584,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
