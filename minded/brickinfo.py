@@ -12,13 +12,13 @@ logger = logging.getLogger(__name__)
 import nxt.locator
 import nxt.brick
 
-class NXTInfo(object):
+class BrickInfo(object):
 
     def __init__(self, application, *args, **kwargs):
 
         self.app = application
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/gge-em/MindEd/nxtinfo.ui')
+        builder.add_from_resource('/org/gge-em/MindEd/brickinfo.ui')
         builder.connect_signals(self)
         self.window = builder.get_object("toolwin")
         self.window.set_application(application)
