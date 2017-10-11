@@ -109,6 +109,8 @@ class EditorApp(Gtk.ScrolledWindow):
                             Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('tabwidth', self.codeview, 'tab-width',
                             Gio.SettingsBindFlags.DEFAULT)
+        self.settings.bind('spacesinsteadtab', self.codeview, 'insert-spaces-instead-of-tabs',
+                            Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('highlightcurrentline', self.codeview, 'highlight-current-line',
                             Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('highlightmatchingbrackets', self.buffer, 'highlight-matching-brackets',
