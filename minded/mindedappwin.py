@@ -65,6 +65,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.btn_print.set_sensitive(False)
         self.brick_status = builder.get_object('brick_status')
         self.brick_status_id = self.brick_status.get_context_id('BrickStatus')
+        self.cursor_location = builder.get_object('type_status')
+        self.cursor_location_id = self.cursor_location.get_context_id('ColLn')
         self.btn_language = builder.get_object('btn_language')
         self.btn_language.set_sensitive(False)
         self.language_label = builder.get_object('language_label')
@@ -119,7 +121,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
             editor = self.notebook.get_nth_page(pagecount)
             if editor.get_buffer().get_modified():
-                realy_quit = self.close_confirmation_dialog(editor)
+                realy_quit = self.dlg_close_confirmation(editor)
                 logger.debug('realy_quit %s' % realy_quit)
                 # cancel close window
                 if not realy_quit:
@@ -209,11 +211,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             child.destroy()
         else:
             logger.debug('file modified, save before closing')
-            self.close_confirmation_dialog(child)
+            self.dlg_close_confirmation(child)
 
     def on_btn_compile_clicked(self, button):
         '''
-        compile the saved file - a .rxe-file results
+        compile the saved file
         '''
 
         page_num = self.notebook.get_current_page()
@@ -282,6 +284,418 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 end_iter = msg.get_end_iter()
                 msg.insert(end_iter, (' unknown file extension, expected: .nxc or .evc'))
 
+    def on_btn_menu_clicked(self, button):
+
+        #Toggl
+        if self.menupop.get_visible():
+            self.menupop.hide()
+        else:
+            self.menupop.show_all()
+
+    def on_btn_print_clicked(self, button):
+
+        if self.menupop.get_visible():
+            self.menupop.hide()
+
+        page_num = self.notebook.get_current_page()
+        editor = self.notebook.get_nth_page(page_num)
+
+        printer = PrintingApp(editor)
+        printer.run()
+
+    def on_btn_about_clicked(self, button):
+
+        if self.menupop.get_visible():
+            self.menupop.hide()
+
+        aboutdlg = Gtk.AboutDialog(transient_for=self.window, modal=True)
+
+        authors = ['Bernd Sellentin']
+        #documenters = []
+
+        aboutdlg.set_program_name('MindEd')
+        aboutdlg.set_comments('An Editor for LEGO Mindstorms Bricks')
+        aboutdlg.set_authors(authors)
+        aboutdlg.set_version(self.application.version)
+        #image = GdkPixbuf.Pixbuf()
+        #image.new_from_file("/home/selles/pyGtk/minded/minded.png")
+        #aboutdlg.set_logo_icon_name(image)
+        aboutdlg.set_logo_icon_name()
+        aboutdlg.set_copyright('2017')
+        aboutdlg.set_website('http://github.com/bsellentin/minded')
+        aboutdlg.set_website_label('MindEd Website')
+
+        aboutdlg.present()
+
+    def on_btn_brickinfo_clicked(self, button):
+        '''open new window with brick information like name, firmware...'''
+        if self.menupop.get_visible():
+            self.menupop.hide()
+        self.brick_info = BrickInfo(self.window.get_application())
+
+    def on_btn_brickfiler_clicked(self, button):
+        '''open new window with brick file browser...'''
+        if self.menupop.get_visible():
+            self.menupop.hide()
+        self.brick_filer = BrickFiler(self.window.get_application())
+
+    def on_btn_apiviewer_clicked(self, button):
+        '''open new window with API reference browser'''
+        if self.menupop.get_visible():
+            self.menupop.hide()
+        self.api_viewer = ApiViewer(self.window.get_application())
+
+    def open_new(self):
+
+        self.untitledDocCount += 1
+
+        dirname = Path.home()
+        filename = 'untitled' + str(self.untitledDocCount)
+        newfile = Path(dirname, filename)
+
+        # make empty file to avoid error on loading
+        try:
+            newfile.touch(exist_ok=True)
+        except OSError:
+            logger.debug('Could not make node for new file')
+            pass
+
+        self.load_file_in_editor(Path(newfile).as_uri())
+
+    def load_file_in_editor(self, file):
+
+        #logger.debug('Buffersize: %s ' % len(self.buffer.props.text))
+        try:
+            editor = EditorApp(self, file)
+        except:
+            logger.warn('Something went terrible wrong')
+
+        self.create_tab_label(editor)
+        self.notebook.append_page(editor, self.box)
+        self.notebook.set_current_page(-1)
+
+        buf = editor.get_buffer()
+        buf.connect('modified_changed', self.on_buffer_modified)
+        buf.connect('mark_set', self.update_cursor_location)
+        editor.codeview.grab_focus()
+
+        if not self.btn_save.get_sensitive():
+            self.btn_save.set_sensitive(True)
+        if not self.btn_save_as.get_sensitive():
+            self.btn_save_as.set_sensitive(True)
+        if not self.btn_print.get_sensitive():
+            self.btn_print.set_sensitive(True)
+        if not self.btn_language.get_sensitive():
+            self.btn_language.set_sensitive(True)
+
+        self.change_language_selection(editor)
+
+        logger.debug('file {} loaded in buffer, modified {}'.format(file, buf.get_modified()))
+        return 1
+
+    def is_untitled(self, editor, close_tab):
+        '''looks if file is new with default name
+        called by on_btn_save_clicked
+                  dlg_close_confirmation_response
+                  called by gtk_main_quit
+                            on_btn_close_tab
+        '''
+        if 'untitled' in editor.document.get_shortname():
+            logger.debug('Found untitled file: {}'.format(editor.document.get_url()))
+            self.save_file_as(editor, close_tab)
+        else:
+            self.save_file(editor, close_tab)
+
+    def save_file_as(self, editor, close_tab):
+
+        logger.debug('function save_file_as: {}'.format(editor.document.get_url()))
+
+        save_dialog = Gtk.FileChooserDialog('Pick a file', self.window,
+                                            Gtk.FileChooserAction.SAVE,
+                                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                             Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
+        save_dialog.set_do_overwrite_confirmation(True)
+        save_dialog.set_local_only(False)
+        try:
+            if 'untitled' in editor.document.get_shortname():
+                save_dialog.set_current_name(editor.document.get_shortname())
+            else:
+                save_dialog.set_uri(editor.document.get_url())
+        except GObject.GError as e:
+            logger.error('Error: {}'.format(e.message))
+
+        save_dialog.connect('response', self.save_file_as_response, editor, close_tab)
+        save_dialog.show()
+
+    def save_file_as_response(self, dialog, response, editor, close_tab):
+
+        save_dialog = dialog
+        if response == Gtk.ResponseType.ACCEPT:
+            filename = Path(save_dialog.get_filename())
+
+            # check for right suffix
+            if editor.this_lang:
+                if editor.this_lang.get_name() == 'EVC':
+                    if not filename.suffix == '.evc':
+                        logger.debug('No suffix')
+                        filename = filename.with_suffix('.evc')
+                        logger.debug('append suffix: {}'.format(filename.name))
+                if editor.this_lang.get_name() == 'NXC':
+                    if not filename.suffix == '.nxc':
+                        logger.debug('No suffix')
+                        filename = filename.with_suffix('.nxc')
+                        logger.debug('append suffix: {}'.format(filename.name))
+
+            # check for valid filename
+            if self.forbiddenchar.match(filename.stem) is not None:
+                editor.document.set_url(filename.as_uri())
+                if logger.isEnabledFor(logging.DEBUG):
+                    page_num = self.notebook.page_num(editor)
+                    logger.debug('func save_file_as_response: %s on tab %s, '
+                                 % (editor.document.get_url(), page_num))
+                self.save_file(editor, close_tab)
+                dialog.destroy()
+            else:
+                self.dlg_something_wrong(
+                    'Filename {} unvalid!'.format(filename.name),
+                    'Filename contains non-alphanumeric characters.')
+                save_dialog.set_uri(editor.document.get_url())
+
+        elif response == Gtk.ResponseType.CANCEL:
+            logger.debug('cancelled: SAVE AS')
+            dialog.destroy()
+
+    def save_file(self, editor, close_tab):
+
+        buf = editor.get_buffer()
+
+        # save file form GtkSourceBuffer as GtkSource.File
+        file = GtkSource.File()
+        file.set_location(Gio.File.new_for_uri(editor.document.get_url()))
+        try:
+            saver = GtkSource.FileSaver.new(buf, file)
+            saver.save_async(1, None, None, None, self.on_save_finish, editor, close_tab)
+        except GObject.GError as e:
+            logger.error('Error: {}'.format(e.message))
+
+    def on_save_finish(self, source, result, editor, close_tab):
+
+        try:
+            # async saving, we have to wait for finish before removing
+            success = source.save_finish(result)
+            logger.debug('file {} saved {}'.format(editor.document.get_url(), success))
+        except GObject.GError as e:
+            logger.error('problem saving file {}'.format(e.message))
+            self.dlg_something_wrong(
+                'Could not save file {}'.format(editor.document.get_url()),
+                e.message)
+            return
+
+        if close_tab:
+            page_num = self.notebook.page_num(editor)
+            logger.debug('remove tab {}'.format(page_num))
+            
+            self.notebook.get_nth_page(page_num).get_child().destroy()
+            self.notebook.get_nth_page(page_num).destroy()
+            self.notebook.remove_page(page_num)
+        else:
+            buf = editor.get_buffer()
+            if buf.get_modified():
+                buf.set_modified(False)
+                logger.debug('set buffer modified {}'.format(buf.get_modified()))
+            # change language according file extension, e.g. new created files
+            editor.this_lang = editor.lm.guess_language(editor.document.get_shortname(), None)
+            if editor.this_lang:
+                buf.set_highlight_syntax(True)
+                buf.set_language(editor.this_lang)
+                self.language_label.set_text(editor.this_lang.get_name())
+            # change tab label
+            self.change_tab_label(editor, editor.document.get_shortname())
+            # change headerbar
+            self.set_title(editor.document)
+
+    def dlg_something_wrong(self, what, why):
+
+        dlg = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.INFO,
+                                Gtk.ButtonsType.OK, what)
+        dlg.format_secondary_text(why)
+
+        dlg.run()
+        dlg.destroy()
+
+    def dlg_close_confirmation(self, editor):
+
+        filename = editor.document.get_shortname()
+
+        dlg = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
+                                Gtk.ButtonsType.NONE,
+                                'Save changes to document {} before closing?'.format(filename))
+        dlg.add_buttons('Close without Saving', Gtk.ResponseType.NO,
+                        'Cancel', Gtk.ResponseType.CANCEL,
+                        'Save', Gtk.ResponseType.YES)
+        dlg.format_secondary_text('Changes to document {} will be permanently lost.'
+                                  .format(filename))
+        dlg.set_default_response(Gtk.ResponseType.YES)
+
+        response = dlg.run()
+
+        if response == Gtk.ResponseType.NO:
+            logger.debug('Close tab without saving')
+            # click perhaps not on current page
+            page_num = self.notebook.page_num(editor)
+            self.notebook.remove_page(page_num)
+            editor.destroy()
+
+        elif response == Gtk.ResponseType.CANCEL:
+            logger.debug('Cancel closing tab')
+            dlg.destroy()
+            return False
+
+        elif response == Gtk.ResponseType.YES:
+            logger.debug('Save file before closing')
+
+            close_tab = 1
+            self.is_untitled(editor, close_tab)
+
+        # if the messagedialog is destroyed (by pressing ESC)
+        elif response == Gtk.ResponseType.DELETE_EVENT:
+            logger.debug('dialog closed or cancelled')
+        # finally, destroy the messagedialog
+        dlg.destroy()
+
+        return True
+
+    def create_tab_label(self, editor):
+
+        # create tab header with close button
+        self.box = Gtk.HBox()
+        closebtn = Gtk.Button()
+        icon = Gio.ThemedIcon(name='window-close')
+        image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
+        closebtn.set_image(image)
+        closebtn.set_relief(Gtk.ReliefStyle.NONE)
+        closebtn.connect('clicked', self.on_btn_close_tab_clicked, editor)
+
+        # change headerbar
+        self.set_title(editor.document)
+
+        self.box.pack_start(Gtk.Label(editor.document.get_shortname()), True, True, 0)
+        self.box.pack_end(closebtn, False, False, 0)
+        self.box.show_all()
+
+    def change_tab_label(self, editor, filename):
+        thisbox = self.notebook.get_tab_label(editor)
+        if thisbox:
+            widglist = thisbox.get_children()
+            widglist[0].set_text(filename)
+
+    def on_buffer_modified(self, widget):
+
+        page_num = self.notebook.get_current_page()
+        editor = self.notebook.get_nth_page(page_num)
+        buf = editor.get_buffer()
+        logger.debug('modified tab {} {}'.format(page_num, buf.get_modified()))
+
+        filename = editor.document.get_shortname()
+
+        if buf.get_modified(): 
+            filename = '*'+filename
+        else:
+            if filename.startswith('*'):
+                filename = filename[1:]
+
+        self.change_tab_label(editor, filename)
+
+    def on_notebook_switch_page(self, notebook, page, page_num):
+        '''change headerbar and language selection accordingly'''
+        editor = self.notebook.get_nth_page(page_num)
+        self.change_language_selection(editor)    
+        self.set_title(editor.document)
+
+    def on_languageselect_changed(self, selection):
+        ''' single click, language changed '''
+        model, treeiter = selection.get_selected()
+        self.change_language(model, treeiter)
+
+    def on_languagetree_row_activated(self, treeview, path, column):
+        '''double click'''
+        selection = treeview.get_selection()
+        model, treeiter = selection.get_selected()
+        self.change_language(model, treeiter)
+
+    def change_language(self, model, treeiter):
+        '''change language for current document'''
+        if treeiter != None:
+            logger.debug('Language selected %s', model[treeiter][0])
+
+            self.language_label.set_text(model[treeiter][1])
+
+            page_num = self.notebook.get_current_page()
+            editor = self.notebook.get_nth_page(page_num)
+
+            root = Path(editor.document.get_shortname()).stem
+
+            editor.this_lang = editor.lm.get_language(model[treeiter][0])
+            buf = editor.get_buffer()
+            if editor.this_lang:
+                if not buf.get_highlight_syntax():
+                    buf.set_highlight_syntax(True)
+                buf.set_language(editor.this_lang)
+                if editor.this_lang.get_name() == 'NXC':
+                    editor.custom_completion_provider.funcs = nxc_funcs.nxc_funcs
+                    editor.custom_completion_provider.consts = nxc_funcs.nxc_consts
+                    editor.custom_completion_provider.lang = 'NXC'
+                    editor.document.set_shortname(root + '.nxc')
+                if editor.this_lang.get_name() == 'EVC':
+                    editor.custom_completion_provider.funcs = evc_funcs.evc_funcs
+                    editor.custom_completion_provider.consts = evc_funcs.evc_consts
+                    editor.custom_completion_provider.lang = 'EVC'
+                    editor.document.set_shortname(root + '.evc')
+                logger.debug('changed extension: ' + editor.document.get_url())
+                buf.set_modified(True)
+                self.set_title(editor.document)
+            else:
+                if buf.get_highlight_syntax():
+                    buf.set_highlight_syntax(False)
+                buf.set_language(None)
+
+            editor.codeview.grab_focus()
+            self.languagemenu.hide()
+
+    def change_language_selection(self, editor):
+        '''changes language_label and language_tree on load file and on switch page'''
+        editor.this_lang = editor.lm.guess_language(editor.document.get_shortname(), None)
+
+        if editor.this_lang:
+            self.language_label.set_text(editor.this_lang.get_name())
+            for i, row in enumerate(self.language_store):
+                if row[1] == editor.this_lang.get_name():
+                    path = Gtk.TreePath(i)
+        else:
+            self.language_label.set_text('Text')
+            path = Gtk.TreePath(0)
+
+        select = self.language_tree.get_selection()
+        select.disconnect_by_func(self.on_languageselect_changed)
+        self.language_tree.set_cursor(path, None, False)    # emits changed-signal
+        select.connect('changed', self.on_languageselect_changed)
+
+    def set_title(self, document):
+        self.headerbar.set_title(document.get_shortname())
+        self.headerbar.set_subtitle(document.get_filepath())
+
+    def update_cursor_location(self, buf, location, mark):
+        self.cursor_location.pop(self.cursor_location_id)
+        
+        #iter = buffer.get_iter_at_mark(buffer.get_insert())
+        pos = buf.props.cursor_position
+        cursor_it = buf.get_iter_at_offset(pos)
+        row = cursor_it.get_line()
+        col = cursor_it.get_line_offset()
+
+        msg = 'Ln {}, Col {}'.format(row+1, col+1)
+        self.cursor_location.push(self.cursor_location_id, msg)
+
     def mkstarter(self, document):
         '''
         build rbf-file, store local, upload later
@@ -315,15 +729,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         msg.insert(enditer, 'Build starter successfull\n')
 
         return 1
-
-    def dlg_something_wrong(self, what, why):
-
-        dlg = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.INFO,
-                                Gtk.ButtonsType.OK, what)
-        dlg.format_secondary_text(why)
-
-        dlg.run()
-        dlg.destroy()
 
     def idle_nbc_proc(self, window, nbc_opts):
         '''
@@ -462,396 +867,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 end_iter = buf.get_end_iter()
                 buf.insert(end_iter, (' Failed to upload %s, try again\n' % filename))
                 return 0
-
-    def on_btn_menu_clicked(self, button):
-
-        #Toggl
-        if self.menupop.get_visible():
-            self.menupop.hide()
-        else:
-            self.menupop.show_all()
-
-    def on_btn_print_clicked(self, button):
-
-        if self.menupop.get_visible():
-            self.menupop.hide()
-
-        page_num = self.notebook.get_current_page()
-        editor = self.notebook.get_nth_page(page_num)
-
-        printer = PrintingApp(editor)
-        printer.run()
-
-    def on_btn_about_clicked(self, button):
-
-        if self.menupop.get_visible():
-            self.menupop.hide()
-
-        aboutdlg = Gtk.AboutDialog(transient_for=self.window, modal=True)
-
-        authors = ['Bernd Sellentin']
-        #documenters = []
-
-        aboutdlg.set_program_name('MindEd')
-        aboutdlg.set_comments('An Editor for LEGO Mindstorms Bricks')
-        aboutdlg.set_authors(authors)
-        aboutdlg.set_version(self.application.version)
-        #image = GdkPixbuf.Pixbuf()
-        #image.new_from_file("/home/selles/pyGtk/minded/minded.png")
-        #aboutdlg.set_logo_icon_name(image)
-        aboutdlg.set_logo_icon_name()
-        aboutdlg.set_copyright('2017')
-        aboutdlg.set_website('http://github.com/bsellentin/minded')
-        aboutdlg.set_website_label('MindEd Website')
-
-        aboutdlg.present()
-
-    def open_new(self):
-
-        self.untitledDocCount += 1
-
-        dirname = Path.home()
-        filename = 'untitled' + str(self.untitledDocCount)
-        newfile = Path(dirname, filename)
-
-        # make empty file to avoid error on loading
-        try:
-            newfile.touch(exist_ok=True)
-        except OSError:
-            logger.debug('Could not make node for new file')
-            pass
-
-        self.load_file_in_editor(Path(newfile).as_uri())
-
-    def load_file_in_editor(self, file):
-
-        #logger.debug('Buffersize: %s ' % len(self.buffer.props.text))
-        try:
-            editor = EditorApp(self, file)
-        except:
-            logger.warn('Something went terrible wrong')
-
-        self.create_tab_label(editor)
-        self.notebook.append_page(editor, self.box)
-        self.notebook.set_current_page(-1)
-
-        buf = editor.get_buffer()
-        buf.connect('modified_changed', self.on_buffer_modified)
-        editor.codeview.grab_focus()
-
-        if not self.btn_save.get_sensitive():
-            self.btn_save.set_sensitive(True)
-        if not self.btn_save_as.get_sensitive():
-            self.btn_save_as.set_sensitive(True)
-        if not self.btn_print.get_sensitive():
-            self.btn_print.set_sensitive(True)
-        if not self.btn_language.get_sensitive():
-            self.btn_language.set_sensitive(True)
-
-        self.change_language_selection(editor)
-
-        logger.debug('file {} loaded in buffer, modified {}'.format(file, buf.get_modified()))
-        return 1
-
-    def is_untitled(self, editor, close_tab):
-        '''looks if file is new with default name
-        called by on_btn_save_clicked
-                  close_confirmation_dialog_response
-                  called by gtk_main_quit
-                            on_btn_close_tab
-        '''
-        if 'untitled' in editor.document.get_shortname():
-            logger.debug('Found untitled file: {}'.format(editor.document.get_url()))
-            self.save_file_as(editor, close_tab)
-        else:
-            self.save_file(editor, close_tab)
-
-    def save_file_as(self, editor, close_tab):
-
-        logger.debug('function save_file_as: {}'.format(editor.document.get_url()))
-
-        save_dialog = Gtk.FileChooserDialog('Pick a file', self.window,
-                                            Gtk.FileChooserAction.SAVE,
-                                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                             Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
-        save_dialog.set_do_overwrite_confirmation(True)
-        save_dialog.set_local_only(False)
-        try:
-            if 'untitled' in editor.document.get_shortname():
-                save_dialog.set_current_name(editor.document.get_shortname())
-            else:
-                save_dialog.set_uri(editor.document.get_url())
-        except GObject.GError as e:
-            logger.error('Error: {}'.format(e.message))
-
-        save_dialog.connect('response', self.save_file_as_response, editor, close_tab)
-        save_dialog.show()
-
-    def save_file_as_response(self, dialog, response, editor, close_tab):
-
-        save_dialog = dialog
-        if response == Gtk.ResponseType.ACCEPT:
-            filename = Path(save_dialog.get_filename())
-
-            # check for right suffix
-            if editor.this_lang:
-                if editor.this_lang.get_name() == 'EVC':
-                    if not filename.suffix == '.evc':
-                        logger.debug('No suffix')
-                        filename = filename.with_suffix('.evc')
-                        logger.debug('append suffix: {}'.format(filename.name))
-                if editor.this_lang.get_name() == 'NXC':
-                    if not filename.suffix == '.nxc':
-                        logger.debug('No suffix')
-                        filename = filename.with_suffix('.nxc')
-                        logger.debug('append suffix: {}'.format(filename.name))
-
-            # check for valid filename
-            if self.forbiddenchar.match(filename.stem) is not None:
-                editor.document.set_url(filename.as_uri())
-                if logger.isEnabledFor(logging.DEBUG):
-                    page_num = self.notebook.page_num(editor)
-                    logger.debug('func save_file_as_response: %s on tab %s, '
-                                 % (editor.document.get_url(), page_num))
-                self.save_file(editor, close_tab)
-                dialog.destroy()
-            else:
-                self.dlg_something_wrong(
-                    'Filename {} unvalid!'.format(filename.name),
-                    'Filename contains non-alphanumeric characters.')
-                save_dialog.set_uri(editor.document.get_url())
-
-        elif response == Gtk.ResponseType.CANCEL:
-            logger.debug('cancelled: SAVE AS')
-            dialog.destroy()
-
-    def save_file(self, editor, close_tab):
-
-        buf = editor.get_buffer()
-
-        # save file form GtkSourceBuffer as GtkSource.File
-        file = GtkSource.File()
-        file.set_location(Gio.File.new_for_uri(editor.document.get_url()))
-        try:
-            saver = GtkSource.FileSaver.new(buf, file)
-            saver.save_async(1, None, None, None, self.on_save_finish, editor, close_tab)
-        except GObject.GError as e:
-            logger.error('Error: {}'.format(e.message))
-
-    def on_save_finish(self, source, result, editor, close_tab):
-
-        try:
-            # async saving, we have to wait for finish before removing
-            success = source.save_finish(result)
-            logger.debug('file {} saved {}'.format(editor.document.get_url(), success))
-        except GObject.GError as e:
-            logger.error('problem saving file {}'.format(e.message))
-            self.dlg_something_wrong(
-                'Could not save file {}'.format(editor.document.get_url()),
-                e.message)
-            return
-
-        if close_tab:
-            page_num = self.notebook.page_num(editor)
-            logger.debug('remove tab {}'.format(page_num))
-            
-            self.notebook.get_nth_page(page_num).get_child().destroy()
-            self.notebook.get_nth_page(page_num).destroy()
-            self.notebook.remove_page(page_num)
-        else:
-            buf = editor.get_buffer()
-            if buf.get_modified():
-                buf.set_modified(False)
-                logger.debug('set buffer modified {}'.format(buf.get_modified()))
-            # change language according file extension, e.g. new created files
-            editor.this_lang = editor.lm.guess_language(editor.document.get_shortname(), None)
-            if editor.this_lang:
-                buf.set_highlight_syntax(True)
-                buf.set_language(editor.this_lang)
-                self.language_label.set_text(editor.this_lang.get_name())
-            # change tab label
-            self.change_tab_label(editor, editor.document.get_shortname())
-            # change headerbar
-            self.set_title(editor.document)
-
-    def close_confirmation_dialog(self, editor):
-
-        filename = editor.document.get_shortname()
-
-        dlg = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
-                                Gtk.ButtonsType.NONE,
-                                'Save changes to document {} before closing?'.format(filename))
-        dlg.add_buttons('Close without Saving', Gtk.ResponseType.NO,
-                        'Cancel', Gtk.ResponseType.CANCEL,
-                        'Save', Gtk.ResponseType.YES)
-        dlg.format_secondary_text('Changes to document {} will be permanently lost.'
-                                  .format(filename))
-        dlg.set_default_response(Gtk.ResponseType.YES)
-
-        response = dlg.run()
-
-        if response == Gtk.ResponseType.NO:
-            logger.debug('Close tab without saving')
-            # click perhaps not on current page
-            page_num = self.notebook.page_num(editor)
-            self.notebook.remove_page(page_num)
-            editor.destroy()
-
-        elif response == Gtk.ResponseType.CANCEL:
-            logger.debug('Cancel closing tab')
-            dlg.destroy()
-            return False
-
-        elif response == Gtk.ResponseType.YES:
-            logger.debug('Save file before closing')
-
-            close_tab = 1
-            self.is_untitled(editor, close_tab)
-
-        # if the messagedialog is destroyed (by pressing ESC)
-        elif response == Gtk.ResponseType.DELETE_EVENT:
-            logger.debug('dialog closed or cancelled')
-        # finally, destroy the messagedialog
-        dlg.destroy()
-
-        return True
-
-    def create_tab_label(self, editor):
-
-        # create tab header with close button
-        self.box = Gtk.HBox()
-        closebtn = Gtk.Button()
-        icon = Gio.ThemedIcon(name='window-close')
-        image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
-        closebtn.set_image(image)
-        closebtn.set_relief(Gtk.ReliefStyle.NONE)
-        closebtn.connect('clicked', self.on_btn_close_tab_clicked, editor)
-
-        # change headerbar
-        self.set_title(editor.document)
-
-        self.box.pack_start(Gtk.Label(editor.document.get_shortname()), True, True, 0)
-        self.box.pack_end(closebtn, False, False, 0)
-        self.box.show_all()
-
-    def on_buffer_modified(self, widget):
-
-        page_num = self.notebook.get_current_page()
-        editor = self.notebook.get_nth_page(page_num)
-        buf = editor.get_buffer()
-        logger.debug('modified tab {} {}'.format(page_num, buf.get_modified()))
-
-        filename = editor.document.get_shortname()
-
-        if buf.get_modified(): 
-            filename = '*'+filename
-        else:
-            if filename.startswith('*'):
-                filename = filename[1:]
-
-        self.change_tab_label(editor, filename)
-
-    def change_tab_label(self, editor, filename):
-        thisbox = self.notebook.get_tab_label(editor)
-        if thisbox:
-            widglist = thisbox.get_children()
-            widglist[0].set_text(filename)
-
-    def on_languageselect_changed(self, selection):
-        ''' single click, language changed '''
-        model, treeiter = selection.get_selected()
-        self.change_language(model, treeiter)
-
-    def on_languagetree_row_activated(self, treeview, path, column):
-        '''double click'''
-        selection = treeview.get_selection()
-        model, treeiter = selection.get_selected()
-        self.change_language(model, treeiter)
-
-    def change_language(self, model, treeiter):
-        '''change language for current document'''
-        if treeiter != None:
-            logger.debug('Language selected %s', model[treeiter][0])
-
-            self.language_label.set_text(model[treeiter][1])
-
-            page_num = self.notebook.get_current_page()
-            editor = self.notebook.get_nth_page(page_num)
-
-            root = Path(editor.document.get_shortname()).stem
-
-            editor.this_lang = editor.lm.get_language(model[treeiter][0])
-            buf = editor.get_buffer()
-            if editor.this_lang:
-                if not buf.get_highlight_syntax():
-                    buf.set_highlight_syntax(True)
-                buf.set_language(editor.this_lang)
-                if editor.this_lang.get_name() == 'NXC':
-                    editor.custom_completion_provider.funcs = nxc_funcs.nxc_funcs
-                    editor.custom_completion_provider.consts = nxc_funcs.nxc_consts
-                    editor.custom_completion_provider.lang = 'NXC'
-                    editor.document.set_shortname(root + '.nxc')
-                if editor.this_lang.get_name() == 'EVC':
-                    editor.custom_completion_provider.funcs = evc_funcs.evc_funcs
-                    editor.custom_completion_provider.consts = evc_funcs.evc_consts
-                    editor.custom_completion_provider.lang = 'EVC'
-                    editor.document.set_shortname(root + '.evc')
-                logger.debug('changed extension: ' + editor.document.get_url())
-                buf.set_modified(True)
-                self.set_title(editor.document)
-            else:
-                if buf.get_highlight_syntax():
-                    buf.set_highlight_syntax(False)
-                buf.set_language(None)
-
-            editor.codeview.grab_focus()
-            self.languagemenu.hide()
-
-    def change_language_selection(self, editor):
-        '''changes language_label and language_tree on load file and on switch page'''
-        editor.this_lang = editor.lm.guess_language(editor.document.get_shortname(), None)
-
-        if editor.this_lang:
-            self.language_label.set_text(editor.this_lang.get_name())
-            for i, row in enumerate(self.language_store):
-                if row[1] == editor.this_lang.get_name():
-                    path = Gtk.TreePath(i)
-        else:
-            self.language_label.set_text('Text')
-            path = Gtk.TreePath(0)
-
-        select = self.language_tree.get_selection()
-        select.disconnect_by_func(self.on_languageselect_changed)
-        self.language_tree.set_cursor(path, None, False)    # emits changed-signal
-        select.connect('changed', self.on_languageselect_changed)
-
-    def on_notebook_switch_page(self, notebook, page, page_num):
-        '''change headerbar and language selection accordingly'''
-        editor = self.notebook.get_nth_page(page_num)
-        self.change_language_selection(editor)    
-        self.set_title(editor.document)
-
-    def set_title(self, document):
-        self.headerbar.set_title(document.get_shortname())
-        self.headerbar.set_subtitle(document.get_filepath())
-
-    def on_btn_brickinfo_clicked(self, button):
-        '''open new window with brick information like name, firmware...'''
-        if self.menupop.get_visible():
-            self.menupop.hide()
-        self.brick_info = BrickInfo(self.window.get_application())
-
-    def on_btn_brickfiler_clicked(self, button):
-        '''open new window with brick file browser...'''
-        if self.menupop.get_visible():
-            self.menupop.hide()
-        self.brick_filer = BrickFiler(self.window.get_application())
-
-    def on_btn_apiviewer_clicked(self, button):
-        '''open new window with API reference browser'''
-        if self.menupop.get_visible():
-            self.menupop.hide()
-        self.api_viewer = ApiViewer(self.window.get_application())
 
 class PrintingApp:
     '''
