@@ -52,10 +52,13 @@ class PreferencesDialog(object):
                       'active', Gio.SettingsBindFlags.DEFAULT)
         settings.bind('tabwidth', builder.get_object('tabs_width_spinbutton'),
                       'value', Gio.SettingsBindFlags.DEFAULT)
+        settings.bind('spacesinsteadtab', builder.get_object('insert_spaces_checkbutton'),
+                      'active', Gio.SettingsBindFlags.DEFAULT)
         settings.bind('highlightcurrentline', builder.get_object('highlight_current_line_checkbutton'),
                       'active', Gio.SettingsBindFlags.DEFAULT)
         settings.bind('highlightmatchingbrackets', builder.get_object('bracket_matching_checkbutton'),
                       'active', Gio.SettingsBindFlags.DEFAULT)
+
         #smartbackspace
 
         self.window.show_all()
