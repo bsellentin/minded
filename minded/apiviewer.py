@@ -149,7 +149,10 @@ class ApiViewer(object):
                         self.info_buffer.apply_tag_by_name('text', text_start, end)
                     for tag in ['<b>', '<span foreground="brown">', '<span foreground="red">']:
                         self.convert_tags(tag, start)
-                    for tag in ['<b>', '</b>', '<span foreground="brown">', '<span foreground="red">', '</span>']:
+                    for tag in ['<b>', '</b>', 
+                                '<span foreground="brown">',
+                                '<span foreground="green">',
+                                '<span foreground="red">', '</span>']:
                         self.delete_tags(tag)
                     # format example
                     self.example_code()
