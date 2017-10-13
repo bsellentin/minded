@@ -91,6 +91,9 @@ class MindEdApp(Gtk.Application):
         self.client.connect("uevent", self.on_uevent)
 
         # Look for brick
+        self.nxtbrick = None
+        self.ev3brick = None
+
         for device in self.client.query_by_subsystem("usb"):
             # NXT
             if (device.get_property('ID_VENDOR') == '0694' and
@@ -104,6 +107,7 @@ class MindEdApp(Gtk.Application):
                     self.nxtbrick = nxt.locator.find_one_brick()
                 except:
                     logger.warn('nxt-python failure')
+
             # EV3
             if (device.get_property('ID_VENDOR_ID') == '0694' and
                 device.get_property('ID_MODEL_ID') == '0005'):
@@ -172,7 +176,7 @@ class MindEdApp(Gtk.Application):
 
         if not self.win:
             logger.debug("NXT-lib: %s" % nxt.locator.__file__)
-            self.win = MindEdAppWin(self.filelist, application=self )
+            self.win = MindEdAppWin(self.filelist, application=self)
         else:
             '''MindEd already running, brick file in file browser clicked'''
             for nth_file in self.filelist[1:]:
