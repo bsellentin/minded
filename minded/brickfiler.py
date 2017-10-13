@@ -292,18 +292,16 @@ class BrickFiler(object):
 
         # Look for Brick
         self.brick_type = None
-        try:
-            brick = self.app.nxtbrick
+        if self.app.nxtbrick:
             logger.info('got app.nxtbrick')
             self.brick_type = 'nxt'
-        except AttributeError:
+        else:
             logger.info('no app.nxtbrick')
 
-        try:
-            brick = self.app.ev3brick
+        if self.app.ev3brick:
             logger.info('got app.ev3brick')
             self.brick_type = 'ev3'
-        except AttributeError:
+        else:
             logger.info('no app.ev3brick')
 
         if self.brick_type == 'nxt':
@@ -482,7 +480,7 @@ class BrickFiler(object):
             self.brickinfoframe.update(widget)
             self.brickinfoframe.show()
         except:
-            self.brickinfoframe.hide()        
+            self.brickinfoframe.hide()
 
     def on_prev_dir_clicked(self, widget):
         '''walk one host directory higher'''

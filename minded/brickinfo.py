@@ -38,18 +38,16 @@ class BrickInfo(object):
 
         # Look for Brick
         self.brick_type = None
-        try:
-            brick = self.app.nxtbrick
+        if self.app.nxtbrick:
             logger.debug('got app.nxtbrick')
             self.brick_type = 'nxt'
-        except AttributeError:
+        else:
             logger.debug('no app.nxtbrick')    
 
-        try:
-            brick = self.app.ev3brick
+        if self.app.ev3brick:
             logger.debug('got app.ev3brick')
             self.brick_type = 'ev3'
-        except AttributeError:
+        else:
             logger.debug('no app.ev3brick')
 
         self.get_brickinfo()
