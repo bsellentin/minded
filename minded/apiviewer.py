@@ -141,7 +141,7 @@ class ApiViewer(object):
                                                                    Gtk.TextSearchFlags.VISIBLE_ONLY,
                                                                    end)
                             self.info_buffer.delete(match_start, match_end)
-                     # format text
+                    # format text
                     start = self.info_buffer.get_start_iter()
                     text_start = start.copy()
                     end = self.info_buffer.get_end_iter()
@@ -165,14 +165,13 @@ class ApiViewer(object):
 
         if match != None:
             match_start, match_end = match
-            tag_end = match_end.copy()
-            if tag_end.forward_visible_word_end():
-                if tag == '<b>':
-                    self.info_buffer.apply_tag_by_name('bold', match_end, tag_end)
-                elif 'brown' in tag:
-                    self.info_buffer.apply_tag_by_name('param', match_end, tag_end)
-                elif 'red' in tag:
-                    self.info_buffer.apply_tag_by_name('warn', match_end, tag_end)
+            (close_tag, tag_end) = match_end.forward_search('<', 0, end)
+            if tag == '<b>':
+                self.info_buffer.apply_tag_by_name('bold', match_end, close_tag)
+            elif 'brown' in tag:
+                self.info_buffer.apply_tag_by_name('param', match_end, close_tag)
+            elif 'red' in tag:
+                self.info_buffer.apply_tag_by_name('warn', match_end, close_tag)
             self.convert_tags(tag, tag_end)
 
     def delete_tags(self, tag):
