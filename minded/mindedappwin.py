@@ -5,14 +5,9 @@
 - EV3 with EV3-Python
 '''
 
-import subprocess
 # requires package python-pathlib
 from pathlib import Path
 from urllib.parse import urlparse, unquote
-import shlex
-import struct
-import hashlib
-import mmap
 import re
 
 import gi
@@ -26,6 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from minded.editorapp import EditorApp
+from minded.brickhelper import BrickHelper
 import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
 from minded.brickinfo import BrickInfo
@@ -52,7 +48,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.window.set_application(self.application)
 
         self.notebook = builder.get_object('notebook')
-        self.compilerview = builder.get_object('compilerview')
         self.headerbar = builder.get_object('header')
         self.menupop = builder.get_object('menumenu')
         self.btn_transmit = builder.get_object('btn_transmit')
@@ -82,16 +77,18 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         column = Gtk.TreeViewColumn('Language', self.cell, text=1)
         self.language_tree.append_column(column)
 
+        compilerview = builder.get_object('compilerview')
+        self.log_buffer = compilerview.get_buffer()
+        self.log_buffer.create_tag('warning', foreground='red', background='yellow')
+
+
         # Look for Brick
-        for device in self.application.client.query_by_subsystem('usb'):
-            if (device.get_property('ID_VENDOR') == '0694' and
-                    device.get_property('ID_MODEL') == '0002'):
-                self.brick_status.push(self.brick_status_id, 'NXT')
-                self.btn_transmit.set_sensitive(True)
-            if (device.get_property('ID_VENDOR_ID') == '0694' and
-                    device.get_property('ID_MODEL_ID') == '0005'):
-                self.brick_status.push(self.brick_status_id, 'EV3')
-                self.btn_transmit.set_sensitive(True)
+        if self.application.nxtbrick:
+            self.brick_status.push(self.brick_status_id, 'NXT')
+            self.btn_transmit.set_sensitive(True)
+        elif self.application.ev3brick:
+            self.brick_status.push(self.brick_status_id, 'EV3')
+            self.btn_transmit.set_sensitive(True)
 
         self.window.show_all()
 
@@ -227,29 +224,19 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         else:
             ext = Path(editor.document.get_shortname()).suffix
             if ext == '.nxc':
-                nbcout = str(Path(editor.document.get_filepath(),
-                                  Path(editor.document.get_shortname()).stem + '.rxe'))
-                logger.debug('File to compile: %s' % editor.document.get_filename())
-                nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout),
-                                           shlex.quote(editor.document.get_filename())))
-                logger.debug('nbc optionen: %s' % nbc_opts)
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
                 self.window.get_window().set_cursor(watch_cursor)
                 # don't starve the gui thread before it can change the cursor,
                 # call the time consuming in an idle callback
-                GObject.idle_add(self.idle_nbc_proc, self.window, nbc_opts)
+                GObject.idle_add(self.idle_nbc_proc, self.window, editor.document, False)
             elif ext == '.evc':
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
                 self.window.get_window().set_cursor(watch_cursor)
                 GObject.idle_add(self.idle_evc_proc, self.window, editor.document)
             else:
-                msg = self.compilerview.get_buffer()
-                end_iter = msg.get_end_iter()
-                red = msg.create_tag(None, foreground = 'red', background='yellow')
-                msg.insert_with_tags(end_iter, 'ERROR:', red)
-                end_iter = msg.get_end_iter()
-                msg.insert(end_iter, (' unknown file extension, expected: .nxc or .evc'))
+                self.log_buffer.set_text('ERROR: unknown file extension, expected: .nxc or .evc')
+                self.format_log(self.log_buffer.get_start_iter)
 
     def on_btn_transmit_clicked(self, button):
         '''
@@ -264,25 +251,20 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         else:
             ext = Path(editor.document.get_shortname()).suffix
             if ext == '.nxc':
-                nbc_opts = (' -d %s' % (shlex.quote(editor.document.get_filename())))
-                logger.debug('Transmit: %s' % nbc_opts)
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
                 self.window.get_window().set_cursor(watch_cursor)
                 # don't starve the gui thread before it can change the cursor,
                 # call the time consuming in an idle callback
-                GObject.idle_add(self.idle_nbc_proc, self.window, nbc_opts)
+                GObject.idle_add(self.idle_nbc_proc, self.window, editor.document, True)
             elif ext == '.evc':
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
                 self.window.get_window().set_cursor(watch_cursor)
                 GObject.idle_add(self.idle_evc_proc, self.window, editor.document, True)
             else:
-                msg = self.compilerview.get_buffer()
-                end_iter = msg.get_end_iter()
-                red = msg.create_tag(None, foreground = 'red', background='yellow')
-                msg.insert_with_tags(end_iter, 'ERROR:', red)
-                end_iter = msg.get_end_iter()
-                msg.insert(end_iter, (' unknown file extension, expected: .nxc or .evc'))
+                self.log_buffer.set_text('ERROR: unknown file extension, expected: .nxc or .evc')
+                self.format_log(self.log_buffer.get_start_iter)
+
 
     def on_btn_menu_clicked(self, button):
 
@@ -331,19 +313,19 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''open new window with brick information like name, firmware...'''
         if self.menupop.get_visible():
             self.menupop.hide()
-        self.brick_info = BrickInfo(self.window.get_application())
+        self.brick_info = BrickInfo(self.application)
 
     def on_btn_brickfiler_clicked(self, button):
         '''open new window with brick file browser...'''
         if self.menupop.get_visible():
             self.menupop.hide()
-        self.brick_filer = BrickFiler(self.window.get_application())
+        self.brick_filer = BrickFiler(self.application)
 
     def on_btn_apiviewer_clicked(self, button):
         '''open new window with API reference browser'''
         if self.menupop.get_visible():
             self.menupop.hide()
-        self.api_viewer = ApiViewer(self.window.get_application())
+        self.api_viewer = ApiViewer(self.application)
 
     def open_new(self):
 
@@ -696,177 +678,82 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         msg = 'Ln {}, Col {}'.format(row+1, col+1)
         self.cursor_location.push(self.cursor_location_id, msg)
 
-    def mkstarter(self, document):
-        '''
-        build rbf-file, store local, upload later
-        '''
-        logger.debug('building starter for: %s' % document.get_filename())
-
-        prjname = Path(document.get_shortname()).stem
-        prjsstore = self.application.settings.get_string('prjsstore')
-        prjpath = str(Path(prjsstore, prjname, prjname))
-        logger.debug('EV3-path: %s' % prjpath)
-
-        magic = b'LEGO'
-        before = b'\x68\x00\x01\x00\x00\x00\x00\x00\x1C\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x60\x80'
-        after = b'\x44\x85\x82\xE8\x03\x40\x86\x40\x0A'
-
-        size = len(magic) + 4 + len(before) + len(prjpath)+1 + len(after)
-
-        cmd = b''.join([
-            magic,
-            struct.pack('I', size),
-            before,
-            str.encode(prjpath)+b'\x00',
-            after
-            ])
-
-        starter  = Path(document.get_filepath(), prjname + '.rbf')
-        starter.write_bytes(cmd)
-
-        msg = self.compilerview.get_buffer()
-        enditer = msg.get_end_iter()
-        msg.insert(enditer, 'Build starter successfull\n')
-
-        return 1
-
-    def idle_nbc_proc(self, window, nbc_opts):
+    def idle_nbc_proc(self, window, document, upload: bool=False):
         '''
         compile and upload file to NXT brick
         '''
-        nbc_exec = self.application.settings.get_string('nbcpath')
-        enhancedfw = self.application.settings.get_boolean('enhancedfw')
-        if enhancedfw:
-            nbc_exec = nbc_exec + ' -EF'
-        logger.debug('use enhancedfw: %s' % enhancedfw)
+        helper = BrickHelper(self.application)
 
-        if not nbc_exec:
+        (error, msg) = helper.nbc_proc(document, upload)
+        if error == 2:
             dlg_something_wrong(
                 'No NBC-executable found!',
                 'not in /usr/bin, not in /usr/local/bin')
         else:
-            nbc_proc = subprocess.Popen(('%s %s' % (nbc_exec, nbc_opts)),
-                                        shell=True, stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-
-            nbc_data = nbc_proc.communicate()
-            if nbc_proc.returncode:  # Error
-                self.compilerview.get_buffer().set_text(nbc_data[1].decode())
-            else:  # OK
-                # nur die letzten 5 Zeilen ausgeben
-                msg = '\n'.join([str(i) for i in nbc_data[0].decode().split('\n')[-5:]])
-                self.compilerview.get_buffer().set_text(msg)
-
-            self.window.get_window().set_cursor(None)
-
-    def idle_evc_proc(self, window, document, upload=False):
-        '''
-        compile and upload file to EV3 brick
-        '''
-        prjname = Path(document.get_shortname()).stem
-
-        compiled = 0
-        starter = 0
-
-        compiled = self.cross_compile(document)
-        if upload:
-            if compiled:
-                starter = self.mkstarter(document)
-            if starter:
-                suca = self.ev3_upload(Path(document.get_filepath(), prjname + '.rbf'))
-                sucb = self.ev3_upload(Path(document.get_filepath(), prjname))
-                if suca and sucb:
-                    self.window.get_application().ev3brick.play_sound('./ui/DownloadSucces')
+            self.log_buffer.set_text(msg)
 
         self.window.get_window().set_cursor(None)
 
-    def cross_compile(self, document):
+    def idle_evc_proc(self, window, document, upload: bool=False):
         '''
-        cross-compile evc-file for EV3-brick, store local, upload later
+        compile and upload file to EV3 brick
         '''
-        infile = document.get_filename()
-        logger.debug('file to compile: {}'.format(infile))
+        helper = BrickHelper(self.application)
 
-        # check for non-alphanumeric characters in filename, won't run on bricks
-        if self.forbiddenchar.match(Path(infile).name) is not None:
-            outfile = str(Path(document.get_filepath(), Path(document.get_shortname()).stem))
-            logger.debug('executable to write: {}'.format(outfile))
+        prjname = Path(document.get_shortname()).stem
 
-            arm_exec = self.application.settings.get_string('armgcc')
+        starter = 0
+        msg=''
+        gcc_error = 0
 
-            ldflags = self.application.settings.get_string('ldflags')
-            incs = self.application.settings.get_string('incs')
-
-            gcc_exec = arm_exec + ldflags + incs + ' -Os'
-            gcc_opts = (' -o %s -x c %s -lev3api' % (shlex.quote(outfile), shlex.quote(infile)))
-
-            # is multithreading?
-            with open(infile,  'rb', 0) as file, \
-                mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as s:
-                if s.find(b'pthread.h') != -1:
-                    gcc_opts += ' -lpthread'
-            logger.debug('command: {}'.format(gcc_exec + gcc_opts))
-
-            gcc_proc = subprocess.Popen(('%s %s' % (gcc_exec, gcc_opts)),
-                                            shell=True, stdout=subprocess.PIPE,
-                                            stderr=subprocess.PIPE)
-
-            gcc_data = gcc_proc.communicate()
-            if gcc_proc.returncode:  # Error
-                self.compilerview.get_buffer().set_text(gcc_data[1].decode())
-                return 0
-            else:  # OK
-                self.compilerview.get_buffer().set_text('Compile successfull\n')
-                return 1
-        else:
-            msg = self.compilerview.get_buffer()
-            end_iter = msg.get_end_iter()
-            red = msg.create_tag(None, foreground = 'red', background='yellow')
-            msg.insert_with_tags(end_iter, 'ERROR:', red)
-            end_iter = msg.get_end_iter()
-            msg.insert(end_iter, (' filename contains non-alphanumeric characters\n'))
-            return 0
-
-    def ev3_upload(self, infile):
-        '''
-        upload file to EV3 brick
-        '''
-        try:
-            brick = self.window.get_application().ev3brick
-            logger.info('got app.ev3brick')
-            upload = True
-        except AttributeError:
-            logger.info('no app.ev3brick')
-            upload = False
-
-        if upload:
-            buf = self.compilerview.get_buffer()
-            if brick.usb_ready():
-
-                prjname = infile.stem
-                prjsstore = self.application.settings.get_string('prjsstore')
-                outfile = str(Path(prjsstore, prjname, infile.name))
-
-                data = infile.read_bytes()
-                brick.write_file(outfile, data)
-
-                content = brick.list_dir(str(Path(prjsstore, prjname)))
-
-                success = 0
-                for afile in content['files']:
-                    if afile['name'] == infile.name:
-                        if afile['md5'] == hashlib.md5(data).hexdigest().upper():
-                            success = 1
-                            enditer = buf.get_end_iter()
-                            buf.insert(enditer, ('Upload of %s successfull\n' % afile['name']))
-                return success
+        if self.forbiddenchar.match(Path(document.get_filename()).name) is not None:
+            gcc_error = helper.cross_compile(document)
+            logger.debug('gcc_error: {}'.format(gcc_error))
+            if gcc_error:
+                msg = 'ERROR: {}'.format(gcc_error)
+                upload = False
             else:
-                end_iter = buf.get_end_iter()
-                red = buf.create_tag(None, foreground = 'red', background='yellow')
-                buf.insert_with_tags(end_iter, 'ERROR:', red)
-                end_iter = buf.get_end_iter()
-                buf.insert(end_iter, (' Failed to upload %s, try again\n' % filename))
-                return 0
+                msg = 'Compile successfull\n'
+        else:
+            msg = 'filename contains non-alphanumeric characters\n'
+            upload = False
+        if upload:
+            if not gcc_error:
+                starter = helper.mkstarter(document)
+                msg += 'Build starter successfull\n'
+            if starter:
+                filename = Path(document.get_filepath(), prjname + '.rbf')
+                errora = helper.ev3_upload(filename)
+                if errora:
+                    msg += 'ERROR: Failed to upload {}.rbf, try again\n'.format(filename)
+                else:
+                    msg += 'Upload of {}.rbf successfull\n'.format(prjname)
+                filename = Path(document.get_filepath(), prjname)
+                errorb = helper.ev3_upload(filename)
+                if errorb:
+                    msg += 'ERROR: Failed to upload {}, try again\n'.format(filename)
+                else:
+                    msg += 'Upload of {} successfull\n'.format(prjname)
+
+                if not errora and not errorb:
+                    self.application.ev3brick.play_sound('./ui/DownloadSucces')
+
+        self.log_buffer.set_text(msg)
+        self.format_log(self.log_buffer.get_start_iter())
+
+    def format_log(self, start_iter):
+        '''
+        eye candy for error message
+        '''
+        end = self.log_buffer.get_end_iter()
+        match = start_iter.forward_search('ERROR:', 0, end)
+        if match != None:
+            match_start, match_end = match
+            self.log_buffer.apply_tag_by_name('warning', match_start, match_end)
+            self.format_log(match_end)
+
+        self.window.get_window().set_cursor(None)
+
 
 class PrintingApp:
     '''
