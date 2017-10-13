@@ -11,8 +11,8 @@ evc_funcs = [
         '      FreeEV3();\n' +
         '      return 0;\n' +
         '  }', 'General'],
-    ['CloseEV3', 'CloseEV3()', '', 'General'],
-    ['ExitEV3', '', 'ExitEV3()', 'General'],
+    ['CloseEV3', 'CloseEV3()', 'CloseEV3()\n', 'General'],
+    ['ExitEV3', 'ExitEV3()', 'ExitEV3()\n', 'General'],
     ['FreeEV3', 'FreeEV3()', '<b>FreeEV3()</b>\n\n' +
         'Close and exit of all EV3-Functions', 'General'],
     ['ButtonIsDown', 'ButtonIsDown()','<b>ButtonIsDown(' +
@@ -122,7 +122,7 @@ evc_funcs = [
     ['LcdBmpFile', 'LcdBmpFile(,,,)', '<b>LcdBmpFile(' +
         '<span foreground="brown">color</span>, ' +
         '<span foreground="brown">x</span>, <span foreground="brown">y</span>, ' +
-        '<span foreground="brown">name)</b>\n\n', 'Display'],
+        '<span foreground="brown">name</span>)</b>\n\n', 'Display'],
     ['NumOut', 'NumOut(,,)', '<b>NumOut(' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>,  <span foreground="brown">value</span>)</b>\n\n' +
@@ -143,7 +143,7 @@ evc_funcs = [
         '            1 small, bold\n' +
         '            2 large\n' +
         '            3 tiny', 'Display'],
-    ['LcdClearDisplay', 'LcdClearDisplay()','', 'Display'],
+    ['LcdClearDisplay', 'LcdClearDisplay()','LcdClearDisplay()\n', 'Display'],
     ['LcdIcon', 'LcdIcon(,,,,)', '<b>LcdIcon(color, x, y, IconType, IconNum)</b>\n\n' +
         'Draw a icon on the screen at the specified location\n' +
         '<b>Parameters:</b>\n' +
@@ -152,9 +152,9 @@ evc_funcs = [
         '           ICONTYPE_LARGE  2           0..27\n' +
         '           ICONTYPE_MENU   3           0..10\n' +
         '           ICONTYPE_ARROW  4           0..2', 'Display'],
-    ['LcdUpdate', 'LcdUpdate()', '', 'Display'],
-    ['LcdInit', 'LcdInit()', '', 'General'],
-    ['LcdExit', 'LcdExit()', '', 'General'],
+    ['LcdUpdate', 'LcdUpdate()', 'LcdUpdate()\n', 'Display'],
+    ['LcdInit', 'LcdInit()', 'LcdInit()\n', 'General'],
+    ['LcdExit', 'LcdExit()', 'LcdExit()\n', 'General'],
     ['LineOut', 'LineOut(,,,)', '<b>LineOut(' +
         '<span foreground="brown">x1</span>, ' +
         '<span foreground="brown">y1</span>, ' +
@@ -177,8 +177,8 @@ evc_funcs = [
         'This function enables reading current output tacho count in degrees.\n' +
         'This count is set to 0 at program start.\n' +
         'See also: ResetTachoCount()', 'Output'],
-    ['OutputInit', 'OutputInit()', '', 'General'],
-    ['OutputExit', 'OutputExit()', '', 'General'],
+    ['OutputInit', 'OutputInit()', 'OutputInit()\n', 'General'],
+    ['OutputExit', 'OutputExit()', 'OutputExit()\n', 'General'],
     ['OnFwd', 'OnFwd(,)', '<b>OnFwd(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
@@ -417,7 +417,7 @@ evc_funcs = [
         '<span foreground="brown">aCode</span>)</b>\n\n' +
         'Play a sound that mimics the RCX system sounds using one of the RCXSoundConstants.\n\n' +
         '<b>Parameters</b>\n' +
-        '  aCode   SOUND_CLICK        key click sound\n' +
+        '  <span foreground="brown">aCode</span>   SOUND_CLICK        key click sound\n' +
         '          SOUND_DOUBLE_BEEP  double beep\n' +
         '          SOUND_UP           sweep up\n' +
         '          SOUND_DOWN         sweep down\n' +
@@ -430,7 +430,7 @@ evc_funcs = [
         'the array is an instance of the Tone structure, containing a frequency\n' +
         'and a duration.\n' +
         '<b>Example:</b>\n' +
-        '  unsigned short melody[7][2] = {' +
+        '  unsigned short melody[7][2] = {\n' +
         '    {TONE_D4, NOTE_QUARTER},       // = 1000ms / 4\n' +
         '    {TONE_E4, NOTE_EIGHT},\n' +
         '    {TONE_D4, NOTE_EIGHT},\n' +
@@ -452,7 +452,7 @@ evc_funcs = [
         '  int touched;\n' +
         '  SetSensorTouch(IN_1);\n'
         '  touched = ReadSensor(IN_1);', 'Input'],
-    ['ReadSensorData', 'ReadSensorData()', '', 'Input'],
+    ['ReadSensorData', 'ReadSensorData()', 'ReadSensorData()\n', 'Input'],
     ['RectOut', 'RectOut(,,,)', '<b>RectOut(' +
         '<span foreground="brown">x</span>, ' 
         '<span foreground="brown">y</span>, ' +
@@ -542,7 +542,21 @@ evc_funcs = [
         '<b>Example:</b>\n' +
         '  SetSensorLight(IN_1);', 'Input'],
     ['SetSensorColor', 'SetSensorColor()', '<b>SetSensorColor(' +
-        '<span foreground="brown">input</span>)</b>\n\n', 'Input'],
+        '<span foreground="brown">input</span>)</b>\n\n' +
+        'Allocate EV3 Color Sensor to specified input port\n' +
+        'in COL_COLOR mode.\n\n' +
+        'Return of color 0: transparent\n' +
+        '                1: black\n' +
+        '                2: blue\n' +
+        '                3: green\n' +
+        '                4: yellow\n' +
+        '                5: red\n' +
+        '                6: white\n' +
+        '                7: brown\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">input</span>        The port to configure.\n' +
+        '<b>Example:</b>\n' +
+        '  SetSensorColor(IN_1);', 'Input'],
     ['SetSensorUS', 'SetSensorUS()', '<b>SetSensorUS(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Ultrasonic Sensor to specified input port\n' +
@@ -610,7 +624,7 @@ evc_funcs = [
         '             IR_SEEK    Position of the Beacon\n' +
         '             IR_REMOTE  Controlling EV3 with Beacon', 'Input'],
     ['SetAllSensorMode', 'SetAllSensorMode()', 'obsolete', 'Input'],
-    ['SetIRBeaconCH', 'SetIRBeaconCH()', '', 'Input'],
+    ['SetIRBeaconCH', 'SetIRBeaconCH()', 'SetIRBeaconCH()\n', 'Input'],
     ['SetLedPattern', 'SetLedPattern()', '<b>SetLedPattern(' +
         '<span foreground="brown">pattern</span>)</b>\n\n', 'Button'],
     ['SetLedWarning', 'SetLedWarning()', '<b>SetLedWarning(' +
