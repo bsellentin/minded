@@ -36,15 +36,16 @@ class BrickHelper():
 
             if upload:
                 # compile and upload
-                nbc_opts = (' -d %s' % (shlex.quote(document.get_filename())))
+                nbc_opts = (' -d %s' % (shlex.quote(document.get_path())))
                 logger.debug('upload: {}'.format(nbc_opts))
             else:
                 # compile only
-                nbcout = str(Path(document.get_filepath(),
-                             Path(document.get_shortname()).stem + '.rxe'))
-                logger.debug('File to compile: {}'.format(document.get_filename()))
+                #nbcout = str(Path(document.get_filepath(),
+                #             Path(document.get_shortname()).stem + '.rxe'))
+                nbcout = str(Path(document.get_path()).with_suffix('.rxe'))
+                logger.debug('File to compile: {}'.format(document.get_path()))
                 nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout),
-                                           shlex.quote(document.get_filename())))
+                                           shlex.quote(document.get_path())))
 
             # do it
             nbc_proc = subprocess.Popen(('%s %s' % (nbc_exec, nbc_opts)),
@@ -63,9 +64,9 @@ class BrickHelper():
         '''
         build rbf-starter-file, store local, upload later
         '''
-        logger.debug('building starter for: {}'.format(document.get_filename()))
+        logger.debug('building starter for: {}'.format(document.get_path()))
 
-        prjname = Path(document.get_shortname()).stem
+        prjname = Path(document.get_basename()).stem
         prjsstore = self.application.settings.get_string('prjsstore')
         prjpath = str(Path(prjsstore, prjname, prjname))
         logger.debug('EV3-path: {}'.format(prjpath))
@@ -84,7 +85,8 @@ class BrickHelper():
             after
             ])
 
-        starter  = Path(document.get_filepath(), prjname + '.rbf')
+        #starter = Path(document.get_filepath(), prjname + '.rbf')
+        starter = Path(document.get_path()).with_suffix('.rbf')
         starter.write_bytes(cmd)
 
         return 1
@@ -93,10 +95,10 @@ class BrickHelper():
         '''
         cross-compile evc-file for EV3-brick, store local, upload later
         '''
-        infile = document.get_filename()
+        infile = document.get_path()
         logger.debug('file to compile: {}'.format(infile))
 
-        outfile = str(Path(document.get_filepath(), Path(document.get_shortname()).stem))
+        outfile = str(Path(document.get_parent(), Path(document.get_basename()).stem))
         logger.debug('executable to write: {}'.format(outfile))
 
         arm_exec = self.application.settings.get_string('armgcc')

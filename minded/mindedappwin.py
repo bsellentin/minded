@@ -7,7 +7,6 @@
 
 # requires package python-pathlib
 from pathlib import Path
-from urllib.parse import urlparse, unquote
 import re
 
 import gi
@@ -153,7 +152,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             # check if file already open
             for pagecount in range(self.notebook.get_n_pages()-1, -1, -1):
                 editor = self.notebook.get_nth_page(pagecount)
-                if editor.document.get_url() == open_dlg.get_uri():
+                if editor.document.get_uri() == open_dlg.get_uri():
                     self.notebook.set_current_page(pagecount)
                     break
             else:
@@ -222,7 +221,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 'You have to save first!',
                 'The compiler works on the real file.')
         else:
-            ext = Path(editor.document.get_shortname()).suffix
+            ext = Path(editor.document.get_basename()).suffix
             if ext == '.nxc':
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
@@ -249,7 +248,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 'You have to save first!',
                 'The compiler works on the real file.')
         else:
-            ext = Path(editor.document.get_shortname()).suffix
+            ext = Path(editor.document.get_basename()).suffix
             if ext == '.nxc':
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
@@ -264,7 +263,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             else:
                 self.log_buffer.set_text('ERROR: unknown file extension, expected: .nxc or .evc')
                 self.format_log(self.log_buffer.get_start_iter)
-
 
     def on_btn_menu_clicked(self, button):
 
@@ -344,11 +342,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         self.load_file_in_editor(Path(newfile).as_uri())
 
-    def load_file_in_editor(self, file):
+    def load_file_in_editor(self, file_uri):
 
         #logger.debug('Buffersize: %s ' % len(self.buffer.props.text))
         try:
-            editor = EditorApp(self, file)
+            editor = EditorApp(self, file_uri)
         except:
             logger.warn('Something went terrible wrong')
 
@@ -372,7 +370,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         self.change_language_selection(editor)
 
-        logger.debug('file {} loaded in buffer, modified {}'.format(file, buf.get_modified()))
+        logger.debug('file {} loaded in buffer, modified {}'.format(file_uri, buf.get_modified()))
         return 1
 
     def is_untitled(self, editor, close_tab):
@@ -382,15 +380,15 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                   called by gtk_main_quit
                             on_btn_close_tab
         '''
-        if 'untitled' in editor.document.get_shortname():
-            logger.debug('Found untitled file: {}'.format(editor.document.get_url()))
+        if 'untitled' in editor.document.get_basename():
+            logger.debug('Found untitled file: {}'.format(editor.document.get_uri()))
             self.save_file_as(editor, close_tab)
         else:
             self.save_file(editor, close_tab)
 
     def save_file_as(self, editor, close_tab):
 
-        logger.debug('function save_file_as: {}'.format(editor.document.get_url()))
+        logger.debug('function save_file_as: {}'.format(editor.document.get_uri()))
 
         save_dialog = Gtk.FileChooserDialog('Pick a file', self.window,
                                             Gtk.FileChooserAction.SAVE,
@@ -399,10 +397,10 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         save_dialog.set_do_overwrite_confirmation(True)
         save_dialog.set_local_only(False)
         try:
-            if 'untitled' in editor.document.get_shortname():
-                save_dialog.set_current_name(editor.document.get_shortname())
+            if 'untitled' in editor.document.get_basename():
+                save_dialog.set_current_name(editor.document.get_basename())
             else:
-                save_dialog.set_uri(editor.document.get_url())
+                save_dialog.set_uri(editor.document.get_uri())
         except GObject.GError as e:
             logger.error('Error: {}'.format(e.message))
 
@@ -413,7 +411,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         save_dialog = dialog
         if response == Gtk.ResponseType.ACCEPT:
-            filename = Path(save_dialog.get_filename())
+            filename = Path(save_dialog.get_filename())  # or uri?
 
             # check for right suffix
             if editor.this_lang:
@@ -430,18 +428,18 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
             # check for valid filename
             if self.forbiddenchar.match(filename.stem) is not None:
-                editor.document.set_url(filename.as_uri())
+                editor.document.set_uri(filename.as_uri())
                 if logger.isEnabledFor(logging.DEBUG):
                     page_num = self.notebook.page_num(editor)
                     logger.debug('func save_file_as_response: %s on tab %s, '
-                                 % (editor.document.get_url(), page_num))
+                                 % (editor.document.get_uri(), page_num))
                 self.save_file(editor, close_tab)
                 dialog.destroy()
             else:
                 self.dlg_something_wrong(
                     'Filename {} unvalid!'.format(filename.name),
                     'Filename contains non-alphanumeric characters.')
-                save_dialog.set_uri(editor.document.get_url())
+                save_dialog.set_uri(editor.document.get_uri())
 
         elif response == Gtk.ResponseType.CANCEL:
             logger.debug('cancelled: SAVE AS')
@@ -451,11 +449,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         buf = editor.get_buffer()
 
-        # save file form GtkSourceBuffer as GtkSource.File
-        file = GtkSource.File()
-        file.set_location(Gio.File.new_for_uri(editor.document.get_url()))
         try:
-            saver = GtkSource.FileSaver.new(buf, file)
+            saver = GtkSource.FileSaver.new(buf, editor.document)
             saver.save_async(1, None, None, None, self.on_save_finish, editor, close_tab)
         except GObject.GError as e:
             logger.error('Error: {}'.format(e.message))
@@ -465,11 +460,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         try:
             # async saving, we have to wait for finish before removing
             success = source.save_finish(result)
-            logger.debug('file {} saved {}'.format(editor.document.get_url(), success))
+            logger.debug('file {} saved {}'.format(editor.document.get_uri(), success))
         except GObject.GError as e:
             logger.error('problem saving file {}'.format(e.message))
             self.dlg_something_wrong(
-                'Could not save file {}'.format(editor.document.get_url()),
+                'Could not save file {}'.format(editor.document.get_uri()),
                 e.message)
             return
 
@@ -486,13 +481,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 buf.set_modified(False)
                 logger.debug('set buffer modified {}'.format(buf.get_modified()))
             # change language according file extension, e.g. new created files
-            editor.this_lang = editor.lm.guess_language(editor.document.get_shortname(), None)
+            editor.this_lang = editor.lm.guess_language(editor.document.get_basename(), None)
             if editor.this_lang:
                 buf.set_highlight_syntax(True)
                 buf.set_language(editor.this_lang)
                 self.language_label.set_text(editor.this_lang.get_name())
             # change tab label
-            self.change_tab_label(editor, editor.document.get_shortname())
+            self.change_tab_label(editor, editor.document.get_basename())
             # change headerbar
             self.set_title(editor.document)
 
@@ -507,7 +502,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def dlg_close_confirmation(self, editor):
 
-        filename = editor.document.get_shortname()
+        filename = editor.document.get_basename()
 
         dlg = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
                                 Gtk.ButtonsType.NONE,
@@ -561,7 +556,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         # change headerbar
         self.set_title(editor.document)
 
-        self.box.pack_start(Gtk.Label(editor.document.get_shortname()), True, True, 0)
+        self.box.pack_start(Gtk.Label(editor.document.get_basename()), True, True, 0)
         self.box.pack_end(closebtn, False, False, 0)
         self.box.show_all()
 
@@ -578,7 +573,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         buf = editor.get_buffer()
         logger.debug('modified tab {} {}'.format(page_num, buf.get_modified()))
 
-        filename = editor.document.get_shortname()
+        filename = editor.document.get_basename()
 
         if buf.get_modified(): 
             filename = '*'+filename
@@ -592,6 +587,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''change headerbar and language selection accordingly'''
         editor = self.notebook.get_nth_page(page_num)
         self.change_language_selection(editor)    
+        #self.set_title(editor.document)
         self.set_title(editor.document)
 
     def on_languageselect_changed(self, selection):
@@ -615,7 +611,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             page_num = self.notebook.get_current_page()
             editor = self.notebook.get_nth_page(page_num)
 
-            root = Path(editor.document.get_shortname()).stem
+            file_uri = Path(editor.document.get_uri())
 
             editor.this_lang = editor.lm.get_language(model[treeiter][0])
             buf = editor.get_buffer()
@@ -627,13 +623,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                     editor.custom_completion_provider.funcs = nxc_funcs.nxc_funcs
                     editor.custom_completion_provider.consts = nxc_funcs.nxc_consts
                     editor.custom_completion_provider.lang = 'NXC'
-                    editor.document.set_shortname(root + '.nxc')
+                    editor.document.set_uri(str(file_uri.with_suffix('.nxc')))
                 if editor.this_lang.get_name() == 'EVC':
                     editor.custom_completion_provider.funcs = evc_funcs.evc_funcs
                     editor.custom_completion_provider.consts = evc_funcs.evc_consts
                     editor.custom_completion_provider.lang = 'EVC'
-                    editor.document.set_shortname(root + '.evc')
-                logger.debug('changed extension: ' + editor.document.get_url())
+                    editor.document.set_uri(str(file_uri.with_suffix('.evc')))
+                logger.debug('changed extension: ' + editor.document.get_uri())
                 buf.set_modified(True)
                 self.set_title(editor.document)
             else:
@@ -646,7 +642,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def change_language_selection(self, editor):
         '''changes language_label and language_tree on load file and on switch page'''
-        editor.this_lang = editor.lm.guess_language(editor.document.get_shortname(), None)
+        editor.this_lang = editor.lm.guess_language(editor.document.get_basename(), None)
 
         if editor.this_lang:
             self.language_label.set_text(editor.this_lang.get_name())
@@ -663,12 +659,12 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         select.connect('changed', self.on_languageselect_changed)
 
     def set_title(self, document):
-        self.headerbar.set_title(document.get_shortname())
-        self.headerbar.set_subtitle(document.get_filepath())
+        self.headerbar.set_title(document.get_basename())
+        self.headerbar.set_subtitle(document.get_path())
 
     def update_cursor_location(self, buf, location, mark):
         self.cursor_location.pop(self.cursor_location_id)
-        
+
         #iter = buffer.get_iter_at_mark(buffer.get_insert())
         pos = buf.props.cursor_position
         cursor_it = buf.get_iter_at_offset(pos)
@@ -700,13 +696,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         helper = BrickHelper(self.application)
 
-        prjname = Path(document.get_shortname()).stem
+        prjname = Path(document.get_basename()).stem
 
         starter = 0
         msg=''
         gcc_error = 0
 
-        if self.forbiddenchar.match(Path(document.get_filename()).name) is not None:
+        if self.forbiddenchar.match(Path(document.get_path()).name) is not None:
             gcc_error = helper.cross_compile(document)
             logger.debug('gcc_error: {}'.format(gcc_error))
             if gcc_error:
@@ -722,13 +718,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 starter = helper.mkstarter(document)
                 msg += 'Build starter successfull\n'
             if starter:
-                filename = Path(document.get_filepath(), prjname + '.rbf')
+                filename = Path(document.get_parent(), prjname + '.rbf')
                 errora = helper.ev3_upload(filename)
                 if errora:
                     msg += 'ERROR: Failed to upload {}.rbf, try again\n'.format(filename)
                 else:
                     msg += 'Upload of {}.rbf successfull\n'.format(prjname)
-                filename = Path(document.get_filepath(), prjname)
+                filename = Path(document.get_parent(), prjname)
                 errorb = helper.ev3_upload(filename)
                 if errorb:
                     msg += 'ERROR: Failed to upload {}, try again\n'.format(filename)

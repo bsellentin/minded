@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from urllib.parse import urlparse, unquote
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -19,53 +18,40 @@ from minded.brickcompletionprovider import BrickCompletionProvider
 
 SIMPLE_COMPLETE = 0
 
-class MindEdDocument:
-    def __init__(self, documenturl):
+class MindEdDocument(GtkSource.File):
+    def __init__(self, file_uri):
+        super().__init__()
+        self.gio_file = Gio.File.new_for_uri(file_uri)
+        self.set_location(self.gio_file)
+
+    def get_uri(self):
         '''file:///path/to/the/file.ext'''
-        self.documenturl = documenturl
-        #print('documenturl: %s' % self.documenturl)
-        parsed = urlparse(unquote(documenturl))
+        return self.gio_file.get_uri()
+
+    def set_uri(self, documenturi):
+        '''new uri eg save as'''
+        old_uri = self.gio_file.get_uri()
+        # self.gio_file.unref() raise RuntimeError('This method is currently unsupported.')
+        self.gio_file = Gio.File.new_for_uri(documenturi)
+        self.set_location(self.gio_file)
+        
+        logger.debug('old {} gio_file to new {}'.format(old_uri, self.gio_file.get_uri()))
+
+    def get_path(self):
         '''/path/to/the/file.ext'''
-        self.filename = parsed.path
-        #print('filename: %s' % self.filename)
+        return self.gio_file.get_path()
+
+    def get_parent(self):
+        '''/path/to/the/'''
+        return self.gio_file.get_parent().get_path()
+
+    def get_basename(self):
         '''file.ext'''
-        self.shortname = Path(parsed.path).name
-        #print('shortname: %s' % self.shortname)
-        '''/path/to/the'''
-        self.filepath = str(Path(parsed.path).parent)
-        #print('filepath: %s' % self.filepath)
-
-    def get_url(self):
-        return self.documenturl
-
-    def set_url(self, documenturl):
-        self.documenturl = documenturl
-        parsed = urlparse(unquote(documenturl))
-        self.filename = parsed.path
-        self.shortname = Path(parsed.path).name
-        self.filepath = str(Path(parsed.path).parent)
-
-    def get_filename(self):
-        return self.filename
-
-    def get_filepath(self):
-        return self.filepath
-
-    def get_shortname(self):
-        return self.shortname
-
-    def set_shortname(self, shortname):
-        self.shortname = shortname
-        self.update_documenturl()
-
-    def update_documenturl(self):
-        self.documenturl = Path(self.filepath, self.shortname).as_uri()
-
-
+        return self.gio_file.get_basename()
 
 class EditorApp(Gtk.ScrolledWindow):
 
-    def __init__(self, mindedappwin, file):
+    def __init__(self, mindedappwin, file_uri):
 
         self.mindedappwin = mindedappwin
 
@@ -73,7 +59,7 @@ class EditorApp(Gtk.ScrolledWindow):
         srcdir = Path(__file__).parents[1]
         logger.debug('SettingsDir: {}'.format(srcdir))
         if Path(srcdir, 'data').exists():
-            # this for developping only
+            # local schema for developping only
             schema_source = Gio.SettingsSchemaSource.new_from_directory(
                 str(Path(srcdir, 'data')),
                 Gio.SettingsSchemaSource.get_default(), False)
@@ -118,7 +104,8 @@ class EditorApp(Gtk.ScrolledWindow):
         self.settings.bind('smartbackspace', self.codeview, 'smart-backspace',
                             Gio.SettingsBindFlags.DEFAULT)
 
-        self.codeview.override_font(Pango.FontDescription(self.settings.get_string('fontname')))  # gedit like
+        self.codeview.override_font(Pango.FontDescription(
+                                    self.settings.get_string('fontname')))  # gedit like
 
         targets = Gtk.TargetList.new(None)
         targets.add_uri_targets(0)
@@ -137,21 +124,18 @@ class EditorApp(Gtk.ScrolledWindow):
         self.add(self.codeview)
         self.show()
 
-        self.document = MindEdDocument(file)
-        #self.custom_completion_provider = None
-        self.load_file(self.document.get_url())
+        self.document = MindEdDocument(file_uri)
+        self.load_file(self.document)
 
-    def load_file(self, infile):
-        # load into GtkSourceBuffer as GtkSource.File
-        afile = GtkSource.File()
-        afile.set_location(Gio.File.new_for_uri(infile))
+    def load_file(self, document):
+        # load into GtkSource.Buffer as GtkSource.File
         try:
-            loader = GtkSource.FileLoader.new(self.codeview.get_buffer(), afile)
-            loader.load_async(1, None, None, None, self.file_load_finish, infile)
+            loader = GtkSource.FileLoader.new(self.codeview.get_buffer(), document)
+            loader.load_async(1, None, None, None, self.file_load_finish, document)
         except GObject.GError as e:
             logger.warn("Error: " + e.message)
 
-    def file_load_finish(self, source, result, file):
+    def file_load_finish(self, source, result, document):
         success = False
         try:
             success = source.load_finish(result)
@@ -161,17 +145,17 @@ class EditorApp(Gtk.ScrolledWindow):
             logger.warn(e.message)
 
         if success:
-            self.this_lang = self.lm.guess_language(file, None)
+            self.this_lang = self.lm.guess_language(document.get_path(), None)
 
             if self.this_lang:
                 self.buffer.set_highlight_syntax(True)
                 self.buffer.set_language(self.this_lang)
                 logger.debug("LanguageManager: %s" % self.this_lang.get_name())
             else:
-                logger.warn('No language found for file "%s"' % file)
+                logger.warn('No language found for file "%s"' % document.get_path())
                 self.buffer.set_highlight_syntax(False)
                 
-            logger.debug("file %s loaded %s" % (file, success))
+            logger.debug("file %s loaded %s" % (document.get_path(), success))
 
             if SIMPLE_COMPLETE:
                 new_lst = []
@@ -198,7 +182,7 @@ class EditorApp(Gtk.ScrolledWindow):
                 self.codeview_completion.add_provider(self.custom_completion_provider)
 
         else:
-            logger.debug("Could not load %s" % file)
+            logger.debug("Could not load %s" % gio_file.get_path())
 
     def drag_motion(self,wid, context, x, y, time):
         Gdk.drag_status(context, Gdk.DragAction.COPY | Gdk.DragAction.MOVE, time)
