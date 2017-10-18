@@ -87,7 +87,7 @@ class BrickListing(Gtk.ListStore):
     put them into a liststore
     '''
     def __init__(self, brick = None, brick_type = None, path = None):
-        Gtk.ListStore.__init__(self, str, Pixbuf, str, bool)
+        Gtk.ListStore.__init__(self, str, Pixbuf, int, bool)
         #self.set_sort_column_id(0, 0)
         
         self.brick_type = brick_type
@@ -105,13 +105,13 @@ class BrickListing(Gtk.ListStore):
             for (fname, size) in f:
                 # exclude NVconfig.sys?
                 if Path(fname).suffix == ".rso":
-                    filelist.append([fname, AUDIOICON, str(size), False])
+                    filelist.append([fname, AUDIOICON, size, False])
                 elif Path(fname).suffix == ".ric":
-                    filelist.append([fname, GRAPHICICON, str(size), False])
+                    filelist.append([fname, GRAPHICICON, size, False])
                 elif Path(fname).suffix in [".rxe", ".rtm"]:
-                    filelist.append([fname, EXECICON, str(size), False])
+                    filelist.append([fname, EXECICON, size, False])
                 else:
-                    filelist.append([fname, FILEICON, str(size), False])
+                    filelist.append([fname, FILEICON, size, False])
 
             filelist.sort()
             for f in filelist:
@@ -141,14 +141,14 @@ class BrickListing(Gtk.ListStore):
                     if folder in ['.', '..',]:
                         pass
                     else:
-                        dirlist.append([folder, DIRICON, '0', True])
+                        dirlist.append([folder, DIRICON, 2, True])  # TODO: get number of objects
                 for file in content['files']:
                     if Path(file['name']).suffix == ".rgf":
-                        filelist.append([file['name'], GRAPHICICON, str(file['size']), False])
+                        filelist.append([file['name'], GRAPHICICON, file['size'], False])
                     elif Path(file['name']).suffix in [".rsf", ".rmd", ".wav", ".rso"]:
-                        filelist.append([file['name'], AUDIOICON, str(file['size']), False])
+                        filelist.append([file['name'], AUDIOICON, file['size'], False])
                     else:
-                        filelist.append([file['name'], FILEICON, str(file['size']), False])
+                        filelist.append([file['name'], FILEICON, file['size'], False])
 
                 # store sorted directories first
                 dirlist.sort()
@@ -159,14 +159,14 @@ class BrickListing(Gtk.ListStore):
                 for f in filelist:
                     self.append(f)
             else:
-                self.append(['Error', ERRORICON, str(0), False])
+                self.append(['Error', ERRORICON, 0, False])
         else:
             self.clear()
 
 class HostListing(Gtk.ListStore):
 
     def __init__(self, path):
-        Gtk.ListStore.__init__(self, str, Pixbuf, str, bool)
+        Gtk.ListStore.__init__(self, str, Pixbuf, int, bool)
 
         self.populate(path)
 
@@ -180,23 +180,29 @@ class HostListing(Gtk.ListStore):
         for fl in Path(path).iterdir():
             # don't list hidden files
             if not str(fl.stem)[0] == '.':
-                if fl.is_dir():
-                    dirlist.append([str(fl.name), DIRICON, 
-                                    str(len([name for name in fl.iterdir()])), True])
-                elif fl.is_file():
-                    if fl.suffix == '.rso':
-                        filelist.append([str(fl.name), AUDIOICON,
-                                         str(fl.stat().st_size), False])
-                    elif fl.suffix == '.ric':
-                        filelist.append([str(fl.name), GRAPHICICON,
-                                         str(fl.stat().st_size), False])
-                    elif fl.suffix == ".rxe":
-                        filelist.append([str(fl.name), EXECICON,
-                                         str(fl.stat().st_size), False])
+                try:
+                    if fl.is_dir():
+                        try:
+                            dirlist.append([str(fl.name), DIRICON,
+                                            len([name for name in fl.iterdir()]), True])
+                        except PermissionError:
+                            dirlist.append([str(fl.name), ERRORICON, 0, False])
+                    elif fl.is_file():
+                        if fl.suffix == '.rso':
+                            filelist.append([str(fl.name), AUDIOICON,
+                                             fl.stat().st_size, False])
+                        elif fl.suffix == '.ric':
+                            filelist.append([str(fl.name), GRAPHICICON,
+                                             fl.stat().st_size, False])
+                        elif fl.suffix == ".rxe":
+                            filelist.append([str(fl.name), EXECICON,
+                                             fl.stat().st_size, False])
+                        else:
+                            filelist.append([str(fl.name), FILEICON, 
+                                             fl.stat().st_size, False])
                     else:
-                        filelist.append([str(fl.name), FILEICON, 
-                                         str(fl.stat().st_size), False])
-                else:
+                        pass
+                except PermissionError:
                     pass
 
         # store sorted directories first
@@ -254,18 +260,20 @@ class FileInfoBar(Gtk.Frame):
         file_size = view.get_model().get_value(selected_iter, COLUMN_SIZE)
         self.selected.set_text("\u00BB" + file_name + "\u00AB selected")
         if view.get_model().get_value(selected_iter, COLUMN_ISDIR):
-            self.sizeinfo.set_text("(" + file_size + " Objects)")
+            self.sizeinfo.set_text("(" + str(file_size) + " Objects)")
         else:
-            self.sizeinfo.set_text("(" + self.human_readable_size(int(file_size)) + ")")
+            self.sizeinfo.set_text("(" + self.human_readable_size(file_size) + ")")
 
     def human_readable_size(self, size, precision=1):
-        
-        suffixes=['Bytes','kB','MB','GB','TB']
-        suffixIndex = 0
-        while size > 1024 and suffixIndex < 4:
-            suffixIndex += 1
-            size = size/1024.0
-        return "%.*f %s"%(precision, size, suffixes[suffixIndex])
+        if size:
+            suffixes=['Bytes','kB','MB','GB','TB']
+            suffixIndex = 0
+            while size > 1024 and suffixIndex < 4:
+                suffixIndex += 1
+                size = size/1024.0
+            return "%.*f %s"%(precision, size, suffixes[suffixIndex])
+        else:
+            return 'not readable'
 
 class BrickFiler(object):
     '''
@@ -311,8 +319,6 @@ class BrickFiler(object):
                                                   self.nxt_model))
         elif self.brick_type == 'ev3':
             self.current_ev3_directory = self.app.settings.get_string('prjsstore')
-            #self.current_ev3_directory = self.window.get_application().settings.get_string('prjsstore')
-            #AttributeError: 'MindEdApp' object has no attribute 'settings'
             #self.current_ev3_directory = '/home/root/lms2012/prjs'
             self.ev3_model = BrickListing(self.app.ev3brick, self.brick_type,
                                           self.current_ev3_directory)
@@ -678,7 +684,6 @@ class BrickFiler(object):
     def quit(self, *args):
         'Quit the program'
         self.window.destroy()
-        # needed! Else Window disappears, but App lives still.
         return True
 
 DIRICON = Gtk.IconTheme.get_default().load_icon('folder', 48, 0)
