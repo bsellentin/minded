@@ -20,7 +20,7 @@ SIMPLE_COMPLETE = 0
 
 class MindEdDocument(GtkSource.File):
     def __init__(self, file_uri):
-        super().__init__()
+        GtkSource.File.__init__(self)
         self.gio_file = Gio.File.new_for_uri(file_uri)
         self.set_location(self.gio_file)
 
@@ -34,7 +34,6 @@ class MindEdDocument(GtkSource.File):
         # self.gio_file.unref() raise RuntimeError('This method is currently unsupported.')
         self.gio_file = Gio.File.new_for_uri(documenturi)
         self.set_location(self.gio_file)
-        
         logger.debug('old {} gio_file to new {}'.format(old_uri, self.gio_file.get_uri()))
 
     def get_path(self):
@@ -125,7 +124,10 @@ class EditorApp(Gtk.ScrolledWindow):
         self.show()
 
         self.document = MindEdDocument(file_uri)
-        self.load_file(self.document)
+        if 'untitled' in self.document.get_basename():
+            self.add_completion(self.document)
+        else:
+            self.load_file(self.document)
 
     def load_file(self, document):
         # load into GtkSource.Buffer as GtkSource.File
@@ -139,50 +141,48 @@ class EditorApp(Gtk.ScrolledWindow):
         success = False
         try:
             success = source.load_finish(result)
-
         except GObject.GError as e:
-            # happens on new file, if not exists
+            # happens on new file, if not exists <- hopefully no more
             logger.warn(e.message)
-
         if success:
-            self.this_lang = self.lm.guess_language(document.get_path(), None)
-
-            if self.this_lang:
-                self.buffer.set_highlight_syntax(True)
-                self.buffer.set_language(self.this_lang)
-                logger.debug("LanguageManager: %s" % self.this_lang.get_name())
-            else:
-                logger.warn('No language found for file "%s"' % document.get_path())
-                self.buffer.set_highlight_syntax(False)
-                
-            logger.debug("file %s loaded %s" % (document.get_path(), success))
-
-            if SIMPLE_COMPLETE:
-                new_lst = []
-                for func in nxc_funcs.nxc_funcs:
-                    new_lst[len(new_lst):] = [func[0]]
-                keywords = ' '.join(new_lst)
-
-                self.keybuff = GtkSource.Buffer()
-                self.keybuff.begin_not_undoable_action()
-                self.keybuff.set_text(keywords)
-                self.keybuff.end_not_undoable_action()
-                self.view_keyword_complete = GtkSource.CompletionWords.new('keyword')
-                self.view_keyword_complete.register(self.keybuff)
-            else:
-                self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
-
-            if SIMPLE_COMPLETE:
-                self.codeview_completion = self.codeview.get_completion()
-                self.codeview_completion.add_provider(self.view_keyword_complete)
-                self.codeview_completion.set_property("accelerators", 0)
-                self.codeview_completion.set_property("show-headers", 0)
-            else:
-                self.codeview_completion = self.codeview.get_completion()
-                self.codeview_completion.add_provider(self.custom_completion_provider)
-
+            self.add_completion(document)
         else:
-            logger.debug("Could not load %s" % gio_file.get_path())
+            logger.debug('Could not load {}'.format(document.get_path()))
+
+    def add_completion(self, document):
+
+        self.this_lang = self.lm.guess_language(document.get_path(), None)
+        if self.this_lang:
+            self.buffer.set_highlight_syntax(True)
+            self.buffer.set_language(self.this_lang)
+            logger.debug('LanguageManager: {}'.format(self.this_lang.get_name()))
+        else:
+            logger.warn('No language found for file {}'.format(document.get_path()))
+            self.buffer.set_highlight_syntax(False)
+
+        if SIMPLE_COMPLETE:
+            new_lst = []
+            for func in nxc_funcs.nxc_funcs:
+                new_lst[len(new_lst):] = [func[0]]
+            keywords = ' '.join(new_lst)
+
+            self.keybuff = GtkSource.Buffer()
+            self.keybuff.begin_not_undoable_action()
+            self.keybuff.set_text(keywords)
+            self.keybuff.end_not_undoable_action()
+            self.view_keyword_complete = GtkSource.CompletionWords.new('keyword')
+            self.view_keyword_complete.register(self.keybuff)
+        else:
+            self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
+
+        if SIMPLE_COMPLETE:
+            self.codeview_completion = self.codeview.get_completion()
+            self.codeview_completion.add_provider(self.view_keyword_complete)
+            self.codeview_completion.set_property("accelerators", 0)
+            self.codeview_completion.set_property("show-headers", 0)
+        else:
+            self.codeview_completion = self.codeview.get_completion()
+            self.codeview_completion.add_provider(self.custom_completion_provider)
 
     def drag_motion(self,wid, context, x, y, time):
         Gdk.drag_status(context, Gdk.DragAction.COPY | Gdk.DragAction.MOVE, time)
@@ -245,7 +245,13 @@ class EditorApp(Gtk.ScrolledWindow):
         # auto_close_paren
         if self.is_opening_paren(ch):
             logger.debug('opening_paren {}'.format(ch))
-            if self.should_auto_close_paren(doc):
+            # don't insert parens if right of opening_paren
+            iter1 = doc.get_iter_at_mark(doc.get_insert())
+            iter1.backward_char()
+            lb = iter1.get_char()
+            if lb in self.opening_parens:
+                handled = True
+            elif self.should_auto_close_paren(doc):
                 handled = self.auto_close_paren(doc, ch)
         # autoindent in {}
         if not handled and event.keyval == Gdk.KEY_Return:
