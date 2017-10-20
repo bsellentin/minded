@@ -107,6 +107,7 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="homogeneous">True</property>
             <child>
               <object class="GtkStatusbar" id="msg_status">
                 <property name="visible">True</property>
@@ -127,7 +128,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkStatusbar" id="type_status">
+              <object class="GtkStatusbar" id="colln_status">
                 <property name="width_request">80</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -555,7 +556,6 @@
             <property name="position">2</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkButton" id="btn_apiviewer">
             <property name="label" translatable="yes">API Browser</property>
@@ -571,7 +571,6 @@
             <property name="position">3</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkButton" id="btn_about">
             <property name="label" translatable="yes">About</property>
