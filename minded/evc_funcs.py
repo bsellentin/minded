@@ -314,21 +314,31 @@ evc_funcs = [
     ['OutputPower', 'OutputPower(,)', '<b>OutputPower(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
-        'This function enables setting the output percentage power on the output ports', 'Output'],
+        'This function enables setting the output percentage power on\n' +
+        'the output ports\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
+        '  <span foreground="brown">power</span>    Specify output speed [-100 – 100 %]\n', 'Output'],
     ['OutputSpeed', 'OutputSpeed(,)','<b>OutputSpeed(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>)</b>\n\n' +
         'This function enables setting the output percentage speed on the output\n' +
         'ports. This modes automatically enables speed control, which means the\n' +
-        'system will automatically adjust the power to keep the specified speed.', 'Output'],
+        'system will automatically adjust the power to keep the specified speed.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports\n' +
+        '  <span foreground="brown">speed</span>    Specify output speed [-100 – 100 %]\n', 'Output'],
     ['OutputStart', 'OutputStart()','<b>OutputStart(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
-        'This function enables starting the specified output port.', 'Output'],
+        'This function enables starting the specified output ports.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.', 'Output'],
     ['OutputStop', 'OutputStop(,)', '<b>OutputStop(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">useBrake</span>)</b>\n\n' +
         'This function enables stopping the specified output port.\n\n' +
         '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>    Desired output ports\n' +
         '  <span foreground="brown">useBreak</span>   0: Float, 1: Break', 'Output'],
     ['OutputStepPower','OutputStepPower(,,,,)','<b>OutputStepPower(' +
         '<span foreground="brown">outputs</span>, ' +
@@ -338,9 +348,11 @@ evc_funcs = [
         '<span foreground="brown">step3</span>)</b>\n\n' +
         'This function enables specifying a full motor power cycle in tacho counts.\n\n' +
         '<b>Parameters</b>\n' +
-        '  <span foreground="brown">step1</span> specifyes the power ramp up periode in tacho counts, \n' +
-        '  <span foreground="brown">step2</span> specifyes the constant power period in tacho counts,\n' +
-        '  <span foreground="brown">step3</span> specifyes the power down period in tacho counts.', 'Output'],
+        '  <span foreground="brown">outputs</span>\n' +
+        '  <span foreground="brown">power</span>\n' +
+        '  <span foreground="brown">step1</span>  specifyes the power ramp up periode in tacho counts, \n' +
+        '  <span foreground="brown">step2</span>  specifyes the constant power period in tacho counts,\n' +
+        '  <span foreground="brown">step3</span>  specifyes the power down period in tacho counts.', 'Output'],
     ['OutputStepSpeed', 'OutputStepSpeed(,,,,)', '<b>OutputStepSpeed(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
@@ -351,9 +363,11 @@ evc_funcs = [
         'The system will automatically adjust the power level to the motor to keep\n' +
         'the specified output speed.\n\n' +
         '<b>Parameters</b>\n' +
-        '  <span foreground="brown">step1</span> specifyes the power ramp up periode in tacho counts,\n' +
-        '  <span foreground="brown">step2</span> specifyes the constant power period in tacho counts,\n' +
-        '  <span foreground="brown">step3</span> specifyes the power down period in tacho counts.', 'Output'],
+        '  <span foreground="brown">outputs</span>\n' +
+        '  <span foreground="brown">speed</span>\n' +
+        '  <span foreground="brown">step1</span>    specifyes the power ramp up periode in tacho counts,\n' +
+        '  <span foreground="brown">step2</span>    specifyes the constant power period in tacho counts,\n' +
+        '  <span foreground="brown">step3</span>    specifyes the power down period in tacho counts.', 'Output'],
     ['OutputStepSync', 'OutputStepSync(,,,)', '<b>OutputStepSync(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
@@ -363,12 +377,15 @@ evc_funcs = [
         'used when motors should run as synchrone as possible, for example to\n' +
         'archieve a model driving straight. Duration is specified in tacho counts.\n\n' +
         '<b>Parameters</b>\n' +
-        '<span foreground="brown">turn</span>:  0  :  Motor will run with same power\n' +
-        '       100:  One motor will run with specified power while the other will\n' +
-        '             be close to zero\n' +
-        '       200:  One motor will run with specified power forward while the other\n' +
-        '             will run in the opposite direction at the same power level.\n' +
-        '<span foreground="brown">step</span>:  Tacho pulses, 0 = Infinite', 'Output'],
+        '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+        '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
+        '  <span foreground="brown">speed</span>\n' +
+        '  <span foreground="brown">turn</span>:    0  :  Motor will run with same power\n' +
+        '           100:  One motor will run with specified power while the other will\n' +
+        '                 be close to zero\n' +
+        '           200:  One motor will run with specified power forward while the other\n' +
+        '                 will run in the opposite direction at the same power level.\n' +
+        '  <span foreground="brown">step</span>:    Tacho pulses, 0 = Infinite', 'Output'],
     ['OutputTimePower', 'OutputTimePower(,,,,)', '<b>OutputTimePower(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>, ' +
@@ -377,20 +394,24 @@ evc_funcs = [
         '<span foreground="brown">time3</span>)</b>\n\n' +
         'This function enables specifying a full motor power cycle in time.\n\n' +
         '<b>Parameters</b>\n' +
-        '  <span foreground="brown">time1</span> specifyes the power ramp up periode in milliseconds,\n' +
-        '  <span foreground="brown">time2</span> specifyes the constant power period in milliseconds,\n' +
-        '  <span foreground="brown">time3</span> specifyes the power down period in milliseconds.', 'Output'],
-    ['OutputTimeSpeed', 'OutputTimeSpeed(,,,,)', '<b>OutputTimePower(' +
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
+        '  <span foreground="brown">power</span>\n' +
+        '  <span foreground="brown">time1</span>    specifyes the power ramp up periode in milliseconds,\n' +
+        '  <span foreground="brown">time2</span>    specifyes the constant power period in milliseconds,\n' +
+        '  <span foreground="brown">time3</span>    specifyes the power down period in milliseconds.', 'Output'],
+    ['OutputTimeSpeed', 'OutputTimeSpeed(,,,,)', '<b>OutputTimeSpeed(' +
         '<span foreground="brown">outputs</span>, ' +
-        '<span foreground="brown">power</span>, ' +
+        '<span foreground="brown">speed</span>, ' +
         '<span foreground="brown">time1</span>, ' +
         '<span foreground="brown">time2</span>, ' +
         '<span foreground="brown">time3</span>)</b>\n\n' +
         'This function enables specifying a full motor power cycle in time.\n\n' +
         '<b>Parameters</b>\n' +
-        '  <span foreground="brown">time1</span> specifyes the power ramp up periode in milliseconds,\n' +
-        '  <span foreground="brown">time2</span> specifyes the constant power period in milliseconds,\n' +
-        '  <span foreground="brown">time3</span> specifyes the power down period in milliseconds.', 'Output'],
+        '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
+        '  <span foreground="brown">speed</span>\n' +
+        '  <span foreground="brown">time1</span>    specifyes the power ramp up periode in milliseconds,\n' +
+        '  <span foreground="brown">time2</span>    specifyes the constant power period in milliseconds,\n' +
+        '  <span foreground="brown">time3</span>    specifyes the power down period in milliseconds.', 'Output'],
     ['OutputTimeSync', 'OutputTimeSync(,,,)', '<b>OutputTimeSync('+ 
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
@@ -398,7 +419,17 @@ evc_funcs = [
         '<span foreground="brown">time</span>)</b>\n\n' +
         'This function enables synchronizing two motors. Synchronization should be\n' +
         'used when motors should run as synchrone as possible, for example to\n' +
-        'archieve a model driving straight. Duration is specified in time.', 'Output'],
+        'archieve a model driving straight. Duration is specified in time.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+        '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
+        '  <span foreground="brown">speed</span>\n' +
+        '  <span foreground="brown">turn</span>     0  :  Motor will run with same power\n' +
+        '           100:  One motor will run with specified power while the other will\n' +
+        '                 be close to zero\n' +
+        '           200:  One motor will run with specified power forward while the other\n' +
+        '                 will run in the opposite direction at the same power level.\n' +
+        '  <span foreground="brown">time</span>', 'Output'],
     ['Off', 'Off()', '<b>Off(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
         'Turn the specified outputs off (with braking).\n\n' +

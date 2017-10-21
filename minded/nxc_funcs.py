@@ -119,7 +119,7 @@ nxc_funcs = [
         '           <b><span foreground="red">Warning:</span></b> These options require the\n' +
         '           enhanced NBC/NXC firmware\n\n' +
         '<b>Example:</b>\n' +
-        '  CircleOut(20, 50, 20);', 'Display'], 
+        '  CircleOut(20, 50, 20, DRAW_OPT_SHAPE_FILL);', 'Display'], 
     ['Coast', 'Coast()', '<b>Coast (<span foreground="brown">outputs</span>)</b>\n\n' +
         'Coast motors. Turn off the specified outputs, making them coast to a stop.\n\n' +
         '<b>Parameters</b>\n' +
