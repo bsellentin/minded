@@ -1,6 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+'''
+Editor Application of MindEd
+'''
+
+# Copyright (C) 2017 Bernd Sellentin <sel@gge-em.org>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 from pathlib import Path
 
 import gi
@@ -13,7 +32,6 @@ from gi.repository import GtkSource
 import logging
 logger = logging.getLogger(__name__)
 
-import minded.nxc_funcs as nxc_funcs
 from minded.brickcompletionprovider import BrickCompletionProvider
 
 SIMPLE_COMPLETE = 0
@@ -51,7 +69,10 @@ class MindEdDocument(GtkSource.File):
 class EditorApp(Gtk.ScrolledWindow):
 
     def __init__(self, mindedappwin, file_uri):
-
+        Gtk.ScrolledWindow.__init__(self)
+        self.set_hexpand(True)
+        self.set_vexpand(True)
+        
         self.mindedappwin = mindedappwin
 
         # look for settings
@@ -70,13 +91,6 @@ class EditorApp(Gtk.ScrolledWindow):
             self.settings = Gio.Settings.new_full(schema, None, None)
         else:
             self.settings = Gio.Settings('org.gge-em.MindEd')
-
-        Gtk.ScrolledWindow.__init__(self)
-        self.set_hexpand(True)
-        self.set_vexpand(True)
-
-        self.lm = GtkSource.LanguageManager.new()
-        self.this_lang = ()
 
         self.buffer = GtkSource.Buffer()
         self.codeview = GtkSource.View().new_with_buffer(self.buffer)
@@ -118,15 +132,18 @@ class EditorApp(Gtk.ScrolledWindow):
         self.codeview.connect('key-press-event', self.on_key_press)
         self.add_brackets()
 
-        self.codeview.show()
-
         self.add(self.codeview)
-        self.show()
+        self.show_all()
+
+        self.lm = GtkSource.LanguageManager.new()
+        self.this_lang = ()
+
+        self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
+        self.codeview_completion = self.codeview.get_completion()
+        self.codeview_completion.add_provider(self.custom_completion_provider)
 
         self.document = MindEdDocument(file_uri)
-        if 'untitled' in self.document.get_basename():
-            self.add_completion(self.document)
-        else:
+        if not 'untitled' in self.document.get_basename():
             self.load_file(self.document)
 
     def load_file(self, document):
@@ -145,44 +162,24 @@ class EditorApp(Gtk.ScrolledWindow):
             # happens on new file, if not exists <- hopefully no more
             logger.warn(e.message)
         if success:
-            self.add_completion(document)
+            self.set_completion(document)
         else:
             logger.debug('Could not load {}'.format(document.get_path()))
 
-    def add_completion(self, document):
-
+    def set_completion(self, document):
+        ''' set syntax highlight and completion '''
         self.this_lang = self.lm.guess_language(document.get_path(), None)
         if self.this_lang:
-            self.buffer.set_highlight_syntax(True)
+            if not self.buffer.get_highlight_syntax():
+                self.buffer.set_highlight_syntax(True)
             self.buffer.set_language(self.this_lang)
             logger.debug('LanguageManager: {}'.format(self.this_lang.get_name()))
+            self.custom_completion_provider.set_completion_list(self.this_lang)
         else:
             logger.warn('No language found for file {}'.format(document.get_path()))
-            self.buffer.set_highlight_syntax(False)
-
-        if SIMPLE_COMPLETE:
-            new_lst = []
-            for func in nxc_funcs.nxc_funcs:
-                new_lst[len(new_lst):] = [func[0]]
-            keywords = ' '.join(new_lst)
-
-            self.keybuff = GtkSource.Buffer()
-            self.keybuff.begin_not_undoable_action()
-            self.keybuff.set_text(keywords)
-            self.keybuff.end_not_undoable_action()
-            self.view_keyword_complete = GtkSource.CompletionWords.new('keyword')
-            self.view_keyword_complete.register(self.keybuff)
-        else:
-            self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
-
-        if SIMPLE_COMPLETE:
-            self.codeview_completion = self.codeview.get_completion()
-            self.codeview_completion.add_provider(self.view_keyword_complete)
-            self.codeview_completion.set_property("accelerators", 0)
-            self.codeview_completion.set_property("show-headers", 0)
-        else:
-            self.codeview_completion = self.codeview.get_completion()
-            self.codeview_completion.add_provider(self.custom_completion_provider)
+            if self.buffer.get_highlight_syntax():
+                self.buffer.set_highlight_syntax(False)
+            self.buffer.set_language(None)
 
     def drag_motion(self,wid, context, x, y, time):
         Gdk.drag_status(context, Gdk.DragAction.COPY | Gdk.DragAction.MOVE, time)

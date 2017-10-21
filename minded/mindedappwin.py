@@ -1,11 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''MindEd - An Editor for programming LEGO Mindstorms Bricks
-- NXT with NXC
-- EV3 with EV3-Python
+
+'''
+MindEd - A IDE for programming LEGO Mindstorms Bricks
 '''
 
-# requires package python-pathlib
+# Copyright (C) 2017 Bernd Sellentin <sel@gge-em.org>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 from pathlib import Path
 import re
 
@@ -21,8 +35,6 @@ logger = logging.getLogger(__name__)
 
 from minded.editorapp import EditorApp
 from minded.brickhelper import BrickHelper
-import minded.nxc_funcs as nxc_funcs
-import minded.evc_funcs as evc_funcs
 from minded.brickinfo import BrickInfo
 from minded.brickfiler import BrickFiler
 from minded.apiviewer import ApiViewer
@@ -232,7 +244,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 GObject.idle_add(self.idle_evc_proc, self.window, editor.document)
             else:
                 self.log_buffer.set_text('# Error: unknown file extension, expected: .nxc or .evc')
-                self.format_log(self.log_buffer.get_start_iter)
+                self.format_log(self.log_buffer.get_start_iter())
 
     def on_btn_transmit_clicked(self, button):
         '''
@@ -258,7 +270,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 GObject.idle_add(self.idle_evc_proc, self.window, editor.document, True)
             else:
                 self.log_buffer.set_text('# Error: unknown file extension, expected: .nxc or .evc')
-                self.format_log(self.log_buffer.get_start_iter)
+                self.format_log(self.log_buffer.get_start_iter())
 
     def on_btn_menu_clicked(self, button):
 
@@ -330,28 +342,29 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def load_file_in_editor(self, file_uri):
 
-        # look if untitled empty
-        page_num = self.notebook.get_n_pages()
-        logger.debug('page_num {}'.format(page_num))
-        if page_num:
-            editor = self.get_editor()
-            start_iter, end_iter = editor.get_buffer().get_bounds()
-            if start_iter.equal(end_iter):
-                logger.debug('empty buffer')
-                # load in existing buffer
-                editor.document.set_uri(file_uri)
-                editor.load_file(editor.document)
-                self.change_language_selection(editor)
-                self.untitledDocCount -= 1
-                return
+        if not 'untitled' in file_uri:
+            # look if untitled empty
+            page_num = self.notebook.get_n_pages()
+            logger.debug('page_num {}'.format(page_num))
+            if page_num:
+                editor = self.get_editor()
+                start_iter, end_iter = editor.get_buffer().get_bounds()
+                if start_iter.equal(end_iter):
+                    logger.debug('empty buffer')
+                    # load in existing buffer
+                    editor.document.set_uri(file_uri)
+                    editor.load_file(editor.document)
+                    self.change_language_selection(editor)
+                    self.set_title(editor.document)
+                    self.untitledDocCount -= 1
+                    return
         # make new page
         try:
             editor = EditorApp(self, file_uri)
         except:
             logger.warn('Something went terrible wrong')
 
-        self.create_tab_label(editor)
-        self.notebook.append_page(editor, self.box)
+        self.notebook.append_page(editor, self.create_tab_label(editor))
         self.notebook.set_current_page(-1)
 
         buf = editor.get_buffer()
@@ -540,9 +553,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         return True
 
     def create_tab_label(self, editor):
-
-        # create tab header with close button
-        self.box = Gtk.HBox()
+        ''' create tab header with close button '''
         closebtn = Gtk.Button()
         icon = Gio.ThemedIcon(name='window-close')
         image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
@@ -550,17 +561,16 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         closebtn.set_relief(Gtk.ReliefStyle.NONE)
         closebtn.connect('clicked', self.on_btn_close_tab_clicked, editor)
 
-        # change headerbar
-        self.set_title(editor.document)
-
-        self.box.pack_start(Gtk.Label(editor.document.get_basename()), True, True, 0)
-        self.box.pack_end(closebtn, False, False, 0)
-        self.box.show_all()
+        box = Gtk.HBox()
+        box.pack_start(Gtk.Label(editor.document.get_basename()), True, True, 0)
+        box.pack_end(closebtn, False, False, 0)
+        box.show_all()
+        return box
 
     def change_tab_label(self, editor, filename):
-        thisbox = self.notebook.get_tab_label(editor)
-        if thisbox:
-            widglist = thisbox.get_children()
+        box = self.notebook.get_tab_label(editor)
+        if box:
+            widglist = box.get_children()
             widglist[0].set_text(filename)
 
     def on_buffer_modified(self, widget):
@@ -600,35 +610,16 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''change language for current document'''
         if treeiter != None:
             logger.debug('Language selected %s', model[treeiter][0])
-
             self.language_label.set_text(model[treeiter][1])
 
             editor = self.get_editor()
             file_uri = Path(editor.document.get_uri())
 
-            editor.this_lang = editor.lm.get_language(model[treeiter][0])
-            buf = editor.get_buffer()
-            if editor.this_lang:
-                if not buf.get_highlight_syntax():
-                    buf.set_highlight_syntax(True)
-                buf.set_language(editor.this_lang)
-                if editor.this_lang.get_name() == 'NXC':
-                    editor.custom_completion_provider.funcs = nxc_funcs.nxc_funcs
-                    editor.custom_completion_provider.consts = nxc_funcs.nxc_consts
-                    editor.custom_completion_provider.lang = 'NXC'
-                    editor.document.set_uri(str(file_uri.with_suffix('.nxc')))
-                if editor.this_lang.get_name() == 'EVC':
-                    editor.custom_completion_provider.funcs = evc_funcs.evc_funcs
-                    editor.custom_completion_provider.consts = evc_funcs.evc_consts
-                    editor.custom_completion_provider.lang = 'EVC'
-                    editor.document.set_uri(str(file_uri.with_suffix('.evc')))
-                logger.debug('changed extension: ' + editor.document.get_uri())
-                buf.set_modified(True)
-                self.set_title(editor.document)
-            else:
-                if buf.get_highlight_syntax():
-                    buf.set_highlight_syntax(False)
-                buf.set_language(None)
+            if model[treeiter][0] == 'nxc':
+                editor.document.set_uri(str(file_uri.with_suffix('.nxc')))
+            if model[treeiter][0] == 'evc':
+                editor.document.set_uri(str(file_uri.with_suffix('.evc')))
+            editor.set_completion(editor.document)
 
             editor.codeview.grab_focus()
             self.languagemenu.hide()

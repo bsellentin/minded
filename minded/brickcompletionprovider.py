@@ -1,6 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+'''
+BrickCompletionProvider of MindEd
+'''
+
+# Copyright (C) 2017 Bernd Sellentin <sel@gge-em.org>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
@@ -21,23 +41,30 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
         GObject.GObject.__init__(self)
 
         if language:
-            logger.debug('Completion for language: %s', language.get_name())
-            if language.get_name() == 'NXC':
-                self.funcs = nxc_funcs.nxc_funcs
-                self.consts = nxc_funcs.nxc_consts
-                self.lang = 'NXC'
-            if language.get_name() == 'EVC':
-                self.funcs = evc_funcs.evc_funcs
-                self.consts = evc_funcs.evc_consts
-                self.lang = 'EVC'
+            logger.debug('Completion for language: {}'.format(language.get_name()))
+            self.set_completion_list(language)
         else:
             logger.debug('No language - no completion')
             self.funcs = []
             self.consts = []
             self.lang = ''
 
+    def set_completion_list(self, language):
+        if language.get_name() == 'NXC':
+            self.funcs = nxc_funcs.nxc_funcs
+            self.consts = nxc_funcs.nxc_consts
+            self.lang = 'NXC'
+        elif language.get_name() == 'EVC':
+            self.funcs = evc_funcs.evc_funcs
+            self.consts = evc_funcs.evc_consts
+            self.lang = 'EVC'
+        else:
+            self.funcs = []
+            self.consts = []
+            self.lang = ''
+
     def do_get_name(self):
-        return ('%s' % self.lang)
+        return ('{}'.format(self.lang))
 
     def do_match(self, context):
         return True
@@ -90,7 +117,8 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             lim_iter = ins_iter.copy()
             if lim_iter.backward_word_start():
                 start_iter = lim_iter.copy()
-                match_start, match_end = ins_iter.backward_search('(', Gtk.TextSearchFlags.VISIBLE_ONLY, start_iter)
+                match_start, match_end = ins_iter.backward_search('(',
+                            Gtk.TextSearchFlags.VISIBLE_ONLY, start_iter)
                 match_start.forward_char()
                 buf.place_cursor(match_start)
         buf.end_user_action()
