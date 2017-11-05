@@ -1,6 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+'''
+Browse the NXC- and EVC-API reference
+'''
+
+# Copyright (C) 2017 Bernd Sellentin <sel@gge-em.org>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Pango
@@ -8,8 +27,6 @@ from gi.repository import Gtk, Pango
 import logging
 logger = logging.getLogger(__name__)
 
-#import evc_funcs
-#import nxc_funcs
 import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
 
@@ -137,9 +154,8 @@ class ApiViewer(object):
                         start = self.info_buffer.get_iter_at_offset(0)
                         end = start.copy()
                         if end.forward_to_line_end():
-                            match_start, match_end = start.forward_search(search,
-                                                                   Gtk.TextSearchFlags.VISIBLE_ONLY,
-                                                                   end)
+                            match_start, match_end = start.forward_search(
+                                search, Gtk.TextSearchFlags.VISIBLE_ONLY, end)
                             self.info_buffer.delete(match_start, match_end)
                     # format text
                     start = self.info_buffer.get_start_iter()
@@ -209,5 +225,4 @@ class ApiViewer(object):
         #Gtk.main_quit()
         # needed! Else Window disappears, but App lives still.
         return True
-
 
