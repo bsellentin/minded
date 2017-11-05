@@ -38,12 +38,12 @@ class EV3():
 
     def __del__(self): pass
 
-    def close(self):
+    def close(self) -> None:
 
         self.device = None
         logger.debug('USB connection closed.')
 
-    def do_nothing(self):
+    def do_nothing(self) -> None:
         cmd = opNop
         self.send_direct_cmd(cmd)
 

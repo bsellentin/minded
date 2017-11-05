@@ -49,7 +49,7 @@ class MindEdApp(Gtk.Application):
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
-        self.version = "0.7.5"
+        self.version = "0.7.6"
 
         self.add_main_option_entries([
             make_option("debug", description="Show debug information on the console"),
@@ -265,7 +265,7 @@ class MindEdApp(Gtk.Application):
         dlg.window.present()
 
     def on_quit(self, action, param):
-        self.quit()
+        self.win.gtk_main_quit()
 
 if __name__ == "__main__":
     app = MindEdApp()
