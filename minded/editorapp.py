@@ -143,7 +143,14 @@ class EditorApp(Gtk.ScrolledWindow):
         self.codeview_completion.add_provider(self.custom_completion_provider)
 
         self.document = MindEdDocument(file_uri)
-        if not 'untitled' in self.document.get_basename():
+        # throws error if file not exists -> load empty buffer
+        #try:
+        #    info = self.document.gio_file.query_info('standard::type,standard::size',
+        #                                             Gio.FileQueryInfoFlags(0))
+        #    self.load_file(self.document)
+        #except Exception as e:
+        #    logger.debug(str(e))
+        if self.document.gio_file.query_exists(None):
             self.load_file(self.document)
 
     def load_file(self, document):
