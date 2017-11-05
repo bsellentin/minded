@@ -163,10 +163,15 @@ evc_funcs = [
         'This function lets you draw a line on the screen\n' +
         'from x1, y1 to x2, y2.', 'Display'],
     ['MotorBusy', 'MotorBusy()', '<b>MotorBusy(' +
-        '<span foreground="brown">output</span>)</b>\n\n' +
-        'Returns 1 if motor is busy, 0 if not.\n\n' +
+        '<span foreground="brown">outputs</span>)</b>\n\n' +
+        'This function enables the program to test if a output port is busy.\n' +
+        'Returns 1 if output is busy, 0 if not.\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>   Desired output ports.\n' +
         '<b>Example:</b>\n' +
-        ' while(MotorBusy(OUT_B));  // wait till motor finishes', 'Output'],
+        ' while(MotorBusy(OUT_B)){\n' +
+        '     Wait(2);  // 2ms between checks\n' +
+        ' }', 'Output'],
     ['MotorRotationCount', 'MotorRotationCount()', '<b>MotorRotationCount(' +
         '<span foreground="brown">output</span>)</b>\n\n' +
         'This function enables the program to read the tacho count in degrees as\n' +
@@ -634,7 +639,7 @@ evc_funcs = [
         '  <span foreground="brown">input</span>        The port to configure.\n' +
         '<b>Example:</b>\n' +
         '  SetSensorNXTSound(IN_1);', 'Input'],
-    ['SetSensorMode', 'SetSensorMode()', '<b>SetSensorMode(' +
+    ['SetSensorMode', 'SetSensorMode(,)', '<b>SetSensorMode(' +
         '<span foreground="brown">input</span>, ' +
         '<span foreground="brown">mode</span>)</b>\n\n' +
         'Touch sensor TOUCH       Return of state (2 states possible)\n' +
