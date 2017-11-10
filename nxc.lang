@@ -32,7 +32,7 @@
     </metadata>
 
     <styles>
-        <style id="comment"           _name="Comment"             map-to="def:doc-comment-element"/>
+        <style id="comment"           _name="Comment"             map-to="def:comment"/>
         <style id="error"             _name="Error"               map-to="def:error"/>
         <style id="string"            _name="String"              map-to="def:string"/>
         <style id="preprocessor"      _name="Preprocessor"        map-to="def:preprocessor"/>
@@ -42,7 +42,7 @@
         <style id="keyword"           _name="Keyword"             map-to="def:keyword"/>
         <style id="type"              _name="Data Type"           map-to="def:type"/>
         <style id="storage-class"     _name="Storage Class"       map-to="def:type"/>
-        <style id="nxt-ios"           _name="NXT IOs"             map-to="def:type"/>
+        <style id="nxt-ios"           _name="NXT IOs"             map-to="def:special-constant"/>
         <style id="printf"            _name="printf Conversion"   map-to="def:special-char"/>
         <style id="escaped-character" _name="Escaped Character"   map-to="def:special-char"/>
         <style id="floating-point"    _name="Floating point number" map-to="def:floating-point"/>
@@ -50,7 +50,7 @@
         <style id="octal"             _name="Octal number"        map-to="def:base-n-integer"/>
         <style id="hexadecimal"       _name="Hexadecimal number"  map-to="def:base-n-integer"/>
         <style id="boolean"           _name="Boolean value"       map-to="def:boolean"/>
-        <style id="commands"          _name="Commands"            map-to="def:comment"/>
+        <style id="commands"          _name="Commands"            map-to="def:identifier"/>
     </styles>
 
     <definitions>
