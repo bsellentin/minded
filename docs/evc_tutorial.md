@@ -427,10 +427,10 @@ int main(){
     
     int black = 10;
     int white = 90;
-    int grey = (white + black)/2;	// 11 ... 50 ... 88: d38
+    int grey = (white + black)/2;   // 11 ... 50 ... 88: d38
     int reflected = 0;
-    int targetspeed = 30;			// grey / targetspeed = kc
-    float kp = 0.79;				// kc = 0.79
+    int targetspeed = 30;           // grey / targetspeed = kc
+    float kp = 0.79;                // kc = 0.79
     int error = 0;
     int turn;
     int powerA;
@@ -439,25 +439,25 @@ int main(){
     SetSensorLight(IN_2);
 
     OutputPower(OUT_BC, targetspeed);
-	OutputStart(OUT_BC);
-	
+    OutputStart(OUT_BC);
+
     LcdText(1,0,LCD_LINE8,"Exit mit <CENTER>");
     
     while(ButtonIsUp(BTNCENTER)){
-		reflected = ReadSensor(IN_2);
-		error = reflected - grey;	// -38 ... 0 ... +38
-		turn = kp * error;
-		
-		powerA = targetspeed + turn;
-		if(powerA > targetspeed + grey) powerA = targetspeed + grey;
-		if(powerA < 0) powerA = 0;
-		
-		powerB = targetspeed - turn;
-		if(powerB > targetspeed + grey) powerB = targetspeed + grey;
-		if(powerB < 0) powerB = 0;
-		
-		OutputPower(OUT_B, powerA);
-		OutputPower(OUT_C, powerB);
+        reflected = ReadSensor(IN_2);
+        error = reflected - grey;   // -38 ... 0 ... +38
+        turn = kp * error;
+
+        powerA = targetspeed + turn;
+        if(powerA > targetspeed + grey) powerA = targetspeed + grey;
+        if(powerA < 0) powerA = 0;
+
+        powerB = targetspeed - turn;
+        if(powerB > targetspeed + grey) powerB = targetspeed + grey;
+        if(powerB < 0) powerB = 0;
+
+        OutputPower(OUT_B, powerA);
+        OutputPower(OUT_C, powerB);
     }
 
     OutputStop(OUT_BC,1);
@@ -656,8 +656,8 @@ gelesen werden können.
 |                    | US_DIST_IN  |                   | Dist in inch |
 |EV3-Gyroskop        | GYRO_ANG    | SetSensorGyro     | angle |
 |                    | GYRO_RATE   |                   | rate |
-|EV3-Infrared        | IR_PROX     | SetSensorIR       | Proximity |
-|                    | IR_SEEK     |                   | Seek |
+|EV3-Infrared        | IR_PROX     | SetSensorIR       | Entfernung 0...100 cm |
+|                    | IR_SEEK     |                   | -25 links ... 0 gerade ... 25 rechts|
 |                    | IR_REMOTE   |                   | Remote Control |
 |NXT-Temperature     | NXT_TEMP_C  |                   | Temperature in C |
 |                    | NXT_TEMP_F  |                   | Temperature in F |
@@ -670,8 +670,27 @@ gelesen werden können.
 |NXT-Sound           | NXT_SND_DB  | SetSensorNXTSound | Decibels |
 |                    | NXT_SND_DBA |                   | A-Weighted Decibels |
 |NXT-Ultrasonic      | NXT_US_CM   |                   | Dist in cm |
-|HiTechnic IR-Seeker | HT_DIR_DC   |                   | Direction of IR signal 1-9 |
+|HiTechnic IR-Seeker | HT_DIR_DC   |                   | Direction of IR signal 1...9 |
 
+
+<h2 id="irbeacon">InfrarotSender</h3>
+
+BEACON_CH_1             0
+BEACON_CH_2             1
+BEACON_CH_3             2
+BEACON_CH_4             3
+BEACON_OFF              0
+BEACON_UP_LEFT          1
+BEACON_DOWN_LEFT        2
+BEACON_UP_RIGHT         3
+BEACON_DOWN_RIGHT       4
+BEACON_UP               5
+BEACON_DIAG_UP_LEFT     6
+BEACON_DIAG_UP_RIGHT    7
+BEACON_DOWN             8
+BEACON_ON               9
+BEACON_LEFT             10
+BEACON_RIGHT            11
 
 <h2 id="parallel">Parallele Tasks</h2>
 
