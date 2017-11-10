@@ -28,6 +28,7 @@ For Debian-based systems MindEd requires the following packages to run:
 As *root* copy the nxc- and evc.language-specs to gtksourceview-3.0/language-specs-folder.
 
     minded$ cp *.lang /usr/share/gtksourceview-3.0/language-specs/
+    minded$ cp minded.xml /usr/share/gtksourceview-3.0/styles/
 
 Now run Minded as normal user.
 
