@@ -121,7 +121,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         TopWin CloseButton clicked, are there unsaved changes
         '''
         # get_n_pages from 0...n-1, remove reversed!
-        realy_quit = False
+        realy_quit = True
         for pagecount in range(self.notebook.get_n_pages()-1, -1, -1):
 
             logger.debug('Window close clicked! Remove page %s' % pagecount)
@@ -129,7 +129,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             editor = self.notebook.get_nth_page(pagecount)
             buf = editor.get_buffer()
             if buf.get_modified():
-                self.dlg_close_confirmation(editor)
+                realy_quit = self.dlg_close_confirmation(editor)
+                if not realy_quit:
+                    return True     # returning True avoids it to signal "destroy-event"
             else:
                 self.notebook.remove_page(pagecount)
 
@@ -502,6 +504,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         elif response == Gtk.ResponseType.CANCEL:
             logger.debug('Cancel closing tab')
+            dlg.destroy()
+            return False
 
         elif response == Gtk.ResponseType.YES:
             logger.debug('Save file before closing')
@@ -516,6 +520,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             logger.debug('dialog closed or cancelled')
         # finally, destroy the messagedialog
         dlg.destroy()
+        return True
 
     def create_tab_label(self, editor):
         ''' create tab header with close button '''
@@ -620,7 +625,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
     def update_cursor_location(self, buf, location, mark):
         self.cursor_location.pop(self.cursor_location_id)
 
-        #iter = buffer.get_iter_at_mark(buffer.get_insert())
         pos = buf.props.cursor_position
         cursor_it = buf.get_iter_at_offset(pos)
         row = cursor_it.get_line()
@@ -708,6 +712,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             self.format_log(match_end)
 
         self.window.get_window().set_cursor(None)
+
 
 class FileOpenDialog(Gtk.FileChooserDialog):
 
