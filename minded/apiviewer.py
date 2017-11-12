@@ -154,9 +154,11 @@ class ApiViewer(object):
                         start = self.info_buffer.get_iter_at_offset(0)
                         end = start.copy()
                         if end.forward_to_line_end():
-                            match_start, match_end = start.forward_search(
+                            match = start.forward_search(
                                 search, Gtk.TextSearchFlags.VISIBLE_ONLY, end)
-                            self.info_buffer.delete(match_start, match_end)
+                            if match:
+                                match_start, match_end = match
+                                self.info_buffer.delete(match_start, match_end)
                     # format text
                     start = self.info_buffer.get_start_iter()
                     text_start = start.copy()
