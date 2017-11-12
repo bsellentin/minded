@@ -49,7 +49,7 @@ class MindEdApp(Gtk.Application):
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
-        self.version = "0.7.6"
+        self.version = "0.7.7"
 
         self.add_main_option_entries([
             make_option("debug", description="Show debug information on the console"),

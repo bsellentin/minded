@@ -111,16 +111,30 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             start_iter = text_iter.copy()
             buf.delete(start_iter, end_iter)
         buf.insert_at_cursor(completion_item.get_text())
-        # set cursor after opening bracket
+        # select if there is first hint
         if completion_item.get_text().endswith(')'):
-            ins_iter = buf.get_iter_at_mark(buf.get_insert())
-            lim_iter = ins_iter.copy()
-            if lim_iter.backward_word_start():
-                start_iter = lim_iter.copy()
-                match_start, match_end = ins_iter.backward_search('(',
-                            Gtk.TextSearchFlags.VISIBLE_ONLY, start_iter)
-                match_start.forward_char()
-                buf.place_cursor(match_start)
+            lim_iter = buf.get_iter_at_mark(buf.get_insert())
+            start_iter = lim_iter.copy()
+            start_iter.backward_chars(len(completion_item.get_text()))
+            start_open, end_open = start_iter.forward_search('(',
+                            Gtk.TextSearchFlags.VISIBLE_ONLY, lim_iter)
+            start_iter = end_open.copy()
+            start_close, end_close = start_iter.forward_search(')',
+                        Gtk.TextSearchFlags.VISIBLE_ONLY, lim_iter)
+            if end_open.equal(start_close):
+                    # no hint
+                    pass
+            else:
+                # search for next ','
+                match = start_iter.forward_search(',',
+                            Gtk.TextSearchFlags.VISIBLE_ONLY, end_close)
+                if match:
+                    # more than one hint
+                    match_start, match_end = match
+                    buf.select_range(end_open, match_start)
+                else:
+                    # only one hint
+                    buf.select_range(end_open, start_close)
         buf.end_user_action()
 
         return True

@@ -95,6 +95,10 @@ class EditorApp(Gtk.ScrolledWindow):
         self.buffer = GtkSource.Buffer()
         self.codeview = GtkSource.View().new_with_buffer(self.buffer)
 
+        sm = GtkSource.StyleSchemeManager.get_default()
+        sid = GtkSource.StyleSchemeManager.get_scheme(sm, 'minded')
+        self.buffer.set_style_scheme(sid)
+
         self.settings.bind('linenumbers', self.codeview, 'show-line-numbers',
                             Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('showrightmargin', self.codeview, 'show-right-margin',
@@ -279,13 +283,22 @@ class EditorApp(Gtk.ScrolledWindow):
                 doc.end_user_action()
                 handled = True
         # don't insert comma if left of one, instead move right
-        if not handled and ch == ',':
+        if not handled and (ch == ',' or event.keyval == Gdk.KEY_Tab):
             logger.debug('KeyEvent: {}'.format(ch))
             iter1 = doc.get_iter_at_mark(doc.get_insert())
             rb = iter1.get_char()
             if rb == ',':
                 iter1.forward_char()
-                doc.place_cursor(iter1)
+                word_end = iter1.copy()
+                word_end.forward_word_end()
+                if iter1.equal(word_end):
+                    # no hint
+                    doc.place_cursor(iter1)
+                else:
+                    # select hint 
+                    word_start = word_end.copy()
+                    word_start.backward_word_start()
+                    doc.select_range(word_start, word_end)
                 handled = True
         return handled
 
