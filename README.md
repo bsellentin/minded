@@ -22,10 +22,23 @@ For Debian-based systems MindEd requires the following packages to run:
 
 ## Installation
 
+For systemwide installation click __release__ and download the latest version as
+deb-package. In the download-folder execute as *root*:
+
+    $dpkg -i minded-*X.Y.Z*_amd64.deb
+
+Advantage: you get mime-support - clicking on a brick-file in the filemanager opens
+MindEd. If something goes wrong, open a terminal and start by typing
+
+    $minded --debug
+
+For local installation clone the repository:
+
     $ git clone --recursive https://github.com/bsellentin/minded.git
     $ cd minded
 
-As *root* copy the nxc- and evc.language-specs to gtksourceview-3.0/language-specs-folder.
+As *root* copy the nxc- and evc.language-specs to gtksourceview-3.0/language-specs-folder
+and the minded-style-file to the gtksourceview-3.0/styles-folder.
 
     minded$ cp *.lang /usr/share/gtksourceview-3.0/language-specs/
     minded$ cp minded.xml /usr/share/gtksourceview-3.0/styles/
