@@ -376,7 +376,7 @@ class EV3():
             reply = self.send_system_cmd(cmd)
             fmt = 'B' + str(part_size) + 's'
             (handle, part) = struct.unpack(fmt, reply[7:])
-            data += part_size
+            data += part
             rest -= part_size
             if rest <= 0 and reply[6:7] != SYSTEM_END_OF_FILE:
                 raise SysCmdError("end of file not reached")
