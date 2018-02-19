@@ -131,7 +131,9 @@ class EditorApp(Gtk.ScrolledWindow):
         #self.codeview.connect('drag_motion', self.drag_motion)
         self.codeview.connect('drag_data_received', self.drag_data_received)
         #self.codeview.connect("drag_drop", self.drag_data_received)
- 
+
+        self.codeview.connect('toggle-overwrite', self.on_toggle_overwrite)
+
         # for bracket completion
         self.codeview.connect('key-press-event', self.on_key_press)
         self.add_brackets()
@@ -145,7 +147,12 @@ class EditorApp(Gtk.ScrolledWindow):
         self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
         self.codeview_completion = self.codeview.get_completion()
         self.codeview_completion.add_provider(self.custom_completion_provider)
-
+        
+        self.word_completion_provider = GtkSource.CompletionWords.new()
+        self.word_completion_provider.register(self.buffer)
+        #self.word_completion = self.codeview.get_completion()
+        self.codeview_completion.add_provider(self.word_completion_provider)
+        
         self.document = MindEdDocument(file_uri)
         # throws error if file not exists -> load empty buffer
         #try:
@@ -244,11 +251,26 @@ class EditorApp(Gtk.ScrolledWindow):
     def get_buffer(self):
         return self.codeview.get_buffer()
 
+    def on_toggle_overwrite(self, view):
+        logger.debug('toggle overwrite')
+
     # bracket completion
     def on_key_press(self, view, event):
         handled = False
         doc = view.get_buffer()
         ch = self.to_char(event.keyval)
+        '''
+        # first handel selection
+        if ch:
+            selection = doc.get_selection_bounds()
+            if selection:
+                start, end = selection
+                if not start.equal(end):
+                    logger.debug('someting selected true')
+                    doc.begin_user_action()
+                    doc.delete(start, end)
+                    doc.end_user_action()
+        '''
 
         # auto_close_paren
         if self.is_opening_paren(ch):
@@ -258,9 +280,11 @@ class EditorApp(Gtk.ScrolledWindow):
             iter1.backward_char()
             lb = iter1.get_char()
             if lb in self.opening_parens:
+                logger.debug("there is opening paren, don't do twice")
                 handled = True
             elif self.should_auto_close_paren(doc):
                 handled = self.auto_close_paren(doc, ch)
+
         # autoindent in {}
         if not handled and event.keyval == Gdk.KEY_Return:
             iter1 = doc.get_iter_at_mark(doc.get_insert())
@@ -300,6 +324,43 @@ class EditorApp(Gtk.ScrolledWindow):
                     word_start.backward_word_start()
                     doc.select_range(word_start, word_end)
                 handled = True
+            # snippets
+            else:
+                line_start = iter1.copy()
+                line_start.backward_visible_line()
+                snippet = iter1.backward_search('skel',
+                    Gtk.TextSearchFlags.VISIBLE_ONLY, line_start)
+                if snippet:
+                    logger.debug('insert snippet')
+                    language = doc.get_language()
+                    if language:
+                        if language.get_name() == 'EVC':
+                            text_to_insert = ('#include "ev3.h"\n' +
+                            'int main(){\n\tInitEV3();\n\n\t$0\n\n' +
+                            '\tFreeEV3();\n\treturn 0;\n}')
+                        elif language.get_name() == 'NXC':
+                            text_to_insert ='task main (){\n\t$0\n}'
+                        else:
+                            logger.debug('no snippet for language {}'.format(language.get_name()))
+                            handled = False
+                            return handled
+
+                        logger.debug('snippet for language {}'.format(language.get_name()))
+                        snip_start, snip_end = snippet
+                        doc.delete(snip_start, snip_end)
+                        doc.begin_user_action()
+                        doc.insert(snip_start, text_to_insert)
+                        mark = doc.get_insert()
+                        iter1 = doc.get_iter_at_mark(mark)
+                        start, end = doc.get_bounds()
+                        token = iter1.backward_search('$0',
+                            Gtk.TextSearchFlags.VISIBLE_ONLY, start)
+                        if token:
+                            token_start, token_end = token
+                            doc.delete(token_start, token_end)
+                            doc.place_cursor(token_start)
+                        doc.end_user_action()
+                        handled = True
         return handled
 
     def to_char(self, keyval_or_char):
@@ -319,6 +380,7 @@ class EditorApp(Gtk.ScrolledWindow):
         if iter1.is_end() or iter1.ends_line():
             return True
         char = iter1.get_char()
+        # don't close inside words
         return not (char.isalnum() or char == '_')
 
     def auto_close_paren(self, doc, opening_paren):
