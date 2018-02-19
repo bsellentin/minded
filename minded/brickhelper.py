@@ -101,13 +101,19 @@ class BrickHelper():
         outfile = str(Path(document.get_parent(), Path(document.get_basename()).stem))
         logger.debug('executable to write: {}'.format(outfile))
 
-        arm_exec = self.application.settings.get_string('armgcc')
+        cplusplus =self.application.settings.get_boolean('cplusplus')
+        if cplusplus:
+            arm_exec = self.application.settings.get_string('armgplusplus')
+            language = 'c++'
+        else:
+            arm_exec = self.application.settings.get_string('armgcc')
+            language = 'c'
 
         ldflags = self.application.settings.get_string('ldflags')
         incs = self.application.settings.get_string('incs')
 
         gcc_exec = arm_exec + ldflags + incs + ' -Os'
-        gcc_opts = (' -o %s -x c %s -lev3api' % (shlex.quote(outfile), shlex.quote(infile)))
+        gcc_opts = (' -o %s -x %s %s -lev3api' % (shlex.quote(outfile), language, shlex.quote(infile)))
 
         # is multithreading?
         with open(infile,  'rb', 0) as file, \

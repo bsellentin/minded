@@ -15,11 +15,25 @@
         Wether to use enhanced NBC/NXC formware or not.
       </description>
     </key>
+    <key name="cplusplus" type="b">
+      <default>false</default>
+      <summary>Use c++ compiler</summary>
+      <description>
+        Wether to use c++ or c-compiler.
+      </description>
+    </key>
     <key name="armgcc" type="s">
       <default>""</default>
       <summary>Path to arm-gcc</summary>
       <description>
         Set path to C cross-compiler for armel architecture.
+      </description>
+    </key>
+    <key name="armgplusplus" type="s">
+      <default>""</default>
+      <summary>Path to arm-g++</summary>
+      <description>
+        Set path to C++ cross-compiler for armel architecture.
       </description>
     </key>
     <key name="ldflags" type="s">

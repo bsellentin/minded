@@ -137,7 +137,7 @@ class MindEdApp(Gtk.Application):
             self.settings = Gio.Settings.new_full(schema, None, None)
         else:
             self.settings = Gio.Settings('org.gge-em.MindEd')
-
+        # nbc compiler
         if not self.settings.get_string('nbcpath'):
             if Path('/usr/bin/nbc').is_file():
                 self.settings.set_string('nbcpath', '/usr/bin/nbc')
@@ -145,15 +145,23 @@ class MindEdApp(Gtk.Application):
                 self.settings.set_string('nbcpath','/usr/local/bin/nbc')
             else:
                 logger.warn('no nbc executable found')
-
+        # c compiler
         if not self.settings.get_string('armgcc'):
             if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():              # Debian-stretch
                 self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-6')   # package gcc-6-arm-linux-gnueabi
             elif Path('/usr/bin/arm-linux-gnueabi-gcc').is_file():              # Ubuntu xenial
-                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc')
+                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-5')
             else:
                 logger.warn('no arm-gcc executable found')
-        # check for development first
+        # c++ compiler
+        if not self.settings.get_string('armgplusplus'):
+            if Path('/usr/bin/arm-linux-gnueabi-g++-6').is_file():
+                self.settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-6')
+            elif Path('/usr/bin/arm-linux-gnueabi-g++-5').is_file():            # Ubuntu xenial
+                self.settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-5')   # package g++-5-arm-linux-gnueabi
+            else:
+                logger.warn('no arm-g++ executable found')
+        # check for ev3-library, development first
         if Path('./EV3-API/API/libev3api.a').is_file():
             self.settings.set_string('ldflags', ' -L' + str(Path('./EV3-API/API').resolve()))
         # systemwide installation

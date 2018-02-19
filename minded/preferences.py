@@ -38,6 +38,7 @@ class PreferencesDialog(object):
         else:
             settings = Gio.Settings('org.gge-em.MindEd')
 
+        # Editor
         settings.bind('fontname', builder.get_object('font_button'),
                       'font-name', Gio.SettingsBindFlags.DEFAULT)
         settings.bind('linenumbers', builder.get_object('display_line_numbers_checkbutton'),
@@ -58,8 +59,17 @@ class PreferencesDialog(object):
                       'active', Gio.SettingsBindFlags.DEFAULT)
         settings.bind('highlightmatchingbrackets', builder.get_object('bracket_matching_checkbutton'),
                       'active', Gio.SettingsBindFlags.DEFAULT)
-
         #smartbackspace
+
+        # EVC
+        cchooser = builder.get_object('choosec')
+        cchooser.set_current_folder('/usr/bin/')
+        settings.bind('armgcc', builder.get_object('cexecfile'),
+                      'text', Gio.SettingsBindFlags.DEFAULT)
+        settings.bind('armgplusplus', builder.get_object('cplusexecfile'),
+                      'text', Gio.SettingsBindFlags.DEFAULT)
+        settings.bind('cplusplus', builder.get_object('c++-compiler'),
+                      'active', Gio.SettingsBindFlags.DEFAULT)
 
         self.window.show_all()
         self.window.connect('delete-event', self.quit)
@@ -69,6 +79,16 @@ class PreferencesDialog(object):
         for pagecount in range(self.app.win.notebook.get_n_pages()-1, -1, -1):
             editor = self.app.win.notebook.get_nth_page(pagecount)
             editor.codeview.override_font(Pango.FontDescription(button.get_font_name()))
+
+    def on_compiler_toggled(self, button):
+        if button.get_active():
+            state = "on"
+            #if(button.get_label()=='C++-compiler'):
+            
+            
+        else:
+            state = "off"
+        logger.debug("Button {} was turned {}".format(button.get_label(), state))
 
     def quit(self, *args):
         'Quit the program'
