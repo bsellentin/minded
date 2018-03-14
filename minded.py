@@ -151,7 +151,7 @@ class MindEdApp(Gtk.Application):
             self.settings = Gio.Settings.new_full(schema, None, None)
         else:
         # systemwide installation
-            locale.bindtextdomain('minded')
+            locale.bindtextdomain('minded', '/usr/share/locale')
             locale.textdomain('minded')
             gettext.bindtextdomain('minded')
             gettext.textdomain('minded')
