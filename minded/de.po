@@ -1,0 +1,262 @@
+# German translations for PACKAGE package.
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Bernd Sellentin <sel@gge-em.org>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-13 17:40+0100\n"
+"PO-Revision-Date: 2018-03-10 19:10+0100\n"
+"Last-Translator: Bernd Sellentin <sel@gge-em.org>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: mindedappwin.py:214 mindedappwin.py:240
+msgid "You have to save first!"
+msgstr "Zuerst speichern!"
+
+#: mindedappwin.py:215 mindedappwin.py:241
+msgid "The compiler works on the real file."
+msgstr "Der Compiler arbeitet mit der echten Datei."
+
+#: mindedappwin.py:230 mindedappwin.py:256
+msgid "# Error: unknown file extension, expected: .nxc or .evc"
+msgstr ""
+
+#: mindedappwin.py:286
+msgid "An Editor for LEGO Mindstorms Bricks"
+msgstr "Ein Editor für LEGO Mindstorms Steine"
+
+#: mindedappwin.py:379
+msgid "Pick a file"
+msgstr "Datei auswählen"
+
+#: mindedappwin.py:432
+msgid "Filename {} unvalid!"
+msgstr "Dateiname {} ungültig"
+
+#: mindedappwin.py:433
+msgid "Filename contains non-alphanumeric characters."
+msgstr "Dateiname enthält ungültige Zeichen"
+
+#: mindedappwin.py:483
+msgid "Could not save file {}"
+msgstr "Konnte Datei {} nicht speichern."
+
+#: mindedappwin.py:659
+msgid "No NBC-executable found!"
+msgstr "NBC-Compiler nicht gefunden!"
+
+#: mindedappwin.py:660
+msgid "not in /usr/bin, not in /usr/local/bin"
+msgstr "weder in /usr/bin, noch in /usr/local/bin"
+
+#: mindedappwin.py:731
+msgid "Please choose a file"
+msgstr "Datei auswählen"
+
+#: mindedappwin.py:743
+msgid "Brick files"
+msgstr "Brick Dateien"
+
+#: mindedappwin.py:749
+msgid "Any files"
+msgstr "Alle Dateien"
+
+#: mindedappwin.py:759
+msgid "Save changes to document {} before closing?"
+msgstr "Änderunge am Dokument {} speichern?"
+
+#: mindedappwin.py:760
+msgid "Close without Saving"
+msgstr "Schließen ohne speichern"
+
+#: mindedappwin.py:761
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: mindedappwin.py:762 ../data/mindedappwin.ui:306
+msgid "Save"
+msgstr "Speichern"
+
+#: mindedappwin.py:763
+msgid "Changes to document {} will be permanently lost."
+msgstr "Änderungen am Dokument {} gehen verloren."
+
+#: ../data/mindedappwin.ui:84
+msgid "compiler-log"
+msgstr "Compiler Log"
+
+#: ../data/mindedappwin.ui:166
+msgid "Text"
+msgstr ""
+
+#: ../data/mindedappwin.ui:261
+msgid "New"
+msgstr "Neu"
+
+#: ../data/mindedappwin.ui:282
+msgid "Open"
+msgstr "Öffnen"
+
+#: ../data/mindedappwin.ui:354
+msgid "Transmit"
+msgstr "Übertragen"
+
+#: ../data/mindedappwin.ui:379
+msgid "Compile"
+msgstr "Compilieren"
+
+#: ../data/mindedappwin.ui:442
+msgid "Back"
+msgstr "Zurück"
+
+#: ../data/mindedappwin.ui:453
+msgid "Brick-Info"
+msgstr ""
+
+#: ../data/mindedappwin.ui:468
+msgid "Brick-Filer"
+msgstr ""
+
+#: ../data/mindedappwin.ui:487
+msgid "Firmware"
+msgstr ""
+
+#: ../data/mindedappwin.ui:532
+msgid "Save as ..."
+msgstr "Speichern unter"
+
+#: ../data/mindedappwin.ui:550
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: ../data/mindedappwin.ui:561
+msgid "API Browser"
+msgstr "API Hilfe"
+
+#: ../data/mindedappwin.ui:576
+msgid "About"
+msgstr "Über"
+
+#: ../data/minded-preferences-dialog.ui:20
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: ../data/minded-preferences-dialog.ui:44
+msgid "Display line numbers"
+msgstr "Zeilennummern anzeigen"
+
+#: ../data/minded-preferences-dialog.ui:57
+msgid "Display right margin at column:"
+msgstr "Rechten Rand anzeigen in Spalte:"
+
+#: ../data/minded-preferences-dialog.ui:109
+msgid "Highlighting"
+msgstr "Hervorhebungen"
+
+#: ../data/minded-preferences-dialog.ui:126
+msgid "Highlight current line"
+msgstr "Aktuelle Zeile hervorheben"
+
+#: ../data/minded-preferences-dialog.ui:139
+msgid "Highlight matching brackets"
+msgstr "Übereinstimmende Klammern hervorheben"
+
+#: ../data/minded-preferences-dialog.ui:170
+msgid "Tab Stops"
+msgstr "Tabulatoren"
+
+#: ../data/minded-preferences-dialog.ui:190
+msgid "Insert spaces instead of tabs"
+msgstr "An Stelle von Tabulatoren Leerzeichen einfügen"
+
+#: ../data/minded-preferences-dialog.ui:203
+msgid "Enable automatic indentation"
+msgstr "Automatischen Einzug aktivieren"
+
+#: ../data/minded-preferences-dialog.ui:219
+msgid "Tab width:"
+msgstr "Tabulatorbreite:"
+
+#: ../data/minded-preferences-dialog.ui:239
+msgid "Indent selection on tab"
+msgstr "Auswahl mit Tabulator einrücken"
+
+#: ../data/minded-preferences-dialog.ui:279
+msgid "Font"
+msgstr "Zeichensatz"
+
+#: ../data/minded-preferences-dialog.ui:300
+msgid "Editor font:"
+msgstr "Editor Zeichensatz"
+
+#: ../data/minded-preferences-dialog.ui:340
+msgid "Editor"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:354 ../data/brickinfo.ui:40
+#: ../data/brickinfo.ui:55 ../data/brickinfo.ui:66 ../data/brickinfo.ui:81
+#: ../data/brickinfo.ui:92 ../data/brickinfo.ui:103 ../data/brickinfo.ui:114
+#: ../data/brickinfo.ui:125 ../data/brickinfo.ui:136 ../data/brickinfo.ui:147
+#: ../data/brickinfo.ui:158 ../data/brickinfo.ui:169 ../data/brickinfo.ui:180
+msgid "label"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:370
+msgid "NXC"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:389
+msgid "no c executable found"
+msgstr "kein C-Compiler gefunden"
+
+#: ../data/minded-preferences-dialog.ui:400
+msgid "no c++ executable found"
+msgstr "kein C++-Compiler gefunden"
+
+#: ../data/minded-preferences-dialog.ui:434
+msgid "C-compiler:"
+msgstr "C-Compiler"
+
+#: ../data/minded-preferences-dialog.ui:450
+msgid "C++-compiler:"
+msgstr "C++-Compiler"
+
+#: ../data/minded-preferences-dialog.ui:488
+msgid "EVC"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:509
+msgid "Help"
+msgstr "Hilfe"
+
+#: ../data/minded-preferences-dialog.ui:522
+msgid "Close"
+msgstr "Schließen"
+
+#: ../data/brickinfo.ui:7
+msgid "Brick Info"
+msgstr "Stein-Info"
+
+#: ../data/brickinfo.ui:28
+msgid "Brick name"
+msgstr "Stein-Name"
+
+#: ../data/brickinfo.ui:251
+msgid "Refresh"
+msgstr "Neu laden"
+
+#: ../data/app-menu.ui:7
+msgid "_Preferences"
+msgstr "Einstellungen"
+
+#: ../data/app-menu.ui:13
+msgid "_Quit"
+msgstr "Beenden"

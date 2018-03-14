@@ -258,7 +258,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
-            <property name="tooltip_text">New</property>
+            <property name="tooltip_text" translatable="yes">New</property>
             <property name="relief">none</property>
             <signal name="clicked" handler="on_btn_new_clicked" swapped="no"/>
             <child>
@@ -279,7 +279,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
-            <property name="tooltip_text">Open</property>
+            <property name="tooltip_text" translatable="yes">Open</property>
             <property name="relief">none</property>
             <signal name="clicked" handler="on_btn_open_clicked" swapped="no"/>
             <child>
@@ -303,7 +303,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
-            <property name="tooltip_text">Save</property>
+            <property name="tooltip_text" translatable="yes">Save</property>
             <property name="relief">none</property>
             <signal name="clicked" handler="on_btn_save_clicked" swapped="no"/>
             <child>
@@ -351,7 +351,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
-            <property name="tooltip_text">Transmit</property>
+            <property name="tooltip_text" translatable="yes">Transmit</property>
             <property name="relief">none</property>
             <signal name="clicked" handler="on_btn_transmit_clicked" swapped="no"/>
             <child>
@@ -376,7 +376,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
-            <property name="tooltip_text">Compile</property>
+            <property name="tooltip_text" translatable="yes">Compile</property>
             <property name="relief">none</property>
             <signal name="clicked" handler="on_btn_compile_clicked" swapped="no"/>
             <child>

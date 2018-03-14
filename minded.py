@@ -10,6 +10,12 @@ import argparse
 import logging
 from pathlib import Path
 
+# internationalization
+import os
+import locale
+import gettext
+APP_NAME = "minded"
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
@@ -49,7 +55,7 @@ class MindEdApp(Gtk.Application):
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
-        self.version = "0.7.7"
+        self.version = "0.7.8"
 
         self.add_main_option_entries([
             make_option("debug", description="Show debug information on the console"),
@@ -121,11 +127,19 @@ class MindEdApp(Gtk.Application):
                 except:
                     logger.warn('ev3-python failure')
 
-        # look for settings
+        # where do we get started
         srcdir = Path(__file__).parent
-        logger.debug('srcdir: %s' % srcdir)
+        logger.debug('srcdir: {}'.format(srcdir))
+
+        # local development
         if Path(srcdir, 'data').exists():
             logger.warn('Running from source tree, using local settings')
+            # Translation stuff
+            locale.bindtextdomain('minded', srcdir.resolve())
+            locale.textdomain('minded')
+            gettext.bindtextdomain('minded', srcdir.resolve())
+            gettext.textdomain('minded')
+            # look for settings
             schema_source = Gio.SettingsSchemaSource.new_from_directory(
                 str(Path(srcdir, 'data')),
                 Gio.SettingsSchemaSource.get_default(), False)
@@ -136,6 +150,11 @@ class MindEdApp(Gtk.Application):
                 raise Exception("Cannot get GSettings schema")
             self.settings = Gio.Settings.new_full(schema, None, None)
         else:
+        # systemwide installation
+            locale.bindtextdomain('minded')
+            locale.textdomain('minded')
+            gettext.bindtextdomain('minded')
+            gettext.textdomain('minded')
             self.settings = Gio.Settings('org.gge-em.MindEd')
         # nbc compiler
         if not self.settings.get_string('nbcpath'):

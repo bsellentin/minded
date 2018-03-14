@@ -33,12 +33,13 @@ from gi.repository import GtkSource
 import logging
 logger = logging.getLogger(__name__)
 
+from gettext import gettext as _
+
 from minded.editorapp import EditorApp
 from minded.brickhelper import BrickHelper
 from minded.brickinfo import BrickInfo
 from minded.brickfiler import BrickFiler
 from minded.apiviewer import ApiViewer
-
 
 class MindEdAppWin(Gtk.ApplicationWindow):
     '''The Main Application Window'''
@@ -49,7 +50,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         #for key in kwargs:
         #    print("%s : %s" % (key, kwargs[key]))
         self.application = kwargs['application']
-        logger.debug('Filelist : %s' % files)
+        logger.debug('Filelist: %s' % files)
 
         builder = Gtk.Builder()
         GObject.type_register(GtkSource.View)
@@ -204,8 +205,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         editor = self.get_editor()
         if editor.get_buffer().get_modified():
             self.dlg_something_wrong(
-                'You have to save first!',
-                'The compiler works on the real file.')
+                _('You have to save first!'),
+                _('The compiler works on the real file.'))
         else:
             ext = Path(editor.document.get_basename()).suffix
             if ext == '.nxc':
@@ -220,7 +221,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 self.window.get_window().set_cursor(watch_cursor)
                 GObject.idle_add(self.idle_evc_proc, self.window, editor.document)
             else:
-                self.log_buffer.set_text('# Error: unknown file extension, expected: .nxc or .evc')
+                self.log_buffer.set_text(_('# Error: unknown file extension, expected: .nxc or .evc'))
                 self.format_log(self.log_buffer.get_start_iter())
 
     def on_btn_transmit_clicked(self, button):
@@ -230,8 +231,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         editor = self.get_editor()
         if editor.get_buffer().get_modified():
             self.dlg_something_wrong(
-                'You have to save first!',
-                'The compiler works on the real file.')
+                _('You have to save first!'),
+                _('The compiler works on the real file.'))
         else:
             ext = Path(editor.document.get_basename()).suffix
             if ext == '.nxc':
@@ -246,7 +247,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 self.window.get_window().set_cursor(watch_cursor)
                 GObject.idle_add(self.idle_evc_proc, self.window, editor.document, True)
             else:
-                self.log_buffer.set_text('# Error: unknown file extension, expected: .nxc or .evc')
+                self.log_buffer.set_text(_('# Error: unknown file extension, expected: .nxc or .evc'))
                 self.format_log(self.log_buffer.get_start_iter())
 
     def on_btn_menu_clicked(self, button):
@@ -276,7 +277,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         #documenters = []
 
         aboutdlg.set_program_name('MindEd')
-        aboutdlg.set_comments('An Editor for LEGO Mindstorms Bricks')
+        aboutdlg.set_comments(_('An Editor for LEGO Mindstorms Bricks'))
         aboutdlg.set_authors(authors)
         aboutdlg.set_version(self.application.version)
         #image = GdkPixbuf.Pixbuf()
@@ -287,7 +288,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         aboutdlg.set_website('http://github.com/bsellentin/minded')
         aboutdlg.set_website_label('MindEd Website')
 
-        aboutdlg.present()
+        response = aboutdlg.run()
+        if response == Gtk.ResponseType.DELETE_EVENT:
+            aboutdlg.destroy()
 
     def on_btn_brickinfo_clicked(self, button):
         '''open new window with brick information like name, firmware...'''
@@ -367,7 +370,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         logger.debug('dialog save_file_as: {}'.format(editor.document.get_uri()))
 
-        save_dialog = Gtk.FileChooserDialog('Pick a file', self.window,
+        save_dialog = Gtk.FileChooserDialog(_('Pick a file'), self.window,
                                             Gtk.FileChooserAction.SAVE,
                                             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                              Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
@@ -420,8 +423,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 dialog.destroy()
             else:
                 self.dlg_something_wrong(
-                    'Filename {} unvalid!'.format(filename.name),
-                    'Filename contains non-alphanumeric characters.')
+                    _('Filename {} unvalid!').format(filename.name),
+                    _('Filename contains non-alphanumeric characters.'))
                 save_dialog.set_uri(editor.document.get_uri())
 
         elif response == Gtk.ResponseType.CANCEL:
@@ -471,7 +474,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         except GObject.GError as e:
             logger.error('problem saving file {}'.format(e.message))
             self.dlg_something_wrong(
-                'Could not save file {}'.format(editor.document.get_uri()),
+                _('Could not save file {}').format(editor.document.get_uri()),
                 e.message)
         else:
             buf = editor.get_buffer()
@@ -599,6 +602,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             self.change_tab_label(editor, editor.document.get_basename())
             self.languagemenu.hide()
             editor.codeview.grab_focus()
+            editor.codeview.set_cursor_visible(True)
 
     def change_language_selection(self, editor):
         '''changes language_label and language_tree on load file and on switch page'''
@@ -646,8 +650,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         (error, msg) = helper.nbc_proc(document, upload)
         if error == 2:
             dlg_something_wrong(
-                'No NBC-executable found!',
-                'not in /usr/bin, not in /usr/local/bin')
+                _('No NBC-executable found!'),
+                _('not in /usr/bin, not in /usr/local/bin'))
         else:
             self.log_buffer.set_text(msg)
             self.format_log(self.log_buffer.get_start_iter())
@@ -718,7 +722,7 @@ class FileOpenDialog(Gtk.FileChooserDialog):
 
     def __init__(self, parent, path):
 
-        Gtk.FileChooserDialog.__init__(self, 'Please choose a file', parent,
+        Gtk.FileChooserDialog.__init__(self, _('Please choose a file'), parent,
                                        Gtk.FileChooserAction.OPEN,
                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                         Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
@@ -730,13 +734,13 @@ class FileOpenDialog(Gtk.FileChooserDialog):
         self.set_local_only(False)
 
         filter_brickc = Gtk.FileFilter()
-        filter_brickc.set_name('Brick files')
+        filter_brickc.set_name(_('Brick files'))
         filter_brickc.add_pattern('*.evc')
         filter_brickc.add_pattern('*.nxc')
         self.add_filter(filter_brickc)
 
         filter_any = Gtk.FileFilter()
-        filter_any.set_name('Any files')
+        filter_any.set_name(_('Any files'))
         filter_any.add_pattern('*')
         self.add_filter(filter_any)
 
@@ -746,11 +750,11 @@ class CloseConfirmationDialog(Gtk.MessageDialog):
     def __init__(self, parent, filename):
         Gtk.MessageDialog.__init__(self, parent, 0, Gtk.MessageType.WARNING,
                                 Gtk.ButtonsType.NONE,
-                                'Save changes to document {} before closing?'.format(filename))
-        self.add_buttons('Close without Saving', Gtk.ResponseType.NO,
-                         'Cancel', Gtk.ResponseType.CANCEL,
-                         'Save', Gtk.ResponseType.YES)
-        self.format_secondary_text('Changes to document {} will be permanently lost.'
+                                _('Save changes to document {} before closing?').format(filename))
+        self.add_buttons(_('Close without Saving'), Gtk.ResponseType.NO,
+                         _('Cancel'), Gtk.ResponseType.CANCEL,
+                         _('Save'), Gtk.ResponseType.YES)
+        self.format_secondary_text(_('Changes to document {} will be permanently lost.')
                                    .format(filename))
         self.set_default_response(Gtk.ResponseType.YES)
 
