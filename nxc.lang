@@ -201,15 +201,14 @@
                 <!-- Keywords -->
                 <context id="keywords" style-ref="keyword" class="keyword">
                     <keyword>asm</keyword>
-                    <keyword>const</keyword>
                     <keyword>break</keyword>
                     <keyword>case</keyword>
+                    <keyword>const</keyword>
                     <keyword>continue</keyword>
                     <keyword>default</keyword>
                     <keyword>do</keyword>
                     <keyword>else</keyword>
                     <keyword>for</keyword>
-                    <keyword>fortran</keyword>
                     <keyword>goto</keyword>
                     <keyword>if</keyword>
                     <keyword>repeat</keyword>
@@ -241,6 +240,7 @@
                     <keyword>enum</keyword>
                     <keyword>const</keyword>
                     <keyword>static</keyword>
+                    <keyword>void</keyword>
                 </context>
 
                 <context id="storage-class" style-ref="storage-class" class="storage-class">
@@ -274,6 +274,7 @@
                     <keyword>LCD_LINE6</keyword>
                     <keyword>LCD_LINE7</keyword>
                     <keyword>LCD_LINE8</keyword>
+                    <keyword>NO_ERR</keyword>
                     <keyword>OUT_A</keyword>
                     <keyword>OUT_B</keyword>
                     <keyword>OUT_C</keyword>
@@ -281,6 +282,21 @@
                     <keyword>OUT_AC</keyword>
                     <keyword>OUT_BC</keyword>
                     <keyword>OUT_ABC</keyword>
+                    <keyword>OUT_MODE_BRAKE</keyword>
+                    <keyword>OUT_MODE_COAST</keyword>
+                    <keyword>OUT_MODE_MOTORON</keyword>
+                    <keyword>OUT_MODE_REGMETHOD</keyword>
+                    <keyword>OUT_MODE_REGULATED</keyword>
+                    <keyword>OUT_REGMODE_IDLE</keyword>
+                    <keyword>OUT_REGMODE_POS</keyword>
+                    <keyword>OUT_REGMODE_SPEED</keyword>
+                    <keyword>OUT_REGMODE_SYNC</keyword>
+                    <keyword>OUT_REGOPTION_NO_SATURATION</keyword>
+                    <keyword>OUT_RUNSTATE_HOLD</keyword>
+                    <keyword>OUT_RUNSTATE_IDLE</keyword>
+                    <keyword>OUT_RUNSTATE_RAMPDOWN</keyword>
+                    <keyword>OUT_RUNSTATE_RAMPUP</keyword>
+                    <keyword>OUT_RUNSTATE_RUNNING</keyword>
                     <keyword>S1</keyword>
                     <keyword>S2</keyword>
                     <keyword>S3</keyword>
@@ -289,16 +305,30 @@
                     <keyword>SENSOR_2</keyword>
                     <keyword>SENSOR_3</keyword>
                     <keyword>SENSOR_4</keyword>
+                    <keyword>SENSOR_CELSIUS</keyword>
+                    <keyword>SENSOR_COLORBLUE</keyword>
+                    <keyword>SENSOR_COLORFULL</keyword>
+                    <keyword>SENSOR_COLORGREEN</keyword>
+                    <keyword>SENSOR_COLORNONE</keyword>
+                    <keyword>SENSOR_COLORRED</keyword>
+                    <keyword>SENSOR_EDGE</keyword>
+                    <keyword>SENSOR_FAHRENHEIT</keyword>
                     <keyword>SENSOR_LIGHT</keyword>
-                    <keyword>SENSOR_TOUCH</keyword>
-                    <keyword>SENSOR_SOUND</keyword>
-                    <keyword>SENSOR_MODE_RAW</keyword>
-                    <keyword>SENSOR_MODE_EDGE</keyword>
-                    <keyword>SENSOR_MODE_PULSE</keyword>
-                    <keyword>SENSOR_MODE_PERCENT</keyword>
+                    <keyword>SENSOR_LOWSPEED</keyword>
+                    <keyword>SENSOR_LOWSPEED_9V</keyword>
+                    <keyword>SENSOR_MODE_BOOL</keyword>
                     <keyword>SENSOR_MODE_CELSIUS</keyword>
+                    <keyword>SENSOR_MODE_EDGE</keyword>
                     <keyword>SENSOR_MODE_FAHRENHEIT</keyword>
+                    <keyword>SENSOR_MODE_PERCENT</keyword>
+                    <keyword>SENSOR_MODE_PULSE</keyword>
+                    <keyword>SENSOR_MODE_RAW</keyword>
                     <keyword>SENSOR_MODE_ROTATION</keyword>
+                    <keyword>SENSOR_NXTLIGHT</keyword>
+                    <keyword>SENSOR_PULSE</keyword>
+                    <keyword>SENSOR_ROTATION</keyword>
+                    <keyword>SENSOR_SOUND</keyword>
+                    <keyword>SENSOR_TOUCH</keyword>
                     <keyword>SENSOR_TYPE_NONE</keyword>
                     <keyword>SENSOR_TYPE_TOUCH</keyword>
                     <keyword>SENSOR_TYPE_TEMPERATURE</keyword>
@@ -317,6 +347,13 @@
                     <keyword>SENSOR_TYPE_COLORGREEN</keyword>
                     <keyword>SENSOR_TYPE_COLORBLUE</keyword>
                     <keyword>SENSOR_TYPE_COLORNONE</keyword>
+                    <keyword>STAT_MSG_EMPTY_MAILBOX</keyword>
+                    <keyword>SOUND_CLICK</keyword>
+                    <keyword>SOUND_DOUBLE_BEEP</keyword>
+                    <keyword>SOUND_DOWN</keyword>
+                    <keyword>SOUND_FAST_UP</keyword>
+                    <keyword>SOUND_LOW_BEEP</keyword>
+                    <keyword>SOUND_UP</keyword>
                 </context>
 
                 <context id="common-defines" style-ref="common-defines" class="common-defines">

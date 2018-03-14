@@ -364,7 +364,10 @@
         <keyword>NXT_COL_AMB</keyword>
         <keyword>NXT_COL_COL</keyword>
         <keyword>NXT_US_CM</keyword>
+        <keyword>HT_DIR_AC</keyword>
         <keyword>HT_DIR_DC</keyword>
+        <keyword>HT_DIR_ACALL</keyword>
+        <keyword>HT_DIR_DCALL</keyword>
         <keyword>SEC_1</keyword> 
         <keyword>SEC_2</keyword>
         <keyword>SEC_3</keyword>
