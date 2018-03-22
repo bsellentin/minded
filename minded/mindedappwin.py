@@ -41,6 +41,7 @@ from minded.brickinfo import BrickInfo
 from minded.brickfiler import BrickFiler
 from minded.apiviewer import ApiViewer
 
+
 class MindEdAppWin(Gtk.ApplicationWindow):
     '''The Main Application Window'''
 
@@ -49,18 +50,45 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         #for key in kwargs:
         #    print("%s : %s" % (key, kwargs[key]))
-        self.application = kwargs['application']
-        logger.debug('Filelist: %s' % files)
+        self.app = kwargs['application']
+        logger.debug('Filelist: {}'.format(files))
+
+        self.set_default_size(800, 600)
+
+        self.set_application(self.app)
+
+        self.add_simple_action('new_doc', self.on_btn_new_clicked)
+        self.add_simple_action('open_doc', self.on_btn_open_clicked)
+        self.add_simple_action('save_doc', self.on_btn_save_clicked)
+        self.add_simple_action('save_doc_as', self.on_btn_save_as_clicked)
+        self.add_simple_action('print_doc', self.on_btn_print_clicked)
+        self.add_simple_action('close_doc', self.on_doc_close_request)
+        self.add_simple_action('transmit', self.on_btn_transmit_clicked)
+        self.add_simple_action('compile', self.on_btn_compile_clicked)
+
+        self.app.set_accels_for_action('win.new_doc', ['<Ctrl>n'])
+        self.app.set_accels_for_action('win.open_doc', ['<Ctrl>o'])
+        self.app.set_accels_for_action('win.save_doc', ['<Ctrl>s'])
+        self.app.set_accels_for_action('win.save_doc_as', ['<Ctrl><Shift>s'])
+        self.app.set_accels_for_action('win.print_doc', ['<Ctrl>p'])
+        self.app.set_accels_for_action('win.close_doc', ['<Ctrl>w'])
+        self.app.set_accels_for_action('win.transmit', ['F6'])
+        self.app.set_accels_for_action('win.compile', ['F5'])
 
         builder = Gtk.Builder()
         GObject.type_register(GtkSource.View)
         builder.add_from_resource('/org/gge-em/MindEd/mindedappwin.ui')
         builder.connect_signals(self)
-        self.window = builder.get_object('TopWin')
-        self.window.set_application(self.application)
+
+        self.box = builder.get_object('TopBox')
 
         self.notebook = builder.get_object('notebook')
-        self.headerbar = builder.get_object('header')
+        self.notebook.set_scrollable(True)
+        self.notebook.popup_enable()
+
+        self.headerbar = builder.get_object('headerbar')
+        self.set_titlebar(self.headerbar)
+
         self.menupop = builder.get_object('menumenu')
         self.btn_transmit = builder.get_object('btn_transmit')
         self.btn_transmit.set_sensitive(False)
@@ -94,16 +122,17 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.log_buffer.create_tag('warning', foreground='red', background='yellow')
 
         # Look for Brick
-        if self.application.nxtbrick:
+        if self.app.nxtbrick:
             self.brick_status.push(self.brick_status_id, 'NXT')
             self.btn_transmit.set_sensitive(True)
-        elif self.application.ev3brick:
+        elif self.app.ev3brick:
             self.brick_status.push(self.brick_status_id, 'EV3')
             self.btn_transmit.set_sensitive(True)
 
-        self.window.show_all()
+        self.add(self.box)
 
         self.untitledDocCount = 0
+
         # bricks don't want prognames with non-alphanumeric characters
         # returns None if non-alphanumeric character found
         self.forbiddenchar = re.compile('^[a-zA-Z0-9_.]+$')
@@ -117,6 +146,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         if not loadedFiles:
             self.open_new()
 
+    def add_simple_action(self, name, callback):
+        action = Gio.SimpleAction.new(name, None)
+        action.connect('activate', callback)
+        self.add_action(action)
+
     def gtk_main_quit(self, *args):
         '''
         TopWin CloseButton clicked, are there unsaved changes
@@ -125,7 +159,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         realy_quit = True
         for pagecount in range(self.notebook.get_n_pages()-1, -1, -1):
 
-            logger.debug('Window close clicked! Remove page %s' % pagecount)
+            logger.debug('Window close clicked! Remove page {}'.format(pagecount))
 
             editor = self.notebook.get_nth_page(pagecount)
             buf = editor.get_buffer()
@@ -138,13 +172,13 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         if self.notebook.get_n_pages() == 0:
             logger.debug('No more pages - destroy win')
-            self.application.quit()
+            self.app.quit()
 
-    def on_btn_new_clicked(self, button):
+    def on_btn_new_clicked(self, action, param):
 
         self.open_new()
 
-    def on_btn_open_clicked(self, button):
+    def on_btn_open_clicked(self, action, param):
 
         if self.notebook.get_n_pages():
             editor = self.get_editor()
@@ -152,7 +186,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         else:
             path = str(Path.home())
 
-        dialog = FileOpenDialog(self, path)
+        dialog = FileOpenDialog(None, path)
+        #dialog.set_transient_for(self.app.win)
+        #dialog.set_modal(True)
         response = dialog.run()
 
         if response == Gtk.ResponseType.ACCEPT:
@@ -171,11 +207,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         dialog.destroy()
 
-    def on_btn_save_clicked(self, button):
+    def on_btn_save_clicked(self, action, param):
 
         self.save_file_async(self.get_editor())
 
-    def on_btn_save_as_clicked(self, button):
+    def on_btn_save_as_clicked(self, action, param):
 
         if self.menupop.get_visible():
             self.menupop.hide()
@@ -183,22 +219,32 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         editor = self.get_editor()
         self.save_file_as(editor)
 
-    def on_btn_close_tab_clicked(self, button, child):
+    def on_doc_close_request(self, action, param):
+        '''
+        gaction: close_doc, accelerator <Ctrl>w
+        '''
+        page_num = self.notebook.get_current_page()
+        logger.debug('action: close tab {}'.format(page_num))
+        if page_num != -1:
+            editor = self.notebook.get_nth_page(page_num)
+            self.close_this_tab(page_num, editor)
 
-        # widget must be child of page, that is scrolledwindow
-        page_num = self.notebook.page_num(child)
-        editor = self.notebook.get_nth_page(page_num)
-        logger.debug('close tab %s' % page_num)
+    def on_btn_close_tab_clicked(self, button, editor):
 
+        # widget must be child of page, that is editor
+        page_num = self.notebook.page_num(editor)
+        logger.debug('close tab {}'.format(page_num))
+        self.close_this_tab(page_num, editor)
+
+    def close_this_tab(self, page_num, editor):
         if page_num != -1 and not editor.get_buffer().get_modified():
             self.notebook.remove_page(page_num)
             editor.destroy()
-            child.destroy()
         else:
             logger.debug('file modified, save before closing')
-            self.dlg_close_confirmation(child)
+            self.dlg_close_confirmation(editor)
 
-    def on_btn_compile_clicked(self, button):
+    def on_btn_compile_clicked(self, action, param):
         '''
         compile the saved file
         '''
@@ -212,19 +258,23 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             if ext == '.nxc':
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
-                self.window.get_window().set_cursor(watch_cursor)
+                #self.window.get_window().set_cursor(watch_cursor)
+                self.get_window().set_cursor(watch_cursor)
                 # don't starve the gui thread before it can change the cursor,
                 # call the time consuming in an idle callback
-                GObject.idle_add(self.idle_nbc_proc, self.window, editor.document, False)
+                #GObject.idle_add(self.idle_nbc_proc, self.window, editor.document, False)
+                GObject.idle_add(self.idle_nbc_proc, self, editor.document, False)
             elif ext == '.evc':
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
-                self.window.get_window().set_cursor(watch_cursor)
-                GObject.idle_add(self.idle_evc_proc, self.window, editor.document)
+                #self.window.get_window().set_cursor(watch_cursor)
+                self.get_window().set_cursor(watch_cursor)
+                #GObject.idle_add(self.idle_evc_proc, self.window, editor.document)
+                GObject.idle_add(self.idle_evc_proc, self, editor.document)
             else:
                 self.log_buffer.set_text(_('# Error: unknown file extension, expected: .nxc or .evc'))
                 self.format_log(self.log_buffer.get_start_iter())
 
-    def on_btn_transmit_clicked(self, button):
+    def on_btn_transmit_clicked(self, action, param):
         '''
         transmit compiled file to brick
         '''
@@ -238,14 +288,18 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             if ext == '.nxc':
                 # change cursor
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
-                self.window.get_window().set_cursor(watch_cursor)
+                #self.window.get_window().set_cursor(watch_cursor)
+                self.get_window().set_cursor(watch_cursor)
                 # don't starve the gui thread before it can change the cursor,
                 # call the time consuming in an idle callback
-                GObject.idle_add(self.idle_nbc_proc, self.window, editor.document, True)
+                #GObject.idle_add(self.idle_nbc_proc, self.window, editor.document, True)
+                GObject.idle_add(self.idle_nbc_proc, self, editor.document, True)
             elif ext == '.evc':
                 watch_cursor = Gdk.Cursor(Gdk.CursorType.WATCH)
-                self.window.get_window().set_cursor(watch_cursor)
-                GObject.idle_add(self.idle_evc_proc, self.window, editor.document, True)
+                #self.window.get_window().set_cursor(watch_cursor)
+                self.get_window().set_cursor(watch_cursor)
+                #GObject.idle_add(self.idle_evc_proc, self.window, editor.document, True)
+                GObject.idle_add(self.idle_evc_proc, self, editor.document, True)
             else:
                 self.log_buffer.set_text(_('# Error: unknown file extension, expected: .nxc or .evc'))
                 self.format_log(self.log_buffer.get_start_iter())
@@ -258,7 +312,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         else:
             self.menupop.show_all()
 
-    def on_btn_print_clicked(self, button):
+    def on_btn_print_clicked(self, action, param):
 
         if self.menupop.get_visible():
             self.menupop.hide()
@@ -271,15 +325,16 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         if self.menupop.get_visible():
             self.menupop.hide()
 
-        aboutdlg = Gtk.AboutDialog(transient_for=self.window, modal=True)
-
+        #aboutdlg = Gtk.AboutDialog(transient_for=self.window, modal=True)
+        aboutdlg = Gtk.AboutDialog(transient_for=self, modal=True)
+        
         authors = ['Bernd Sellentin']
         #documenters = []
 
         aboutdlg.set_program_name('MindEd')
         aboutdlg.set_comments(_('An Editor for LEGO Mindstorms Bricks'))
         aboutdlg.set_authors(authors)
-        aboutdlg.set_version(self.application.version)
+        aboutdlg.set_version(self.app.version)
         #image = GdkPixbuf.Pixbuf()
         #image.new_from_file("/home/selles/pyGtk/minded/minded.png")
         #aboutdlg.set_logo_icon_name(image)
@@ -296,19 +351,19 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''open new window with brick information like name, firmware...'''
         if self.menupop.get_visible():
             self.menupop.hide()
-        self.brick_info = BrickInfo(self.application)
+        self.brick_info = BrickInfo(self.app)
 
     def on_btn_brickfiler_clicked(self, button):
         '''open new window with brick file browser...'''
         if self.menupop.get_visible():
             self.menupop.hide()
-        self.brick_filer = BrickFiler(self.application)
+        self.brick_filer = BrickFiler(self.app)
 
     def on_btn_apiviewer_clicked(self, button):
         '''open new window with API reference browser'''
         if self.menupop.get_visible():
             self.menupop.hide()
-        self.api_viewer = ApiViewer(self.application)
+        self.api_viewer = ApiViewer(self.app)
 
     def open_new(self):
 
@@ -363,14 +418,15 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
             self.change_language_selection(editor)
 
-            logger.debug('file {} loaded in buffer, modified {}'.format(file_uri, buf.get_modified()))
+            logger.debug('file {} loaded in buffer, modified {}'
+                        .format(file_uri, buf.get_modified()))
         return 1
 
     def save_file_as(self, editor):
 
         logger.debug('dialog save_file_as: {}'.format(editor.document.get_uri()))
 
-        save_dialog = Gtk.FileChooserDialog(_('Pick a file'), self.window,
+        save_dialog = Gtk.FileChooserDialog(_('Pick a file'), self,
                                             Gtk.FileChooserAction.SAVE,
                                             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                              Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
@@ -408,8 +464,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 editor.document.set_uri(filename.as_uri())
                 if logger.isEnabledFor(logging.DEBUG):
                     page_num = self.notebook.page_num(editor)
-                    logger.debug('func save_file_as_response: %s on tab %s, '
-                                 % (editor.document.get_uri(), page_num))
+                    logger.debug('func save_file_as_response: {} on tab {}, '
+                                 .format((editor.document.get_uri(), page_num)))
 
                 self.save_file_sync(editor)
 
@@ -484,7 +540,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def dlg_something_wrong(self, what, why):
 
-        dlg = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.INFO,
+        #dlg = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.INFO,
+        #                        Gtk.ButtonsType.OK, what)
+        dlg = Gtk.MessageDialog(self, 0, Gtk.MessageType.INFO,
                                 Gtk.ButtonsType.OK, what)
         dlg.format_secondary_text(why)
 
@@ -493,7 +551,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def dlg_close_confirmation(self, editor):
 
-        dlg = CloseConfirmationDialog(self.window, editor.document.get_basename())
+        dlg = CloseConfirmationDialog(self, editor.document.get_basename())
         response = dlg.run()
 
         page_num = self.notebook.page_num(editor)
@@ -527,18 +585,24 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def create_tab_label(self, editor):
         ''' create tab header with close button '''
-        closebtn = Gtk.Button()
+        close_btn = Gtk.Button()
         icon = Gio.ThemedIcon(name='window-close')
         image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
-        closebtn.set_image(image)
-        closebtn.set_relief(Gtk.ReliefStyle.NONE)
-        closebtn.connect('clicked', self.on_btn_close_tab_clicked, editor)
+        close_btn.set_image(image)
+        close_btn.set_relief(Gtk.ReliefStyle.NONE)
+        close_btn.connect('clicked', self.on_btn_close_tab_clicked, editor)
 
-        box = Gtk.HBox()
-        box.pack_start(Gtk.Label(editor.document.get_basename()), True, True, 0)
-        box.pack_end(closebtn, False, False, 0)
-        box.show_all()
-        return box
+        #box = Gtk.HBox() deprecated, use Gtk.Grid
+        #box.pack_start(Gtk.Label(editor.document.get_basename()), True, True, 0)
+        #box.pack_end(closebtn, False, False, 0)
+        #box.show_all()
+        #return box
+        grid = Gtk.Grid()
+        grid.set_column_spacing(5)
+        grid.attach(close_btn,1,0,1,1)
+        grid.attach(Gtk.Label(editor.document.get_basename()),0,0,1,1)
+        grid.show_all()
+        return grid
 
     def change_tab_label(self, editor, filename):
         ''' language change or save as '''
@@ -569,9 +633,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def on_notebook_switch_page(self, notebook, page, page_num):
         '''change headerbar and language selection accordingly'''
-        editor = self.notebook.get_nth_page(page_num)
-        self.change_language_selection(editor)
-        self.set_title(editor.document)
+        self.change_language_selection(page)
+        self.set_title(page.document)
 
     def on_languageselect_changed(self, selection):
         ''' single click, language changed '''
@@ -587,7 +650,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
     def change_language(self, model, treeiter):
         '''change language for current document'''
         if treeiter != None:
-            logger.debug('Language selected %s', model[treeiter][0])
+            logger.debug('Language selected {}'.format(model[treeiter][0]))
             self.language_label.set_text(model[treeiter][1])
 
             editor = self.get_editor()
@@ -645,7 +708,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         compile and upload file to NXT brick
         '''
-        helper = BrickHelper(self.application)
+        helper = BrickHelper(self.app)
 
         (error, msg) = helper.nbc_proc(document, upload)
         if error == 2:
@@ -656,13 +719,14 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             self.log_buffer.set_text(msg)
             self.format_log(self.log_buffer.get_start_iter())
 
-        self.window.get_window().set_cursor(None)
+        #self.window.get_window().set_cursor(None)
+        self.get_window().set_cursor(None)
 
     def idle_evc_proc(self, window, document, upload: bool=False):
         '''
         compile and upload file to EV3 brick
         '''
-        helper = BrickHelper(self.application)
+        helper = BrickHelper(self.app)
 
         prjname = Path(document.get_basename()).stem
 
@@ -699,7 +763,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                     msg += 'Upload of {} successfull\n'.format(prjname)
 
                 if not errora and not errorb:
-                    self.application.ev3brick.play_sound('./ui/DownloadSucces')
+                    self.app.ev3brick.play_sound('./ui/DownloadSucces')
 
         self.log_buffer.set_text(msg)
         self.format_log(self.log_buffer.get_start_iter())
@@ -715,7 +779,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             self.log_buffer.apply_tag_by_name('warning', match_start, match_end)
             self.format_log(match_end)
 
-        self.window.get_window().set_cursor(None)
+        #self.window.get_window().set_cursor(None)
+        self.get_window().set_cursor(None)
 
 
 class FileOpenDialog(Gtk.FileChooserDialog):
@@ -757,6 +822,7 @@ class CloseConfirmationDialog(Gtk.MessageDialog):
         self.format_secondary_text(_('Changes to document {} will be permanently lost.')
                                    .format(filename))
         self.set_default_response(Gtk.ResponseType.YES)
+        logger.debug('parent {}'.format(parent))
 
 
 class PrintingApp:
@@ -801,11 +867,11 @@ class PrintingApp:
         n_pages = compositor.get_n_pages()
         operation.set_n_pages(n_pages)
 
-        logger.debug('Sending %s pages to printer', n_pages)
+        logger.debug('Sending {} pages to printer'.format(n_pages))
 
     def draw_page(self, operation, context, page_num, compositor):
 
-        logger.debug('Sending page: %s', (page_num+1))
+        logger.debug('Sending page: {}'.format((page_num+1)))
 
         compositor.draw_page(context, page_num)
 

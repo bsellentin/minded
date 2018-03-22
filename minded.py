@@ -11,7 +11,7 @@ import logging
 from pathlib import Path
 
 # internationalization
-import os
+#import os
 import locale
 import gettext
 APP_NAME = "minded"
@@ -83,9 +83,14 @@ class MindEdApp(Gtk.Application):
         action.connect("activate", self.on_preferences)
         self.add_action(action)
 
+        action = Gio.SimpleAction.new('shortcuts', None)
+        action.connect('activate', self.on_shortcuts)
+        self.add_action(action)
+
         action = Gio.SimpleAction.new('quit', None)
         action.connect("activate", self.on_quit)
         self.add_action(action)
+        self.set_accels_for_action('app.quit', ['<Control>Q'])
 
         builder = Gtk.Builder()
         builder.add_from_resource('/org/gge-em/MindEd/app-menu.ui')
@@ -106,7 +111,7 @@ class MindEdApp(Gtk.Application):
                 device.get_property('ID_MODEL') == '0002'):
                 if logger.isEnabledFor(logging.DEBUG):
                     for device_key in device.get_property_keys():
-                        logger.debug("   device property %s: %s"  % (device_key, 
+                        logger.debug("   device property {}: {}".format(device_key, 
                               device.get_property(device_key)))
                 try:
                     #self.brick = nxt.locator.find_one_brick(keyword_arguments.get('host',None))
@@ -119,7 +124,7 @@ class MindEdApp(Gtk.Application):
                 device.get_property('ID_MODEL_ID') == '0005'):
                 if logger.isEnabledFor(logging.DEBUG):
                     for device_key in device.get_property_keys():
-                        logger.debug("   device property %s: %s"  % (device_key, 
+                        logger.debug("   device property {}: {}".format(device_key, 
                               device.get_property(device_key)))
                 try:
                     self.ev3brick = ev3.EV3()
@@ -145,7 +150,7 @@ class MindEdApp(Gtk.Application):
                 Gio.SettingsSchemaSource.get_default(), False)
             schema = Gio.SettingsSchemaSource.lookup(
                 schema_source, 'org.gge-em.MindEd', False)
-            logger.debug('Gsettings schema: %s' % schema.get_path())
+            logger.debug('Gsettings schema: {}'.format(schema.get_path()))
             if not schema:
                 raise Exception("Cannot get GSettings schema")
             self.settings = Gio.Settings.new_full(schema, None, None)
@@ -202,19 +207,20 @@ class MindEdApp(Gtk.Application):
             #TODO: if SD-card, check avaibility
 
         if not self.win:
-            logger.debug("NXT-lib: %s" % nxt.locator.__file__)
+            logger.debug("NXT-lib: {}".format(nxt.locator.__file__))
             self.win = MindEdAppWin(self.filelist, application=self)
         else:
             '''MindEd already running, brick file in file browser clicked'''
             for nth_file in self.filelist[1:]:
                 if Path(nth_file).is_file():
                     self.win.load_file_in_editor(Path(nth_file).resolve().as_uri())
+        self.win.present()
 
     def do_command_line(self, command_line):
 
         options = command_line.get_options_dict()
         if options.contains("version"):
-            print("MindEd %s" % self.version)
+            print("MindEd {}".format(self.version))
             return 0
         if options.contains("debug"):
             self.args += ("debug",)
@@ -225,7 +231,7 @@ class MindEdApp(Gtk.Application):
                                 level=logging.WARN)
 
         self.filelist = command_line.get_arguments()
-        logger.debug("Filelist: %s" % self.filelist)
+        logger.debug("Filelist: {}".format(self.filelist))
 
         self.activate()
         return 0
@@ -290,6 +296,12 @@ class MindEdApp(Gtk.Application):
         dlg.window.set_transient_for(self.win)
         dlg.window.set_modal(True)
         dlg.window.present()
+
+    def on_shortcuts(self, action, param):
+        builder = Gtk.Builder()
+        builder.add_from_resource('/org/gge-em/MindEd/shortcuts.ui')
+        self.shortcuts_win = builder.get_object('shortcuts-minded')
+        self.shortcuts_win.show_all()
 
     def on_quit(self, action, param):
         self.win.gtk_main_quit()
