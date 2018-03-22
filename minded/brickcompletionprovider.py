@@ -102,7 +102,7 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             return
 
     def do_activate_proposal(self, completion_item, text_iter):
-        logger.debug('activate_proposal: %s', completion_item.get_text())
+        logger.debug('activate_proposal: {}'.format(completion_item.get_text()))
         buf = text_iter.get_buffer()
 
         buf.begin_user_action()

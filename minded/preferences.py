@@ -24,14 +24,14 @@ class PreferencesDialog(object):
 
         # look for settings
         srcdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) 
-        logger.debug('srcdir: %s' % srcdir)
+        logger.debug('srcdir: {}'.format(srcdir))
         if os.path.exists(os.path.join(srcdir, 'data')):
             logger.warn('Running from source tree, using local settings')
             schema_source=Gio.SettingsSchemaSource.new_from_directory(
                 os.path.join(srcdir, 'data'), Gio.SettingsSchemaSource.get_default(), False)
             schema=Gio.SettingsSchemaSource.lookup(
                 schema_source, 'org.gge-em.MindEd', False)
-            logger.debug('Gsettings schema: %s' % schema.get_path())
+            logger.debug('Gsettings schema: {}'.format(schema.get_path()))
             if not schema:
                 raise Exception("Cannot get GSettings schema")
             settings = Gio.Settings.new_full(schema, None, None)
@@ -75,7 +75,7 @@ class PreferencesDialog(object):
         self.window.connect('delete-event', self.quit)
 
     def on_font_button_font_set(self, button):
-        logger.debug('Font set: %s' % button.get_font_name())
+        logger.debug('Font set: {}'.format(button.get_font_name()))
         for pagecount in range(self.app.win.notebook.get_n_pages()-1, -1, -1):
             editor = self.app.win.notebook.get_nth_page(pagecount)
             editor.codeview.override_font(Pango.FontDescription(button.get_font_name()))

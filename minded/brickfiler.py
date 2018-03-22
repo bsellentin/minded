@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# nxt_filer program -- Simple GUI to manage files on a LEGO Mindstorms NXT
+# brick_filer program -- Simple GUI to manage files on a LEGO Mindstorms P-Bricks
 # Copyright (C) 2006  Douglas P Lau
 # Copyright (C) 2010  rhn
 # Copyright (C) 2016  selles
@@ -53,7 +53,7 @@ def read_file(brick, file_uri):
 def write_file(brick, file_name, data):
     '''write one file to NXT brick'''
     w = FileWriter(brick, file_name, len(data))
-    logger.debug('Pushing %s (%d bytes) ...' % (file_name, w.size)) 
+    logger.debug('Pushing {} ({} bytes) ...'.format(file_name, w.size))
     sys.stdout.flush()
     w.write(data)
     logger.debug('wrote %d bytes' % len(data))
@@ -64,7 +64,7 @@ def write_files(brick, file_uris):
     wnames = []
     for file_uri in file_uris:
         if file_uri:
-            logger.debug('File: %s Type %s' % (file_uri, type(file_uri)))
+            logger.debug('File: {} Type {}'.format(file_uri, type(file_uri)))
             file_path = urlparse(unquote(file_uri))
             file_name = Path(file_path.path).name
 
@@ -73,7 +73,7 @@ def write_files(brick, file_uris):
                 data = url.read()
             finally:
                 url.close()
-            logger.debug('name %s, size: %d ' % (file_name, len(data)))
+            logger.debug('name {}, size: {}'.format(file_name, len(data)))
             try:
                 write_file(brick, file_name, data)
                 wnames.append((file_name, str(len(data))))
@@ -119,7 +119,7 @@ class BrickListing(Gtk.ListStore):
 
             if logger.isEnabledFor(logging.DEBUG):
                 for row in self:
-                    logger.debug(row[COLUMN_PATH,COLUMN_SIZE])
+                    logger.debug('{} {}'.format(row[COLUMN_PATH], row[COLUMN_SIZE]))
 
         elif self.brick_type == 'ev3':
             self.clear()
@@ -271,7 +271,7 @@ class FileInfoBar(Gtk.Frame):
             while size > 1024 and suffixIndex < 4:
                 suffixIndex += 1
                 size = size/1024.0
-            return "%.*f %s"%(precision, size, suffixes[suffixIndex])
+            return '{:.{prec}f} {}'.format(size, suffixes[suffixIndex], prec=precision)
         else:
             return 'not readable'
 
@@ -531,7 +531,7 @@ class BrickFiler(object):
         selected_iter = iconview.get_model().get_iter(selected_path)
         name = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
         file_uris = [Path(self.current_directory, name).as_uri()]
-        logger.debug('dragged: %s' % file_uris)
+        logger.debug('dragged: {}'.format(file_uris))
         success = selection.set_uris(file_uris)
         if logger.isEnabledFor(logging.DEBUG):
             if success: 
@@ -557,13 +557,13 @@ class BrickFiler(object):
                 ext = ['.rxe', '.rso', '.ric', '.rtm', 'rpg']
                 for f in file_uris:
                     if f.endswith(tuple(ext)):
-                        logger.debug('dropped: %s' % file_uris)
+                        logger.debug('dropped: {}'.format(file_uris))
                         wnames = write_files(self.app.nxtbrick, file_uris) # returns ('fname', 'size')
                         self.nxt_model.populate(self.app.nxtbrick, '*.*')
                         context.finish(True, False, etime) 
                         return
                     else:
-                        logger.debug("don't want %s" % file_uris)
+                        logger.debug("don't want {}".format(file_uris))
                         # TODO: Give feedback
                         #bar = gtk.InfoBar()
                         #vb.pack_start(bar, False, False)
@@ -580,8 +580,8 @@ class BrickFiler(object):
                     file_name = Path(file_path.path).name
                     infile = str(Path(self.current_ev3_directory, Path(file_path.path).name))
                     outfile = file_path.path
-                    logger.debug('dropped: %s' % outfile)
-                    logger.debug('write to: %s' % infile)
+                    logger.debug('dropped: {}'.format(outfile))
+                    logger.debug('write to: {}'.format(infile))
                     data = open(outfile, 'rb').read()
                     self.app.ev3brick.write_file(infile, data)
                     self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
@@ -616,13 +616,13 @@ class BrickFiler(object):
         info, etime):
         '''delete button as drag target'''
         file_name = selection.get_text()
-        logger.debug('selected to delete: %s' % file_name)
+        logger.debug('selected to delete: {}'.format(file_name))
 
         if self.brick_type == 'nxt':
             if context.get_actions() == DRAG_ACTION:
                 try:
                     self.app.nxtbrick.delete(file_name)
-                    logger.debug('deleted: %s' % file_name)
+                    logger.debug('deleted: {}'.format(file_name))
                     self.nxt_model.populate(self.app.nxtbrick, '*.*')
                     context.finish(True, False, etime)
                     return
@@ -643,10 +643,10 @@ class BrickFiler(object):
                 selected_iter = model.get_iter(iter_path)
                 if selected_iter is not None:
                     file_name = model.get_value(selected_iter, 0)
-                    logger.debug('selected to delete: %s' % file_name)
+                    logger.debug('selected to delete: {}'.format(file_name))
                     try:
                         self.app.nxtbrick.delete(file_name)
-                        logger.debug('deleted: %s' % file_name)
+                        logger.debug('deleted: {}'.format(file_name))
                         model.remove(selected_iter)
                     except:
                         logger.debug('File not deleted')
@@ -674,7 +674,7 @@ class BrickFiler(object):
                         # is File
                         try:
                             self.app.ev3brick.del_file(file_name)
-                            logger.debug('deleted: %s' % file_name)
+                            logger.debug('deleted: {}'.format(file_name))
                             model.remove(selected_iter)
                         except:
                             logger.debug('File not deleted')

@@ -72,7 +72,7 @@ class EditorApp(Gtk.ScrolledWindow):
         Gtk.ScrolledWindow.__init__(self)
         self.set_hexpand(True)
         self.set_vexpand(True)
-        
+
         self.mindedappwin = mindedappwin
 
         # look for settings
@@ -208,9 +208,9 @@ class EditorApp(Gtk.ScrolledWindow):
 
         if selection.get_target().name() == 'text/uri-list':
             logger.debug("DnD: got text-uri")
-            logger.debug('DnDaction %s' % context.get_actions())
+            logger.debug('DnDaction {}'.format(context.get_actions()))
             data = selection.get_data()
-            logger.debug('DnD dropped: %s' % data)
+            logger.debug('DnD dropped: {}'.format(data))
             #logger.debug('Buffersize: %s ' % len(self.buffer.props.text))
             # check if file already open
             for pagecount in range(self.mindedappwin.notebook.get_n_pages()-1, -1, -1):
@@ -224,8 +224,8 @@ class EditorApp(Gtk.ScrolledWindow):
             context.finish(True, False, etime)
 
         else:
-            print('DnD: got %s' % selection.get_target())
-            print('DnDaction %s' % context.get_actions())
+            print('DnD: got {}'.format(selection.get_target()))
+            print('DnDaction {}'.format(context.get_actions()))
         '''
         #print('got %s' % selection.get_target())
         #print(type(selection.get_target()))
