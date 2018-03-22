@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-13 17:40+0100\n"
+"POT-Creation-Date: 2018-03-22 20:12+0100\n"
 "PO-Revision-Date: 2018-03-10 19:10+0100\n"
 "Last-Translator: Bernd Sellentin <sel@gge-em.org>\n"
 "Language-Team: German\n"
@@ -17,135 +17,188 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mindedappwin.py:214 mindedappwin.py:240
+#: mindedappwin.py:254 mindedappwin.py:284
 msgid "You have to save first!"
 msgstr "Zuerst speichern!"
 
-#: mindedappwin.py:215 mindedappwin.py:241
+#: mindedappwin.py:255 mindedappwin.py:285
 msgid "The compiler works on the real file."
 msgstr "Der Compiler arbeitet mit der echten Datei."
 
-#: mindedappwin.py:230 mindedappwin.py:256
+#: mindedappwin.py:274 mindedappwin.py:304
 msgid "# Error: unknown file extension, expected: .nxc or .evc"
 msgstr ""
 
-#: mindedappwin.py:286
+#: mindedappwin.py:335
 msgid "An Editor for LEGO Mindstorms Bricks"
 msgstr "Ein Editor für LEGO Mindstorms Steine"
 
-#: mindedappwin.py:379
+#: mindedappwin.py:429
 msgid "Pick a file"
 msgstr "Datei auswählen"
 
-#: mindedappwin.py:432
+#: mindedappwin.py:482
 msgid "Filename {} unvalid!"
 msgstr "Dateiname {} ungültig"
 
-#: mindedappwin.py:433
+#: mindedappwin.py:483
 msgid "Filename contains non-alphanumeric characters."
 msgstr "Dateiname enthält ungültige Zeichen"
 
-#: mindedappwin.py:483
+#: mindedappwin.py:533
 msgid "Could not save file {}"
 msgstr "Konnte Datei {} nicht speichern."
 
-#: mindedappwin.py:659
+#: mindedappwin.py:716
 msgid "No NBC-executable found!"
 msgstr "NBC-Compiler nicht gefunden!"
 
-#: mindedappwin.py:660
+#: mindedappwin.py:717
 msgid "not in /usr/bin, not in /usr/local/bin"
 msgstr "weder in /usr/bin, noch in /usr/local/bin"
 
-#: mindedappwin.py:731
+#: mindedappwin.py:790
 msgid "Please choose a file"
 msgstr "Datei auswählen"
 
-#: mindedappwin.py:743
+#: mindedappwin.py:802
 msgid "Brick files"
 msgstr "Brick Dateien"
 
-#: mindedappwin.py:749
+#: mindedappwin.py:808
 msgid "Any files"
 msgstr "Alle Dateien"
 
-#: mindedappwin.py:759
+#: mindedappwin.py:818
 msgid "Save changes to document {} before closing?"
 msgstr "Änderunge am Dokument {} speichern?"
 
-#: mindedappwin.py:760
+#: mindedappwin.py:819
 msgid "Close without Saving"
 msgstr "Schließen ohne speichern"
 
-#: mindedappwin.py:761
+#: mindedappwin.py:820
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: mindedappwin.py:762 ../data/mindedappwin.ui:306
+#: mindedappwin.py:821
 msgid "Save"
 msgstr "Speichern"
 
-#: mindedappwin.py:763
+#: mindedappwin.py:822
 msgid "Changes to document {} will be permanently lost."
 msgstr "Änderungen am Dokument {} gehen verloren."
 
-#: ../data/mindedappwin.ui:84
-msgid "compiler-log"
-msgstr "Compiler Log"
+#: ../data/shortcuts.ui:13
+msgid "Documents"
+msgstr "Dokumente"
 
-#: ../data/mindedappwin.ui:166
-msgid "Text"
+#: ../data/shortcuts.ui:17
+msgid "Create new document"
+msgstr "Ein neues Dokument anlegen"
+
+#: ../data/shortcuts.ui:23
+msgid "Open a document"
+msgstr "Dokument öffnen"
+
+#: ../data/shortcuts.ui:29
+msgid "Save the document"
+msgstr "Dokument speichern"
+
+#: ../data/shortcuts.ui:35
+msgid "Save document as"
+msgstr "Dokument mit neuem Namen speichern"
+
+#: ../data/shortcuts.ui:41
+msgid "Close the document"
+msgstr "Dokument schließen"
+
+#: ../data/shortcuts.ui:47
+msgid "Print the document"
+msgstr "Dokument drucken"
+
+#: ../data/shortcuts.ui:54
+msgid "Compiler"
 msgstr ""
 
-#: ../data/mindedappwin.ui:261
-msgid "New"
-msgstr "Neu"
+#: ../data/shortcuts.ui:58
+msgid "Compile the program"
+msgstr "Programm übersetzen"
 
-#: ../data/mindedappwin.ui:282
-msgid "Open"
-msgstr "Öffnen"
+#: ../data/shortcuts.ui:64
+msgid "Transmit program to brick"
+msgstr "Programm auf den Stein hochladen"
 
-#: ../data/mindedappwin.ui:354
+#: ../data/minded-preferences-dialog.ui:354 ../data/brickinfo.ui:40
+#: ../data/brickinfo.ui:55 ../data/brickinfo.ui:66 ../data/brickinfo.ui:81
+#: ../data/brickinfo.ui:92 ../data/brickinfo.ui:103 ../data/brickinfo.ui:114
+#: ../data/brickinfo.ui:125 ../data/brickinfo.ui:136 ../data/brickinfo.ui:147
+#: ../data/brickinfo.ui:158 ../data/brickinfo.ui:169 ../data/brickinfo.ui:180
+#: ../data/tab-close-button.ui:12
+msgid "label"
+msgstr ""
+
+#: ../data/mindedappwin.ui:16
+msgid "Create a new document"
+msgstr "Ein neue Datei anlegen"
+
+#: ../data/mindedappwin.ui:37
+msgid "Open a file"
+msgstr "Eine Datei öffnen"
+
+#: ../data/mindedappwin.ui:61
+msgid "Save the current file"
+msgstr "Die geöffnete Datei speichern"
+
+#: ../data/mindedappwin.ui:109
 msgid "Transmit"
 msgstr "Übertragen"
 
-#: ../data/mindedappwin.ui:379
+#: ../data/mindedappwin.ui:134
 msgid "Compile"
 msgstr "Compilieren"
 
-#: ../data/mindedappwin.ui:442
+#: ../data/mindedappwin.ui:168
 msgid "Back"
 msgstr "Zurück"
 
-#: ../data/mindedappwin.ui:453
+#: ../data/mindedappwin.ui:179
 msgid "Brick-Info"
 msgstr ""
 
-#: ../data/mindedappwin.ui:468
+#: ../data/mindedappwin.ui:194
 msgid "Brick-Filer"
 msgstr ""
 
-#: ../data/mindedappwin.ui:487
+#: ../data/mindedappwin.ui:212
 msgid "Firmware"
 msgstr ""
 
-#: ../data/mindedappwin.ui:532
+#: ../data/mindedappwin.ui:257
 msgid "Save as ..."
 msgstr "Speichern unter"
 
-#: ../data/mindedappwin.ui:550
+#: ../data/mindedappwin.ui:275
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: ../data/mindedappwin.ui:561
+#: ../data/mindedappwin.ui:286
 msgid "API Browser"
 msgstr "API Hilfe"
 
-#: ../data/mindedappwin.ui:576
+#: ../data/mindedappwin.ui:301
 msgid "About"
 msgstr "Über"
 
-#: ../data/minded-preferences-dialog.ui:20
+#: ../data/mindedappwin.ui:392
+msgid "compiler-log"
+msgstr "Compiler Log"
+
+#: ../data/mindedappwin.ui:474
+msgid "Text"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:20 ../data/app-menu.ui:7
 msgid "Preferences"
 msgstr "Einstellungen"
 
@@ -154,8 +207,8 @@ msgid "Display line numbers"
 msgstr "Zeilennummern anzeigen"
 
 #: ../data/minded-preferences-dialog.ui:57
-msgid "Display right margin at column:"
-msgstr "Rechten Rand anzeigen in Spalte:"
+msgid "Display right margin at column"
+msgstr "Rechten Rand anzeigen in Spalte"
 
 #: ../data/minded-preferences-dialog.ui:109
 msgid "Highlighting"
@@ -199,14 +252,6 @@ msgstr "Editor Zeichensatz"
 
 #: ../data/minded-preferences-dialog.ui:340
 msgid "Editor"
-msgstr ""
-
-#: ../data/minded-preferences-dialog.ui:354 ../data/brickinfo.ui:40
-#: ../data/brickinfo.ui:55 ../data/brickinfo.ui:66 ../data/brickinfo.ui:81
-#: ../data/brickinfo.ui:92 ../data/brickinfo.ui:103 ../data/brickinfo.ui:114
-#: ../data/brickinfo.ui:125 ../data/brickinfo.ui:136 ../data/brickinfo.ui:147
-#: ../data/brickinfo.ui:158 ../data/brickinfo.ui:169 ../data/brickinfo.ui:180
-msgid "label"
 msgstr ""
 
 #: ../data/minded-preferences-dialog.ui:370
@@ -253,10 +298,11 @@ msgstr "Stein-Name"
 msgid "Refresh"
 msgstr "Neu laden"
 
-#: ../data/app-menu.ui:7
-msgid "_Preferences"
-msgstr "Einstellungen"
+#: ../data/app-menu.ui:11
+msgid "Shortcuts"
+msgstr "Tastenkürzel"
 
-#: ../data/app-menu.ui:13
-msgid "_Quit"
+#: ../data/app-menu.ui:17
+msgid "Quit"
 msgstr "Beenden"
+
