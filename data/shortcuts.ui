@@ -47,6 +47,18 @@
                 <property name="title" translatable="yes">Print the document</property>
               </object>
             </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;&lt;Alt&gt;Page_Down</property>
+                <property name="title" translatable="yes">Switch to the next document</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;&lt;Alt&gt;Page_Up</property>
+                <property name="title" translatable="yes">Switch to the previous document</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>
@@ -68,11 +80,62 @@
         </child>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="title" translatable="yes">Application</property>
+            <property name="title" translatable="yes">Windows</property>
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="accelerator">&lt;ctrl&gt;Q</property>
-                <property name="title" translatable="yes">Quit application</property>
+                <property name="title" translatable="yes">Quit the application</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes">Copy and Paste</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;C</property>
+                <property name="title" translatable="yes">Copy selected text to clipboard</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;X</property>
+                <property name="title" translatable="yes">Cut selected text to clipboard</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;V</property>
+                <property name="title" translatable="yes">Paste text from clipboard</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes">Undo and Redo</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;Z</property>
+                <property name="title" translatable="yes">Undo previous command</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;Shift&gt;&lt;ctrl&gt;Z</property>
+                <property name="title" translatable="yes">Redo previous command</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes">Selection</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;A</property>
+                <property name="title" translatable="yes">Select all text</property>
               </object>
             </child>
           </object>
