@@ -1,9 +1,25 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+
 '''MindEd - An Editor for programming LEGO Mindstorms Bricks
 - NXT with NXC
-- EV3 with EV3-Python
+- EV3 with EVC - a fork of C4EV3 
 '''
+
+# Copyright (C) 2017 Bernd Sellentin <sel@gge-em.org>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 import argparse
@@ -11,7 +27,6 @@ import logging
 from pathlib import Path
 
 # internationalization
-#import os
 import locale
 import gettext
 APP_NAME = "minded"
@@ -67,13 +82,38 @@ class MindEdApp(Gtk.Application):
 
         self.args = ()
         self.filelist = []
-        # look for ui-files
+
+        # where do we get started
         srcdir = Path(__file__).parent
+        # local installation, for development
         if Path(srcdir, 'data').exists():
             logger.warn('Running from source tree, using local ui-files')
+            logger.debug('srcdir: {}'.format(srcdir))
+            # look for ui-files
             pkgdatadir = Path(srcdir, 'data')
+            # look for settings
+            schema_source = Gio.SettingsSchemaSource.new_from_directory(
+                str(Path(srcdir, 'data')),
+                Gio.SettingsSchemaSource.get_default(), False)
+            schema = Gio.SettingsSchemaSource.lookup(
+                schema_source, 'org.gge-em.MindEd', False)
+            logger.debug('Gsettings schema: {}'.format(schema.get_path()))
+            if not schema:
+                raise Exception("Cannot get GSettings schema")
+            self.settings = Gio.Settings.new_full(schema, None, None)
+            # Translation stuff
+            locale.bindtextdomain('minded', srcdir.resolve())
+            locale.textdomain('minded')
+            gettext.bindtextdomain('minded', srcdir.resolve())
+            gettext.textdomain('minded')
+        # systemwide installation
         else:
             pkgdatadir = '/usr/share/minded'
+            self.settings = Gio.Settings('org.gge-em.MindEd')
+            locale.bindtextdomain('minded', '/usr/share/locale')
+            locale.textdomain('minded')
+            gettext.bindtextdomain('minded')
+            gettext.textdomain('minded')
 
         resource_path = Path(pkgdatadir, 'minded.gresource')
         resource = Gio.Resource.load(str(resource_path))
@@ -85,6 +125,10 @@ class MindEdApp(Gtk.Application):
 
         action = Gio.SimpleAction.new('shortcuts', None)
         action.connect('activate', self.on_shortcuts)
+        self.add_action(action)
+
+        action = Gio.SimpleAction.new('about', None)
+        action.connect('activate', self.on_about)
         self.add_action(action)
 
         action = Gio.SimpleAction.new('quit', None)
@@ -114,6 +158,7 @@ class MindEdApp(Gtk.Application):
                         logger.debug("   device property {}: {}".format(device_key, 
                               device.get_property(device_key)))
                 try:
+                    logger.debug("NXT-lib: {}".format(nxt.locator.__file__))
                     #self.brick = nxt.locator.find_one_brick(keyword_arguments.get('host',None))
                     self.nxtbrick = nxt.locator.find_one_brick()
                 except:
@@ -132,35 +177,6 @@ class MindEdApp(Gtk.Application):
                 except:
                     logger.warn('ev3-python failure')
 
-        # where do we get started
-        srcdir = Path(__file__).parent
-        logger.debug('srcdir: {}'.format(srcdir))
-
-        # local development
-        if Path(srcdir, 'data').exists():
-            logger.warn('Running from source tree, using local settings')
-            # Translation stuff
-            locale.bindtextdomain('minded', srcdir.resolve())
-            locale.textdomain('minded')
-            gettext.bindtextdomain('minded', srcdir.resolve())
-            gettext.textdomain('minded')
-            # look for settings
-            schema_source = Gio.SettingsSchemaSource.new_from_directory(
-                str(Path(srcdir, 'data')),
-                Gio.SettingsSchemaSource.get_default(), False)
-            schema = Gio.SettingsSchemaSource.lookup(
-                schema_source, 'org.gge-em.MindEd', False)
-            logger.debug('Gsettings schema: {}'.format(schema.get_path()))
-            if not schema:
-                raise Exception("Cannot get GSettings schema")
-            self.settings = Gio.Settings.new_full(schema, None, None)
-        else:
-        # systemwide installation
-            locale.bindtextdomain('minded', '/usr/share/locale')
-            locale.textdomain('minded')
-            gettext.bindtextdomain('minded')
-            gettext.textdomain('minded')
-            self.settings = Gio.Settings('org.gge-em.MindEd')
         # nbc compiler
         if not self.settings.get_string('nbcpath'):
             if Path('/usr/bin/nbc').is_file():
@@ -207,7 +223,6 @@ class MindEdApp(Gtk.Application):
             #TODO: if SD-card, check avaibility
 
         if not self.win:
-            logger.debug("NXT-lib: {}".format(nxt.locator.__file__))
             self.win = MindEdAppWin(self.filelist, application=self)
         else:
             '''MindEd already running, brick file in file browser clicked'''
@@ -238,19 +253,20 @@ class MindEdApp(Gtk.Application):
 
     def on_uevent(self, client, action, device):
         ''' report plugin-event to application'''
-        #for device_key in device.get_property_keys():
-        #    print("   device property %s: %s"  % (device_key, device.get_property(device_key)))
+        if logger.isEnabledFor(logging.DEBUG):
+            for device_key in device.get_property_keys():
+                logger.debug('   device property {}: {}'.format(
+                    device_key, device.get_property(device_key)))
 
-        # only LEGO-devices
-        if (device.get_property('ID_VENDOR') == '0694' or
-            device.get_property('ID_VENDOR_ID') == '0694'):
-            # NXT
-            if device.get_property('ID_MODEL') == '0002':
-
-                if action == "add":
+        if action == "add":
+            # only LEGO-devices
+            if (device.get_property('ID_VENDOR') == '0694' or
+                device.get_property('ID_VENDOR_ID') == '0694'):
+                # NXT
+                if device.get_property('ID_MODEL') == '0002':
                     logger.debug(' uevent: added NXT')
                     self.win.brick_status.push(self.win.brick_status_id, "NXT")
-                    self.win.btn_transmit.set_sensitive(True)
+                    self.win.transmit_action.set_enabled(True)
 
                     try:
                         self.nxtbrick = nxt.locator.find_one_brick()
@@ -261,35 +277,34 @@ class MindEdApp(Gtk.Application):
                         self.win.nxt_filer.nxt_model.populate(self.brick, '*.*')
                     except AttributeError:
                         pass
-
-                if action == "remove":
-                    logger.debug(' uevent: removed NXT')
-                    self.win.brick_status.pop(self.win.brick_status_id)
-                    self.win.btn_transmit.set_sensitive(False)
-
-                    try:
-                        self.win.nxt_filer.nxt_model.clear()
-                    except AttributeError:
-                        pass
-
-            # EV3
-            elif device.get_property('ID_MODEL_ID') == '0005':
-
-                if action == "add":
+                # EV3
+                elif device.get_property('ID_MODEL_ID') == '0005':
                     logger.debug(' uevent: added EV3')
                     self.win.brick_status.push(self.win.brick_status_id, "EV3")
-                    self.win.btn_transmit.set_sensitive(True)
+                    self.win.transmit_action.set_enabled(True)
                     try:
                         self.ev3brick = ev3.EV3()
                         self.ev3brick.do_nothing()
                     except:
                         logger.warn('ev3-python failure')
 
-                if action == "remove":
-                    logger.debug(' uevent: removed EV3')
-                    self.win.brick_status.pop(self.win.brick_status_id)
-                    self.win.btn_transmit.set_sensitive(False)
-                    self.ev3brick.close()
+        # newer libgudev returns on remove ID_VENDOR None
+        if action == 'remove':
+            if '694/5' in device.get_property('PRODUCT'):
+                '''EV3 PRODUCT 694/5/216'''
+                logger.debug(' uevent: removed EV3')
+                self.win.brick_status.pop(self.win.brick_status_id)
+                self.win.transmit_action.set_enabled(False)
+                self.ev3brick.close()
+            if '694/2' in device.get_property('PRODUCT'):
+                '''NXT PRODUCT 694/2/0'''
+                logger.debug(' uevent: removed NXT')
+                self.win.brick_status.pop(self.win.brick_status_id)
+                self.win.transmit_action.set_enabled(False)
+                try:
+                    self.win.nxt_filer.nxt_model.clear()
+                except AttributeError:
+                    pass
 
     def on_preferences(self, action, param):
         dlg = PreferencesDialog(self.win.get_application())
@@ -302,6 +317,14 @@ class MindEdApp(Gtk.Application):
         builder.add_from_resource('/org/gge-em/MindEd/shortcuts.ui')
         self.shortcuts_win = builder.get_object('shortcuts-minded')
         self.shortcuts_win.show_all()
+
+    def on_about(self, action, param):
+        builder = Gtk.Builder()
+        builder.add_from_resource('/org/gge-em/MindEd/about.ui')
+        self.about_win = builder.get_object('about-dlg')
+        self.about_win.set_version(self.version)
+        self.about_win.set_transient_for(self.win)
+        self.about_win.show_all()
 
     def on_quit(self, action, param):
         self.win.gtk_main_quit()

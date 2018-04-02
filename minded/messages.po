@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-13 17:40+0100\n"
+"POT-Creation-Date: 2018-04-02 12:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,135 +17,219 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: mindedappwin.py:214 mindedappwin.py:240
+#: mindedappwin.py:273 mindedappwin.py:299
 msgid "You have to save first!"
 msgstr ""
 
-#: mindedappwin.py:215 mindedappwin.py:241
+#: mindedappwin.py:274 mindedappwin.py:300
 msgid "The compiler works on the real file."
 msgstr ""
 
-#: mindedappwin.py:230 mindedappwin.py:256
+#: mindedappwin.py:289 mindedappwin.py:315
 msgid "# Error: unknown file extension, expected: .nxc or .evc"
 msgstr ""
 
-#: mindedappwin.py:286
-msgid "An Editor for LEGO Mindstorms Bricks"
-msgstr ""
-
-#: mindedappwin.py:379
+#: mindedappwin.py:398
 msgid "Pick a file"
 msgstr ""
 
-#: mindedappwin.py:432
+#: mindedappwin.py:451
 msgid "Filename {} unvalid!"
 msgstr ""
 
-#: mindedappwin.py:433
+#: mindedappwin.py:452
 msgid "Filename contains non-alphanumeric characters."
 msgstr ""
 
-#: mindedappwin.py:483
+#: mindedappwin.py:502
 msgid "Could not save file {}"
 msgstr ""
 
-#: mindedappwin.py:659
+#: mindedappwin.py:680
 msgid "No NBC-executable found!"
 msgstr ""
 
-#: mindedappwin.py:660
+#: mindedappwin.py:681
 msgid "not in /usr/bin, not in /usr/local/bin"
 msgstr ""
 
-#: mindedappwin.py:731
+#: mindedappwin.py:752
 msgid "Please choose a file"
 msgstr ""
 
-#: mindedappwin.py:743
+#: mindedappwin.py:764
 msgid "Brick files"
 msgstr ""
 
-#: mindedappwin.py:749
+#: mindedappwin.py:770
 msgid "Any files"
 msgstr ""
 
-#: mindedappwin.py:759
+#: mindedappwin.py:780
 msgid "Save changes to document {} before closing?"
 msgstr ""
 
-#: mindedappwin.py:760
+#: mindedappwin.py:781
 msgid "Close without Saving"
 msgstr ""
 
-#: mindedappwin.py:761
+#: mindedappwin.py:782
 msgid "Cancel"
 msgstr ""
 
-#: mindedappwin.py:762 ../data/mindedappwin.ui:306
+#: mindedappwin.py:783
 msgid "Save"
 msgstr ""
 
-#: mindedappwin.py:763
+#: mindedappwin.py:784
 msgid "Changes to document {} will be permanently lost."
 msgstr ""
 
-#: ../data/mindedappwin.ui:84
-msgid "compiler-log"
+#: ../data/shortcuts.ui:13
+msgid "Documents"
 msgstr ""
 
-#: ../data/mindedappwin.ui:166
-msgid "Text"
+#: ../data/shortcuts.ui:17
+msgid "Create new document"
 msgstr ""
 
-#: ../data/mindedappwin.ui:261
-msgid "New"
+#: ../data/shortcuts.ui:23
+msgid "Open a document"
 msgstr ""
 
-#: ../data/mindedappwin.ui:282
-msgid "Open"
+#: ../data/shortcuts.ui:29
+msgid "Save the document"
 msgstr ""
 
-#: ../data/mindedappwin.ui:354
+#: ../data/shortcuts.ui:35
+msgid "Save document as"
+msgstr ""
+
+#: ../data/shortcuts.ui:41
+msgid "Close the document"
+msgstr ""
+
+#: ../data/shortcuts.ui:47
+msgid "Print the document"
+msgstr ""
+
+#: ../data/shortcuts.ui:53
+msgid "Switch to the next document"
+msgstr ""
+
+#: ../data/shortcuts.ui:59
+msgid "Switch to the previous document"
+msgstr ""
+
+#: ../data/shortcuts.ui:66
+msgid "Compiler"
+msgstr ""
+
+#: ../data/shortcuts.ui:70
+msgid "Compile the program"
+msgstr ""
+
+#: ../data/shortcuts.ui:76
+msgid "Transmit program to brick"
+msgstr ""
+
+#: ../data/shortcuts.ui:83
+msgid "Windows"
+msgstr ""
+
+#: ../data/shortcuts.ui:87
+msgid "Quit the application"
+msgstr ""
+
+#: ../data/shortcuts.ui:94
+msgid "Copy and Paste"
+msgstr ""
+
+#: ../data/shortcuts.ui:98
+msgid "Copy selected text to clipboard"
+msgstr ""
+
+#: ../data/shortcuts.ui:104
+msgid "Cut selected text to clipboard"
+msgstr ""
+
+#: ../data/shortcuts.ui:110
+msgid "Paste text from clipboard"
+msgstr ""
+
+#: ../data/shortcuts.ui:117
+msgid "Undo and Redo"
+msgstr ""
+
+#: ../data/shortcuts.ui:121
+msgid "Undo previous command"
+msgstr ""
+
+#: ../data/shortcuts.ui:127
+msgid "Redo previous command"
+msgstr ""
+
+#: ../data/shortcuts.ui:134
+msgid "Selection"
+msgstr ""
+
+#: ../data/shortcuts.ui:138
+msgid "Select all text"
+msgstr ""
+
+#: ../data/mindedappwin.ui:16
+msgid "Create a new document"
+msgstr ""
+
+#: ../data/mindedappwin.ui:37
+msgid "Open a file"
+msgstr ""
+
+#: ../data/mindedappwin.ui:61
+msgid "Save the current file"
+msgstr ""
+
+#: ../data/mindedappwin.ui:98
 msgid "Transmit"
 msgstr ""
 
-#: ../data/mindedappwin.ui:379
+#: ../data/mindedappwin.ui:123
 msgid "Compile"
 msgstr ""
 
-#: ../data/mindedappwin.ui:442
-msgid "Back"
+#: ../data/mindedappwin.ui:215
+msgid "compiler-log"
 msgstr ""
 
-#: ../data/mindedappwin.ui:453
-msgid "Brick-Info"
+#: ../data/mindedappwin.ui:297
+msgid "Text"
 msgstr ""
 
-#: ../data/mindedappwin.ui:468
-msgid "Brick-Filer"
+#: ../data/mindedappwin.ui:411
+msgid "Print…"
 msgstr ""
 
-#: ../data/mindedappwin.ui:487
-msgid "Firmware"
+#: ../data/mindedappwin.ui:417
+msgid "Save As…"
 msgstr ""
 
-#: ../data/mindedappwin.ui:532
-msgid "Save as ..."
-msgstr ""
-
-#: ../data/mindedappwin.ui:550
+#: ../data/mindedappwin.ui:423
 msgid "Tools"
 msgstr ""
 
-#: ../data/mindedappwin.ui:561
-msgid "API Browser"
+#: ../data/mindedappwin.ui:427 ../data/brickinfo.ui:7
+msgid "Brick Info"
 msgstr ""
 
-#: ../data/mindedappwin.ui:576
-msgid "About"
+#: ../data/mindedappwin.ui:431
+msgid "Brick Filer"
 msgstr ""
 
-#: ../data/minded-preferences-dialog.ui:20
+#: ../data/mindedappwin.ui:440
+msgid "API Help"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:20 ../data/app-menu.ui:7
 msgid "Preferences"
 msgstr ""
 
@@ -241,10 +325,6 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: ../data/brickinfo.ui:7
-msgid "Brick Info"
-msgstr ""
-
 #: ../data/brickinfo.ui:28
 msgid "Brick name"
 msgstr ""
@@ -253,10 +333,22 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: ../data/app-menu.ui:7
-msgid "_Preferences"
+#: ../data/app-menu.ui:11
+msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: ../data/app-menu.ui:13
-msgid "_Quit"
+#: ../data/app-menu.ui:15
+msgid "About"
+msgstr ""
+
+#: ../data/app-menu.ui:21
+msgid "Quit"
+msgstr ""
+
+#: ../data/about.ui:11
+msgid "An Editor for LEGO Mindstorms Bricks"
+msgstr ""
+
+#: ../data/about.ui:13
+msgid "MindEd Webside"
 msgstr ""
