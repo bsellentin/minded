@@ -527,15 +527,15 @@ evc_funcs = [
         '<span foreground="brown">outputs</span>)</b>\n\n' +
         'This function enables resetting the tacho count for the\n' +
         'individual output ports. The tacho count is also resetted\n' +
-        'at program start.\n', 'Input'],
+        'at program start.\n', 'Output'],
     ['ResetRotationCount', 'ResetRotationCount(outputs)', '<b>ResetRotationCount(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
         'This function enables the program to clear the tacho count\n' +
         'used as sensor input. This rotation count is resetted at\n' +
-        'boot time, not at program start.', 'Input'],
+        'boot time, not at program start.', 'Output'],
     ['ResetAllTachoCounts', 'ResetAllTachoCounts()', '<b>ResetAllTachoCounts(' +
         '<span foreground="brown">outputs</span>)</b>\n\n' +
-        'Resets tacho and rotation count.', 'Input'],
+        'Resets tacho and rotation count.', 'Output'],
     ['RotateMotor', 'RotateMotor(output, speed, angle)', '<b>RotateMotor(' +
         '<span foreground="brown">output</span>, ' +
         '<span foreground="brown">speed</span>, ' +
@@ -574,10 +574,18 @@ evc_funcs = [
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
         '<span foreground="brown">angle</span>)</b>\n\n', 'Output'],
+    ['SetDirection', 'SetDirection(outputs, direction)', '<b>SetDirection(' +
+        '<span foreground="brown">outputs</span>, ' +
+        '<span foreground="brown">direction</span>)</b>\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">direction</span>        OUT_FWD\n' +
+        '                   OUT_REV\n' +
+        '                   OUT_TOGGLE', 'Output'],
     ['SetPower', 'SetPower(outputs, power)', '<b>SetPower(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
         'Negative values forward, positive values backwards', 'Output'],
+    ['SetSpeed', 'SetSpeed(outputs, speed)', 'SetSpeed(outputs, speed)', 'Output'],
     ['SetSensorTouch', 'SetSensorTouch(input)', '<b>SetSensorTouch(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Touch Sensor to specified input port\n' +
@@ -770,6 +778,10 @@ evc_consts = [
     ['OUT_ACD', 'OUT_ACD'],
     ['OUT_BCD', 'OUT_BCD'],
     ['OUT_ALL', 'OUT_ALL'],
+    ['OUT_ON', 'OUT_ON'],
+    ['OUT_OFF', 'OUT_OFF'],
+    ['OUT_FWD', 'OUT_FWD'],
+    ['OUT_REV', 'OUT_REV'],
     ['RESET_NONE', 'RESET_NONE'],
     ['RESET_COUNT', 'RESET_COUNT'],
     ['RESET_BLOCK_COUNT', 'RESET_BLOCK_COUNT'],
