@@ -78,23 +78,12 @@
       </packing>
     </child>
     <child>
-      <object class="GtkButton" id="btn_menu">
+      <object class="GtkMenuButton" id="btn_hamburger_menu">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="receives_default">False</property>
+        <property name="valign">center</property>
         <property name="relief">none</property>
-        <signal name="clicked" handler="on_btn_menu_clicked" swapped="no"/>
-        <child>
-          <object class="GtkImage" id="menu-icon">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="icon_name">open-menu-symbolic</property>
-            <property name="icon_size">1</property>
-          </object>
-        </child>
-        <style>
-          <class name="image-button"/>
-        </style>
+        <property name="use_popover">True</property>
+        <property name="image">menu_image</property>
       </object>
       <packing>
         <property name="pack_type">end</property>
@@ -149,172 +138,6 @@
       <packing>
         <property name="pack_type">end</property>
         <property name="position">5</property>
-      </packing>
-    </child>
-  </object>
-  <object class="GtkPopoverMenu" id="menumenu">
-    <property name="can_focus">False</property>
-    <property name="relative_to">btn_menu</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkModelButton">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="text" translatable="yes">Back</property>
-            <property name="menu_name">main</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_brickinfo">
-            <property name="label" translatable="yes">Brick-Info</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="on_btn_brickinfo_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_brickfiler">
-            <property name="label" translatable="yes">Brick-Filer</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="on_btn_brickfiler_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="btn_firmware">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="receives_default">False</property>
-            <property name="text" translatable="yes">Firmware</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="submenu">tools</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkButton" id="btn_print">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">win.print_doc</property>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">printer-symbolic</property>
-                <property name="icon_size">1</property>
-              </object>
-            </child>
-            <style>
-              <class name="image-button"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_save_as">
-            <property name="label" translatable="yes">Save as ...</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">win.save_doc_as</property>
-            <property name="relief">none</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="text" translatable="yes">Tools</property>
-            <property name="menu_name">tools</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_apiviewer">
-            <property name="label" translatable="yes">API Browser</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="on_btn_apiviewer_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_about">
-            <property name="label" translatable="yes">About</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="on_btn_about_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">4</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="submenu">main</property>
-        <property name="position">2</property>
       </packing>
     </child>
   </object>
@@ -580,5 +403,47 @@
         </child>
       </object>
     </child>
+  </object>
+  <menu id="hamburger-menu">
+    <section>
+      <attribute name="id">doc-section</attribute>
+      <item>
+        <attribute name="label" translatable="yes">Print…</attribute>
+        <attribute name="action">win.print_doc</attribute>
+        <attribute name="icon">printer-symbolic</attribute>
+      </item>
+      <item>
+        <attribute name="id">btn_save_as</attribute>
+        <attribute name="label" translatable="yes">Save As…</attribute>
+        <attribute name="action">win.save_doc_as</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">Tools</attribute>
+        <section>
+          <attribute name="id">tools-section</attribute>
+          <item>
+            <attribute name="label" translatable="yes">Brick Info</attribute>
+            <attribute name="action">win.brick_info</attribute>
+          </item>
+          <item>
+            <attribute name="label" translatable="yes">Brick Filer</attribute>
+            <attribute name="action">win.brick_filer</attribute>
+          </item>
+        </section>
+      </submenu>
+    </section>
+    <section>
+      <attribute name="id">help-section</attribute>
+      <item>
+        <attribute name="label" translatable="yes">API Help</attribute>
+        <attribute name="action">win.api_browser</attribute>
+      </item>
+    </section>
+  </menu>
+  <object class="GtkImage" id="menu_image">
+    <property name="visible">True</property>
+    <property name="icon_name">open-menu-symbolic</property>
   </object>
 </interface>
