@@ -332,6 +332,11 @@
         <keyword>OUT_ACD</keyword>
         <keyword>OUT_BCD</keyword>
         <keyword>OUT_ALL</keyword>
+        <keyword>OUT_ON</keyword>
+        <keyword>OUT_OFF</keyword>
+        <keyword>OUT_FWD</keyword>
+        <keyword>OUT_REV</keyword>
+        <keyword>OUT_TOGGLE</keyword>
         <keyword>RESET_NONE</keyword>
         <keyword>RESET_COUNT</keyword>
         <keyword>RESET_BLOCK_COUNT</keyword>
@@ -549,7 +554,6 @@
         <keyword>RotateMotorEx</keyword>
         <keyword>RotateMotorNoWait</keyword>
         <keyword>RotateMotorNoWaitEx</keyword>
-        <keyword>SetPower</keyword>
         <keyword>SetSensorLight</keyword>
         <keyword>SetSensorColor</keyword>
         <keyword>SetSensorTouch</keyword>
@@ -560,6 +564,9 @@
         <keyword>SetSensorNXTLight</keyword>
         <keyword>SetSensorNXTSound</keyword>
         <keyword>SetSensorMode</keyword>
+        <keyword>SetDirection</keyword>
+        <keyword>SetPower</keyword>
+        <keyword>SetSpeed</keyword>
         <keyword>SetAllSensorMode</keyword>
         <keyword>SetIRBeaconCH</keyword>
         <keyword>SetLedPattern</keyword>
