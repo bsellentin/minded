@@ -11,8 +11,8 @@ evc_funcs = [
         '      FreeEV3();\n' +
         '      return 0;\n' +
         '  }', 'General'],
-    ['CloseEV3', 'CloseEV3()', 'CloseEV3()\n', 'General'],
-    ['ExitEV3', 'ExitEV3()', 'ExitEV3()\n', 'General'],
+    #['CloseEV3', 'CloseEV3()', 'CloseEV3()\n', 'General'],
+    #['ExitEV3', 'ExitEV3()', 'ExitEV3()\n', 'General'],
     ['FreeEV3', 'FreeEV3()', '<b>FreeEV3()</b>\n\n' +
         'Close and exit of all EV3-Functions', 'General'],
     ['ButtonIsDown', 'ButtonIsDown(button)','<b>ButtonIsDown(' +
@@ -75,6 +75,11 @@ evc_funcs = [
         'This function lets you draw a circle on the screen\n' +
         'with its center at the specified x and y location,\n' +
         'using the specified radius.', 'Display'],
+    ['CurrentTick', 'CurrentTick()', '<b>CurrentTick()</b>\n\n' +
+        'Read the current system tick.\n\n' +
+        '<b>Example:</b>\n' +
+        '  long tick;\n' +
+        '  tick = CurrentTick();', 'General'],
     ['EllipseOut','EllipseOut(x, y, radiusX, radiusY)','<b>EllipseOut(' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>, ' +
@@ -157,8 +162,8 @@ evc_funcs = [
         '           ICONTYPE_MENU   3           0..10\n' +
         '           ICONTYPE_ARROW  4           0..2', 'Display'],
     ['LcdUpdate', 'LcdUpdate()', 'LcdUpdate()\n', 'Display'],
-    ['LcdInit', 'LcdInit()', 'LcdInit()\n', 'General'],
-    ['LcdExit', 'LcdExit()', 'LcdExit()\n', 'General'],
+    #['LcdInit', 'LcdInit()', 'LcdInit()\n', 'General'],
+    #['LcdExit', 'LcdExit()', 'LcdExit()\n', 'General'],
     ['LineOut', 'LineOut(x1, y1, x2, y2)', '<b>LineOut(' +
         '<span foreground="brown">x1</span>, ' +
         '<span foreground="brown">y1</span>, ' +
@@ -186,8 +191,8 @@ evc_funcs = [
         'This function enables reading current output tacho count in degrees.\n' +
         'This count is set to 0 at program start.\n' +
         'See also: ResetTachoCount()', 'Output'],
-    ['OutputInit', 'OutputInit()', 'OutputInit()\n', 'General'],
-    ['OutputExit', 'OutputExit()', 'OutputExit()\n', 'General'],
+    #['OutputInit', 'OutputInit()', 'OutputInit()\n', 'General'],
+    #['OutputExit', 'OutputExit()', 'OutputExit()\n', 'General'],
     ['OnFwd', 'OnFwd(outputs, power)', '<b>OnFwd(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
@@ -493,6 +498,13 @@ evc_funcs = [
     ['PointOut', 'PointOut(x, y)', '<b>PointOut(' +
         '<span foreground="brown">x</span>, ' +
         '<span foreground="brown">y</span>)</b>\n\n', 'Display'],
+    ['Random', 'Random(int)',
+        '<b>Random (<span foreground="brown">n = 0</span>)</b>\n\n' +
+        'Generate random number. The returned value will range\n' +
+        'between 0 and n (exclusive).\n\n' + 
+        '<b>Parameters</b>\n  <span foreground="brown">int</span> The maximum unsigned value desired.\n' +
+        '<b>Example:</b>\n' +
+        '  int x = Random(100); // unsigned int between 0..99\n', 'General'],
     ['ReadSensor', 'ReadSensor(input)', '<b>ReadSensor(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Readout of the actual sensor data.\n\n' +
