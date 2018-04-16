@@ -238,25 +238,19 @@
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="homogeneous">True</property>
+        <property name="homogeneous">False</property>
         <child>
-          <object class="GtkStatusbar" id="msg_status">
+          <object class="GtkLabel" id="ovw_status">
             <property name="visible">True</property>
+            <property name="width_request">80</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">10</property>
-            <property name="margin_right">10</property>
-            <property name="margin_start">10</property>
-            <property name="margin_end">10</property>
-            <property name="margin_top">6</property>
-            <property name="margin_bottom">6</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">2</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
+           </object>
+           <packing>
+             <property name="expand">False</property>
+             <property name="fill">True</property>
+             <property name="pack_type">end</property>
+             <property name="position">0</property>
+           </packing>
         </child>
         <child>
           <object class="GtkStatusbar" id="colln_status">
