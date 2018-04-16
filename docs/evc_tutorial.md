@@ -346,10 +346,10 @@ Denn entsprechend ist der richtige Datentyp zu wählen.
 #include "ev3.h"
 int main(){
 InitEV3();
-LcdTextf(1,1,LCD_LINE1,"short:      %2d Bit", sizeof(short)\*8);
-LcdTextf(1,1,LCD_LINE2,"int:        %2d Bit", sizeof(int)\*8);
-LcdTextf(1,1,LCD_LINE3,"long:       %2d Bit", sizeof(long)\*8);
-LcdTextf(1,1,LCD_LINE4,"long long:  %2d Bit", sizeof(long long)\*8);
+LcdTextf(1,1,LCD_LINE1,"short:      %2d Bit", sizeof(short)*8);
+LcdTextf(1,1,LCD_LINE2,"int:        %2d Bit", sizeof(int)*8);
+LcdTextf(1,1,LCD_LINE3,"long:       %2d Bit", sizeof(long)*8);
+LcdTextf(1,1,LCD_LINE4,"long long:  %2d Bit", sizeof(long long)*8);
 
 LcdText(1,1,LCD_LINE8,"Exit mit <CENTER>");
 ButtonWaitForPress(BTNCENTER);
@@ -357,15 +357,15 @@ FreeEV3();
 }
 ```
 
-| Datentyp | Speichergröße | Wertebereich |
-|----------|---------------|--------------|
-|short |16 Bit |0 bis 65.535|
-|int |32 Bit| 0 bis 4.294.967.295|
-|long| 32 Bit ||
-|long long |64 Bit|0 bis 18.446.744.073.709.551.615|
-|float|||
-|double|||
-|long double|||
+| Datentyp  | Speichergröße | Wertebereich |
+|-----------|---------------|--------------|
+|short      |16 Bit |0 bis 65.535|
+|int        |32 Bit |0 bis 4.294.967.295|
+|long       |32 Bit ||
+|long long  |64 Bit |0 bis 18.446.744.073.709.551.615|
+|float      |32 Bit ||
+|double     |64 Bit ||
+|long double|64 Bit ||
 
 ## Kontrollstrukturen
 
@@ -654,6 +654,7 @@ gelesen werden können.
 |EV3-Ultrasonic      | US_DIST_CM  | SetSensorUS       | Distanz in Centimeter          |
 |                    | US_DIST_MM  |                   | Dist in mm |
 |                    | US_DIST_IN  |                   | Dist in inch |
+|                    | US_LISTEN   |                   | 0: kein 1: ein anderes US-Signal|
 |EV3-Gyroskop        | GYRO_ANG    | SetSensorGyro     | angle |
 |                    | GYRO_RATE   |                   | rate |
 |EV3-Infrared        | IR_PROX     | SetSensorIR       | Entfernung 0...100 cm |
@@ -673,24 +674,28 @@ gelesen werden können.
 |HiTechnic IR-Seeker | HT_DIR_DC   |                   | Direction of IR signal 1...9 |
 
 
-<h2 id="irbeacon">InfrarotSender</h3>
+<h2 id="irbeacon">InfrarotSender</h2>
 
-BEACON_CH_1             0
-BEACON_CH_2             1
-BEACON_CH_3             2
-BEACON_CH_4             3
-BEACON_OFF              0
-BEACON_UP_LEFT          1
-BEACON_DOWN_LEFT        2
-BEACON_UP_RIGHT         3
-BEACON_DOWN_RIGHT       4
-BEACON_UP               5
-BEACON_DIAG_UP_LEFT     6
-BEACON_DIAG_UP_RIGHT    7
-BEACON_DOWN             8
-BEACON_ON               9
-BEACON_LEFT             10
-BEACON_RIGHT            11
+|
+|BEACON_CH_1             |0|
+|BEACON_CH_2             |1|
+|BEACON_CH_3             |2|
+|BEACON_CH_4             |3|
+
+|Taste bzw. -kombination| Wert|
+|-----|----:|
+|BEACON_OFF              |0|
+|BEACON_UP_LEFT          |1|
+|BEACON_DOWN_LEFT        |2|
+|BEACON_UP_RIGHT         |3|
+|BEACON_DOWN_RIGHT       |4|
+|BEACON_UP               |5|
+|BEACON_DIAG_UP_LEFT     |6|
+|BEACON_DIAG_UP_RIGHT    |7|
+|BEACON_DOWN             |8|
+|BEACON_ON               |9|
+|BEACON_LEFT             |10|
+|BEACON_RIGHT            |11|
 
 <h2 id="parallel">Parallele Tasks</h2>
 
