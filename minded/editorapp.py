@@ -21,6 +21,7 @@ Editor Application of MindEd
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from pathlib import Path
+import re
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -31,6 +32,8 @@ from gi.repository import GtkSource
 
 import logging
 logger = logging.getLogger(__name__)
+
+from gettext import gettext as _
 
 from minded.brickcompletionprovider import BrickCompletionProvider
 
@@ -132,8 +135,6 @@ class EditorApp(Gtk.ScrolledWindow):
         self.codeview.connect('drag_data_received', self.drag_data_received)
         #self.codeview.connect("drag_drop", self.drag_data_received)
 
-        self.codeview.connect('toggle-overwrite', self.on_toggle_overwrite)
-
         # for bracket completion
         self.codeview.connect('key-press-event', self.on_key_press)
         self.add_brackets()
@@ -153,6 +154,10 @@ class EditorApp(Gtk.ScrolledWindow):
         #self.word_completion = self.codeview.get_completion()
         self.codeview_completion.add_provider(self.word_completion_provider)
         
+        # bricks don't want prognames with non-alphanumeric characters
+        # returns None if non-alphanumeric character found
+        self.forbiddenchar = re.compile('^[a-zA-Z0-9_.]+$')
+
         self.document = MindEdDocument(file_uri)
         # throws error if file not exists -> load empty buffer
         #try:
@@ -183,6 +188,122 @@ class EditorApp(Gtk.ScrolledWindow):
             self.set_completion(document)
         else:
             logger.debug('Could not load {}'.format(document.get_path()))
+
+    def save_file_as(self):
+
+        logger.debug('dialog save_file_as: {}'.format(self.document.get_uri()))
+
+        save_dialog = Gtk.FileChooserDialog(_('Pick a file'), self.mindedappwin,
+                                            Gtk.FileChooserAction.SAVE,
+                                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                             Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
+        save_dialog.set_do_overwrite_confirmation(True)
+        save_dialog.set_local_only(False)
+        try:
+            save_dialog.set_uri(self.document.get_uri())
+        except GObject.GError as e:
+            logger.error('# Error: {}'.format(e.message))
+
+        save_dialog.connect('response', self.save_file_as_response)
+        save_dialog.show()
+
+    def save_file_as_response(self, dialog, response):
+
+        save_dialog = dialog
+        if response == Gtk.ResponseType.ACCEPT:
+            filename = Path(save_dialog.get_filename())  # or uri?
+
+            # check for right suffix
+            if self.this_lang:
+                if self.this_lang.get_name() == 'EVC':
+                    if not filename.suffix == '.evc':
+                        logger.debug('No suffix')
+                        filename = filename.with_suffix('.evc')
+                        logger.debug('append suffix: {}'.format(filename.name))
+                if self.this_lang.get_name() == 'NXC':
+                    if not filename.suffix == '.nxc':
+                        logger.debug('No suffix')
+                        filename = filename.with_suffix('.nxc')
+                        logger.debug('append suffix: {}'.format(filename.name))
+
+            # check for valid filename
+            if self.forbiddenchar.match(filename.stem) is not None:
+                self.document.set_uri(filename.as_uri())
+                if logger.isEnabledFor(logging.DEBUG):
+                    page_num = self.mindedappwin.notebook.page_num(self)
+                    logger.debug('func save_file_as_response: {} on tab {}, '
+                                 .format(self.document.get_uri(), page_num))
+
+                self.save_file_sync()
+
+                # change language according file extension, e.g. new created files
+                self.set_completion(self.document)
+                self.mindedappwin.change_language_selection(self)
+                # change tab label
+                self.mindedappwin.change_tab_label(self, self.document.get_basename())
+                # change headerbar
+                self.mindedappwin.set_title(self.document)
+                dialog.destroy()
+            else:
+                self.mindedappwin.dlg_something_wrong(save_dialog,
+                    _('Filename {} unvalid!').format(filename.name),
+                    _('Filename contains non-alphanumeric characters.'))
+                save_dialog.set_uri(self.document.get_uri())
+
+        elif response == Gtk.ResponseType.CANCEL:
+            logger.debug('cancelled: SAVE AS')
+            dialog.destroy()
+
+    def save_file_sync(self):
+
+        if 'untitled' in self.document.get_basename():
+            logger.debug('Found untitled file: {}'.format(self.document.get_uri()))
+            self.save_file_as()
+        else:
+            buf = self.get_buffer()
+            start, end = buf.get_bounds()
+            content = buf.get_text(start, end, False)
+            f = self.document.gio_file
+            try:
+                f.replace_contents(content.encode(), None, False, Gio.FileCreateFlags(0),None)
+                logger.debug('file {} saved sync'.format(self.document.get_uri()))
+            except GLib.Error as e:
+                logger.error('# Error: {}'.format(e.message))
+            else:
+                if buf.get_modified():
+                    buf.set_modified(False)
+                    logger.debug('set buffer modified {}'.format(buf.get_modified()))
+
+    def save_file_async(self):
+
+        if 'untitled' in self.document.get_basename():
+            logger.debug('Found untitled file: {}'.format(self.document.get_uri()))
+            self.save_file_as()
+        else:
+            buf = self.get_buffer()
+
+            try:
+                saver = GtkSource.FileSaver.new(buf, self.document)
+                saver.save_async(1, None, None, None, self.on_save_async_finish)
+            except GObject.GError as e:
+                logger.error('# Error: {}'.format(e.message))
+
+    def on_save_async_finish(self, source, result):
+
+        try:
+            # async saving, we have to wait for finish before removing
+            success = source.save_finish(result)
+            logger.debug('file {} saved async {}'.format(self.document.get_uri(), success))
+        except GObject.GError as e:
+            logger.error('problem saving file {}'.format(e.message))
+            self.mindedappwin.dlg_something_wrong(self,
+                _('Could not save file {}').format(self.document.get_uri()),
+                e.message)
+        else:
+            buf = self.get_buffer()
+            if buf.get_modified():
+                buf.set_modified(False)
+                logger.debug('set buffer modified {}'.format(buf.get_modified()))
 
     def set_completion(self, document):
         ''' set syntax highlight and completion '''
@@ -253,6 +374,8 @@ class EditorApp(Gtk.ScrolledWindow):
 
     def on_toggle_overwrite(self, view):
         logger.debug('toggle overwrite')
+        #view.get_overwrite()
+        self.mindedappwin.update_overwrite_status(view.get_overwrite())
 
     # bracket completion
     def on_key_press(self, view, event):
