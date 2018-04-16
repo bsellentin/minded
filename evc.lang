@@ -502,6 +502,7 @@
         <keyword>ButtonWaitForPress</keyword>
         <keyword>ButtonWaitForAnyPress</keyword>
         <keyword>CircleOut</keyword>
+        <keyword>CurrentTick</keyword>
         <keyword>EllipseOut</keyword>
         <keyword>LcdText</keyword>
         <keyword>LcdTextf</keyword>
@@ -545,6 +546,7 @@
         <keyword>PlaySound</keyword>
         <keyword>PlayFile</keyword>
         <keyword>PointOut</keyword>
+        <keyword>Random</keyword>
         <keyword>RectOut</keyword>
         <keyword>ResetGyro</keyword>
         <keyword>ResetTachoCount</keyword>
