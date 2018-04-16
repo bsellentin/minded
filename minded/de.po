@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-02 12:17+0200\n"
+"POT-Creation-Date: 2018-04-16 18:56+0200\n"
 "PO-Revision-Date: 2018-03-10 19:10+0100\n"
 "Last-Translator: Bernd Sellentin <sel@gge-em.org>\n"
 "Language-Team: German\n"
@@ -17,71 +17,79 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mindedappwin.py:273 mindedappwin.py:299
-msgid "You have to save first!"
-msgstr "Zuerst speichern!"
-
-#: mindedappwin.py:274 mindedappwin.py:300
-msgid "The compiler works on the real file."
-msgstr "Der Compiler arbeitet mit der echten Datei."
-
-#: mindedappwin.py:289 mindedappwin.py:315
-msgid "# Error: unknown file extension, expected: .nxc or .evc"
-msgstr ""
-
-#: mindedappwin.py:398
+#: editorapp.py:196
 msgid "Pick a file"
 msgstr "Datei auswählen"
 
-#: mindedappwin.py:451
+#: editorapp.py:249
 msgid "Filename {} unvalid!"
 msgstr "Dateiname {} ungültig"
 
-#: mindedappwin.py:452
+#: editorapp.py:250
 msgid "Filename contains non-alphanumeric characters."
 msgstr "Dateiname enthält ungültige Zeichen"
 
-#: mindedappwin.py:502
+#: editorapp.py:300
 msgid "Could not save file {}"
 msgstr "Konnte Datei {} nicht speichern."
 
-#: mindedappwin.py:680
+#: mindedappwin.py:275 mindedappwin.py:301
+msgid "You have to save first!"
+msgstr "Zuerst speichern!"
+
+#: mindedappwin.py:276 mindedappwin.py:302
+msgid "The compiler works on the real file."
+msgstr "Der Compiler arbeitet mit der echten Datei."
+
+#: mindedappwin.py:291 mindedappwin.py:317
+msgid "# Error: unknown file extension, expected: .nxc or .evc"
+msgstr ""
+
+#: mindedappwin.py:384 mindedappwin.py:598
+msgid "INS"
+msgstr "EINF"
+
+#: mindedappwin.py:596
+msgid "OVR"
+msgstr "ÜBS"
+
+#: mindedappwin.py:630
 msgid "No NBC-executable found!"
 msgstr "NBC-Compiler nicht gefunden!"
 
-#: mindedappwin.py:681
+#: mindedappwin.py:631
 msgid "not in /usr/bin, not in /usr/local/bin"
 msgstr "weder in /usr/bin, noch in /usr/local/bin"
 
-#: mindedappwin.py:752
+#: mindedappwin.py:702
 msgid "Please choose a file"
 msgstr "Datei auswählen"
 
-#: mindedappwin.py:764
+#: mindedappwin.py:714
 msgid "Brick files"
 msgstr "Brick Dateien"
 
-#: mindedappwin.py:770
+#: mindedappwin.py:720
 msgid "Any files"
 msgstr "Alle Dateien"
 
-#: mindedappwin.py:780
+#: mindedappwin.py:730
 msgid "Save changes to document {} before closing?"
 msgstr "Änderunge am Dokument {} speichern?"
 
-#: mindedappwin.py:781
+#: mindedappwin.py:731
 msgid "Close without Saving"
 msgstr "Schließen ohne speichern"
 
-#: mindedappwin.py:782
+#: mindedappwin.py:732
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: mindedappwin.py:783
+#: mindedappwin.py:733
 msgid "Save"
 msgstr "Speichern"
 
-#: mindedappwin.py:784
+#: mindedappwin.py:734
 msgid "Changes to document {} will be permanently lost."
 msgstr "Änderungen am Dokument {} gehen verloren."
 
@@ -201,31 +209,31 @@ msgstr "Compilieren"
 msgid "compiler-log"
 msgstr "Compiler Log"
 
-#: ../data/mindedappwin.ui:297
+#: ../data/mindedappwin.ui:291
 msgid "Text"
 msgstr ""
 
-#: ../data/mindedappwin.ui:411
+#: ../data/mindedappwin.ui:405
 msgid "Print…"
 msgstr "Drucken…"
 
-#: ../data/mindedappwin.ui:417
+#: ../data/mindedappwin.ui:411
 msgid "Save As…"
 msgstr "Speichern unter…"
 
-#: ../data/mindedappwin.ui:423
+#: ../data/mindedappwin.ui:417
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: ../data/mindedappwin.ui:427 ../data/brickinfo.ui:7
+#: ../data/mindedappwin.ui:421 ../data/brickinfo.ui:7
 msgid "Brick Info"
 msgstr "Stein-Info"
 
-#: ../data/mindedappwin.ui:431
+#: ../data/mindedappwin.ui:425
 msgid "Brick Filer"
 msgstr "Brick Dateimanager"
 
-#: ../data/mindedappwin.ui:440
+#: ../data/mindedappwin.ui:434
 msgid "API Help"
 msgstr "API-Hilfe"
 
@@ -352,4 +360,3 @@ msgstr "Ein Editor für LEGO Mindstorms Steine"
 #: ../data/about.ui:13
 msgid "MindEd Website"
 msgstr "Minded Website"
-
