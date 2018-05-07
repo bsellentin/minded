@@ -61,6 +61,11 @@ class PreferencesDialog(object):
                       'active', Gio.SettingsBindFlags.DEFAULT)
         #smartbackspace
 
+        wrap_mode_checkbutton = builder.get_object('line_wrap_mode_checkbutton')
+        wrap_mode_checkbutton.connect('toggled', self.on_wrap_mode_toggled, settings)
+        if settings.get_enum('linewrapmode'):
+            wrap_mode_checkbutton.set_active(True)
+
         # EVC
         cchooser = builder.get_object('choosec')
         cchooser.set_current_folder('/usr/bin/')
@@ -80,15 +85,21 @@ class PreferencesDialog(object):
             editor = self.app.win.notebook.get_nth_page(pagecount)
             editor.codeview.override_font(Pango.FontDescription(button.get_font_name()))
 
+    def on_wrap_mode_toggled(self, button, settings):
+        if button.get_active():
+            settings.set_string('linewrapmode', 'word')
+        else:
+            settings.set_string('linewrapmode', 'none')
+
+
     def on_compiler_toggled(self, button):
         if button.get_active():
             state = "on"
             #if(button.get_label()=='C++-compiler'):
-            
-            
         else:
             state = "off"
         logger.debug("Button {} was turned {}".format(button.get_label(), state))
+
 
     def quit(self, *args):
         'Quit the program'

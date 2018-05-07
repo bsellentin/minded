@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
+  <enum id="org.gge-em.MindEd.WrapMode">
+    <value nick="none" value="0"/>
+    <value nick="char" value="1"/>
+    <value nick="word" value="2"/>
+    <value nick="word-char" value="3"/>
+  </enum>
   <schema path="/org/gge-em/MindEd/" id="org.gge-em.MindEd">
     <key name="nbcpath" type="s">
       <default>""</default>
@@ -52,7 +58,7 @@
     </key>
     <key name="developermode" type="b">
       <default>false</default>
-      <summary>Use with care</summary>
+      <summary>Browse filesystem on brick. Use with care</summary>
       <description>
         Enables root mode
       </description>
@@ -147,7 +153,16 @@
         Sets the width of tabulation in characters.
       </description>
     </key>
-    
-    
+    <key name="linewrapmode" enum="org.gge-em.MindEd.WrapMode">
+      <aliases>
+        <alias value='GTK_WRAP_NONE' target='none'/>
+        <alias value='GTK_WRAP_WORD' target='word'/>
+        <alias value='GTK_WRAP_CHAR' target='char'/>
+      </aliases>
+      <default>'word'</default>
+      <summary>Line Wrapping Mode</summary>
+      <description>
+        Specifies how to wrap long lines in the editing area. Use “none” for no wrapping, “word” for wrapping at word boundaries, and “char” for wrapping at individual character boundaries. Note that the values are case-sensitive, so make sure they appear exactly as mentioned here.</description>
+    </key>
   </schema>
 </schemalist>
