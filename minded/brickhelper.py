@@ -24,6 +24,7 @@ class BrickHelper():
     def nbc_proc(self, document, upload: bool=False):
         '''
         compile and upload file to NXT brick
+        returns (error, msg)
         '''
         nbc_exec = self.application.settings.get_string('nbcpath')
         if not nbc_exec:
@@ -60,6 +61,39 @@ class BrickHelper():
                 msg = '\n'.join([str(i) for i in nbc_data[0].decode().split('\n')[-5:]])
                 return (nbc_proc.returncode, msg)
 
+    def evc_proc(self, document, upload: bool=False):
+        '''
+        compile and upload file to EV3 brick
+        param upload false = compile only
+        returns (error, msg)
+        '''
+
+        prjname = Path(document.get_basename()).stem
+        msg = ''
+
+        gcc_err, msg = self.cross_compile(document)
+        if gcc_err:
+            # compilation failed
+            return (gcc_err, msg)
+        if upload:
+            # make starter
+            starter_err, starter_msg = self.mkstarter(document)
+            msg += starter_msg
+            if not starter_err:
+                # upload starter
+                filename = Path(document.get_parent(), prjname + '.rbf')
+                errora, err_msg = self.ev3_upload(filename)
+                msg += err_msg
+                # upload executable
+                filename = Path(document.get_parent(), prjname)
+                errorb, err_msg = self.ev3_upload(filename)
+                msg += err_msg
+
+                if not errora and not errorb:
+                    self.application.ev3brick.play_sound('./ui/DownloadSucces')
+
+        return (0, msg)
+
     def mkstarter(self, document):
         '''
         build rbf-starter-file, store local, upload later
@@ -85,11 +119,12 @@ class BrickHelper():
             after
             ])
 
-        #starter = Path(document.get_filepath(), prjname + '.rbf')
         starter = Path(document.get_path()).with_suffix('.rbf')
-        starter.write_bytes(cmd)
-
-        return 1
+        try:
+            starter.write_bytes(cmd)
+            return (0, 'Build starter successfull\n')
+        except OSError as err:
+            return (1, 'OS error:{0}'.format(err))
 
     def cross_compile(self, document):
         '''
@@ -128,10 +163,10 @@ class BrickHelper():
 
         gcc_data = gcc_proc.communicate()
         if gcc_proc.returncode:  # Error
-            return gcc_data[1].decode()
+            return (gcc_proc.returncode, gcc_data[1].decode())
         else:  # OK
-            return 0
-
+            msg = 'Compile successfull\n'
+            return (gcc_proc.returncode, msg)
 
     def ev3_upload(self, infile):
         '''
@@ -146,6 +181,7 @@ class BrickHelper():
                 outfile = str(Path(prjsstore, prjname, infile.name))
 
                 data = infile.read_bytes()
+                # TODO: GetErrorCode from brick
                 brick.write_file(outfile, data)
 
                 content = brick.list_dir(str(Path(prjsstore, prjname)))
@@ -153,9 +189,11 @@ class BrickHelper():
                 for afile in content['files']:
                     if afile['name'] == infile.name:
                         error = 1
+                        msg = '# Error: Failed to upload {}, try again\n'.format(infile.name)
                         if afile['md5'] == hashlib.md5(data).hexdigest().upper():
                             error = 0
-                return error
+                            msg = 'Upload of {} successfull\n'.format(infile.name)
+                return (error, msg)
             else:
-                return 2
+                return (2, 'brick not ready\n')
 

@@ -40,8 +40,18 @@ from minded.brickcompletionprovider import BrickCompletionProvider
 SIMPLE_COMPLETE = 0
 
 class MindEdDocument(GtkSource.File):
+
+    untitledDocCount = 0
+
     def __init__(self, file_uri):
         GtkSource.File.__init__(self)
+
+        if file_uri == 'untitled':
+           dirname = Path.home()
+           MindEdDocument.untitledDocCount += 1
+           filename = file_uri + str(MindEdDocument.untitledDocCount)
+           file_uri = Path(dirname, filename).as_uri()
+
         self.gio_file = Gio.File.new_for_uri(file_uri)
         self.set_location(self.gio_file)
 
@@ -52,7 +62,6 @@ class MindEdDocument(GtkSource.File):
     def set_uri(self, documenturi):
         '''new uri eg save as'''
         old_uri = self.gio_file.get_uri()
-        # self.gio_file.unref() raise RuntimeError('This method is currently unsupported.')
         self.gio_file = Gio.File.new_for_uri(documenturi)
         self.set_location(self.gio_file)
         logger.debug('old {} gio_file to new {}'.format(old_uri, self.gio_file.get_uri()))
@@ -68,6 +77,9 @@ class MindEdDocument(GtkSource.File):
     def get_basename(self):
         '''file.ext'''
         return self.gio_file.get_basename()
+
+    def dec_untitled(self):
+        MindEdDocument.untitledDocCount -= 1
 
 class EditorApp(Gtk.ScrolledWindow):
 
@@ -123,6 +135,8 @@ class EditorApp(Gtk.ScrolledWindow):
                             Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('smartbackspace', self.codeview, 'smart-backspace',
                             Gio.SettingsBindFlags.DEFAULT)
+        self.settings.bind('linewrapmode', self.codeview, 'wrap-mode',
+                            Gio.SettingsBindFlags.DEFAULT)
 
         self.codeview.override_font(Pango.FontDescription(
                                     self.settings.get_string('fontname')))  # gedit like
@@ -148,12 +162,12 @@ class EditorApp(Gtk.ScrolledWindow):
         self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
         self.codeview_completion = self.codeview.get_completion()
         self.codeview_completion.add_provider(self.custom_completion_provider)
-        
+
         self.word_completion_provider = GtkSource.CompletionWords.new()
         self.word_completion_provider.register(self.buffer)
         #self.word_completion = self.codeview.get_completion()
         self.codeview_completion.add_provider(self.word_completion_provider)
-        
+
         # bricks don't want prognames with non-alphanumeric characters
         # returns None if non-alphanumeric character found
         self.forbiddenchar = re.compile('^[a-zA-Z0-9_.]+$')
@@ -186,10 +200,11 @@ class EditorApp(Gtk.ScrolledWindow):
             logger.warn(e.message)
         if success:
             self.set_completion(document)
+            logger.debug("NewlineType {}".format(document.get_newline_type()))
         else:
             logger.debug('Could not load {}'.format(document.get_path()))
 
-    def save_file_as(self):
+    def save_file_as(self, close_tab):
 
         logger.debug('dialog save_file_as: {}'.format(self.document.get_uri()))
 
@@ -199,15 +214,21 @@ class EditorApp(Gtk.ScrolledWindow):
                                              Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
         save_dialog.set_do_overwrite_confirmation(True)
         save_dialog.set_local_only(False)
+
+        save_dialog.add_choice('newline_type', _('Line Ending'),
+            ['linux', 'mac', 'windows'],
+            ['Unix/Linux', 'Mac OS', 'Windows'])
+        save_dialog.set_choice('newline_type', 'windows')
+
         try:
             save_dialog.set_uri(self.document.get_uri())
         except GObject.GError as e:
             logger.error('# Error: {}'.format(e.message))
 
-        save_dialog.connect('response', self.save_file_as_response)
+        save_dialog.connect('response', self.save_file_as_response, close_tab)
         save_dialog.show()
 
-    def save_file_as_response(self, dialog, response):
+    def save_file_as_response(self, dialog, response, close_tab):
 
         save_dialog = dialog
         if response == Gtk.ResponseType.ACCEPT:
@@ -226,23 +247,22 @@ class EditorApp(Gtk.ScrolledWindow):
                         filename = filename.with_suffix('.nxc')
                         logger.debug('append suffix: {}'.format(filename.name))
 
+            # TODO: check for max filename length: ev3 20.3 nxt 15.3
+
             # check for valid filename
             if self.forbiddenchar.match(filename.stem) is not None:
                 self.document.set_uri(filename.as_uri())
+                
                 if logger.isEnabledFor(logging.DEBUG):
                     page_num = self.mindedappwin.notebook.page_num(self)
                     logger.debug('func save_file_as_response: {} on tab {}, '
                                  .format(self.document.get_uri(), page_num))
 
-                self.save_file_sync()
+                newline_types = {'linux': GtkSource.NewlineType.LF,
+                                 'mac' : GtkSource.NewlineType.CR,
+                                 'windows': GtkSource.NewlineType.CR_LF}
+                self.save_file_async(close_tab, newline_types.get(save_dialog.get_choice('newline_type')))
 
-                # change language according file extension, e.g. new created files
-                self.set_completion(self.document)
-                self.mindedappwin.change_language_selection(self)
-                # change tab label
-                self.mindedappwin.change_tab_label(self, self.document.get_basename())
-                # change headerbar
-                self.mindedappwin.set_title(self.document)
                 dialog.destroy()
             else:
                 self.mindedappwin.dlg_something_wrong(save_dialog,
@@ -254,56 +274,55 @@ class EditorApp(Gtk.ScrolledWindow):
             logger.debug('cancelled: SAVE AS')
             dialog.destroy()
 
-    def save_file_sync(self):
-
+    def save_file_async(self, close_tab, newline_type):
+        '''
+        only saving: page_num = None
+        save and close tab: page_num to close
+        '''
+        logger.debug('NewlineType: {}'.format(newline_type))
         if 'untitled' in self.document.get_basename():
             logger.debug('Found untitled file: {}'.format(self.document.get_uri()))
-            self.save_file_as()
-        else:
-            buf = self.get_buffer()
-            start, end = buf.get_bounds()
-            content = buf.get_text(start, end, False)
-            f = self.document.gio_file
-            try:
-                f.replace_contents(content.encode(), None, False, Gio.FileCreateFlags(0),None)
-                logger.debug('file {} saved sync'.format(self.document.get_uri()))
-            except GLib.Error as e:
-                logger.error('# Error: {}'.format(e.message))
-            else:
-                if buf.get_modified():
-                    buf.set_modified(False)
-                    logger.debug('set buffer modified {}'.format(buf.get_modified()))
-
-    def save_file_async(self):
-
-        if 'untitled' in self.document.get_basename():
-            logger.debug('Found untitled file: {}'.format(self.document.get_uri()))
-            self.save_file_as()
+            self.save_file_as(close_tab)
         else:
             buf = self.get_buffer()
 
             try:
                 saver = GtkSource.FileSaver.new(buf, self.document)
-                saver.save_async(1, None, None, None, self.on_save_async_finish)
+                saver.set_newline_type(newline_type)
+                saver.save_async(1, None, None, None, self.on_save_async_finish, close_tab)
             except GObject.GError as e:
                 logger.error('# Error: {}'.format(e.message))
 
-    def on_save_async_finish(self, source, result):
+    def on_save_async_finish(self, source, result, close_tab):
 
         try:
             # async saving, we have to wait for finish before removing
             success = source.save_finish(result)
             logger.debug('file {} saved async {}'.format(self.document.get_uri(), success))
+
         except GObject.GError as e:
             logger.error('problem saving file {}'.format(e.message))
             self.mindedappwin.dlg_something_wrong(self,
                 _('Could not save file {}').format(self.document.get_uri()),
                 e.message)
         else:
-            buf = self.get_buffer()
-            if buf.get_modified():
-                buf.set_modified(False)
-                logger.debug('set buffer modified {}'.format(buf.get_modified()))
+            if close_tab:
+                # close tab request
+                page_num = self.mindedappwin.notebook.page_num(self)
+                self.mindedappwin.notebook.remove_page(page_num)
+            else:
+                buf = self.get_buffer()
+                if buf.get_modified():
+                    buf.set_modified(False)
+                    logger.debug('set buffer modified {}'.format(buf.get_modified()))
+
+                # change language according file extension, e.g. new created files
+                self.set_completion(self.document)
+                self.mindedappwin.change_language_selection(self)
+                # change tab label
+                self.mindedappwin.change_tab_label(self, self.document.get_basename())
+                # change headerbar
+                self.mindedappwin.set_title(self.document)
 
     def set_completion(self, document):
         ''' set syntax highlight and completion '''
@@ -371,11 +390,6 @@ class EditorApp(Gtk.ScrolledWindow):
 
     def get_buffer(self):
         return self.codeview.get_buffer()
-
-    def on_toggle_overwrite(self, view):
-        logger.debug('toggle overwrite')
-        #view.get_overwrite()
-        self.mindedappwin.update_overwrite_status(view.get_overwrite())
 
     # bracket completion
     def on_key_press(self, view, event):

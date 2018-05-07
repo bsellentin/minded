@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 from gettext import gettext as _
 
-from minded.editorapp import EditorApp
+from minded.editorapp import EditorApp, MindEdDocument
 from minded.brickhelper import BrickHelper
 from minded.brickinfo import BrickInfo
 from minded.brickfiler import BrickFiler
@@ -150,8 +150,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         self.add(self.box)
 
-        self.untitledDocCount = 0
-
         # bricks don't want prognames with non-alphanumeric characters
         # returns None if non-alphanumeric character found
         # TODO: same is duplicte in editorapp
@@ -200,12 +198,16 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def on_btn_open_clicked(self, action, param):
 
-        # get current document directory
+        # get directory of current document 
         if self.notebook.get_n_pages():
             editor = self.get_editor()
             path = editor.document.get_parent()
         else:
-            path = str(Path.home())
+            # zero pages
+            path = Path.home().joinpath('untitled').as_uri()
+            # make new page
+            self.make_new_page(path)
+            editor = self.get_editor()
 
         dialog = FileOpenDialog(self, path)
         dialog.connect('response', self.open_file_response, editor)
@@ -232,12 +234,12 @@ class MindEdAppWin(Gtk.ApplicationWindow):
     def on_btn_save_clicked(self, action, param):
 
         editor = self.get_editor()
-        editor.save_file_async()
+        editor.save_file_async(False, editor.document.get_newline_type())
 
     def on_btn_save_as_clicked(self, action, param):
 
         editor = self.get_editor()
-        editor.save_file_as()
+        editor.save_file_as(False)
 
     def on_doc_close_request(self, action, param):
         '''
@@ -258,6 +260,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def close_this_tab(self, page_num, editor):
         if page_num != -1 and not editor.get_buffer().get_modified():
+            if 'untitled' in editor.document.get_basename():
+                editor.document.dec_untitled()
             self.notebook.remove_page(page_num)
             editor.destroy()
             #TODO check for empty notebook, disable save-, save_as-, print-action
@@ -341,19 +345,17 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.api_viewer = ApiViewer(self.app)
 
     def open_new(self):
+        '''
+        open new empty document
+        '''
 
-        self.untitledDocCount += 1
-
-        dirname = Path.home()
-        filename = 'untitled' + str(self.untitledDocCount)
-        newfile = Path(dirname, filename)
-
-        self.load_file_in_editor(Path(newfile).as_uri())
+        doc = MindEdDocument('untitled')
+        self.load_file_in_editor(doc.get_uri())
 
     def load_file_in_editor(self, file_uri):
 
         if not 'untitled' in file_uri:
-            # look if for untitled and empty document
+            # is current page a untitled and empty document
             page_num = self.notebook.get_n_pages()
             if page_num:
                 editor = self.get_editor()
@@ -365,8 +367,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                     editor.load_file(editor.document)
                     self.change_language_selection(editor)
                     self.set_title(editor.document)
-                    self.untitledDocCount -= 1
+                    editor.document.dec_untitled()  # TODO
                     return
+        self.make_new_page(file_uri)
+    
+    def make_new_page(self, file_uri):
         # make new page
         try:
             editor = EditorApp(self, file_uri)
@@ -438,12 +443,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             return False
 
         elif response == Gtk.ResponseType.YES:
-            logger.debug('Save file before closing')
-            # synchronous saving - otherwise page removed
-            # before save_finish
-            editor.save_file_sync()
-            self.notebook.remove_page(page_num)
-            editor.destroy()
+            logger.debug('Save file on page {} before closing'.format(page_num))
+            editor.save_file_async(True, editor.document.get_newline_type())
 
         # if the messagedialog is destroyed (by pressing ESC)
         elif response == Gtk.ResponseType.DELETE_EVENT:
@@ -641,42 +642,12 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         helper = BrickHelper(self.app)
 
-        prjname = Path(document.get_basename()).stem
-
-        starter = 0
         msg=''
-        gcc_error = 0
 
         if self.forbiddenchar.match(Path(document.get_path()).name) is not None:
-            gcc_error = helper.cross_compile(document)
-            if gcc_error:
-                msg = '# Error: {}'.format(gcc_error)
-                upload = False
-            else:
-                msg = 'Compile successfull\n'
+            (error, msg) = helper.evc_proc(document, upload)
         else:
             msg = 'filename contains non-alphanumeric characters\n'
-            upload = False
-        if upload:
-            if not gcc_error:
-                starter = helper.mkstarter(document)
-                msg += 'Build starter successfull\n'
-            if starter:
-                filename = Path(document.get_parent(), prjname + '.rbf')
-                errora = helper.ev3_upload(filename)
-                if errora:
-                    msg += '# Error: Failed to upload {}.rbf, try again\n'.format(filename)
-                else:
-                    msg += 'Upload of {}.rbf successfull\n'.format(prjname)
-                filename = Path(document.get_parent(), prjname)
-                errorb = helper.ev3_upload(filename)
-                if errorb:
-                    msg += '# Error: Failed to upload {}, try again\n'.format(filename)
-                else:
-                    msg += 'Upload of {} successfull\n'.format(prjname)
-
-                if not errora and not errorb:
-                    self.app.ev3brick.play_sound('./ui/DownloadSucces')
 
         self.log_buffer.set_text(msg)
         self.format_log(self.log_buffer.get_start_iter())
@@ -742,7 +713,7 @@ class PrintingApp:
     '''
     Print with syntax highlightning
     '''
-
+    # TODO: GtkDialog mapped without a transient parent
     def __init__(self, textview):
         self.operation = Gtk.PrintOperation.new()
         self.compositor = GtkSource.PrintCompositor.new_from_view(textview.codeview)
