@@ -262,6 +262,22 @@
                     <keyword>BTN4</keyword>
                     <keyword>DISPLAY_WIDTH</keyword>
                     <keyword>DISPLAY_HEIGHT</keyword>
+                    <keyword>DRAW_OPT_NORMAL</keyword>
+                    <keyword>DRAW_OPT_CLEAR_WHOLE_SCREEN</keyword>
+                    <keyword>DRAW_OPT_CLEAR_EXCEPT_STATUS_SCREEN</keyword>
+                    <keyword>DRAW_OPT_CLEAR_PIXELS</keyword>
+                    <keyword>DRAW_OPT_CLEAR</keyword>
+                    <keyword>DRAW_OPT_INVERT</keyword>
+                    <keyword>DRAW_OPT_LOGICAL_COPY</keyword>
+                    <keyword>DRAW_OPT_LOGICAL_AND</keyword>
+                    <keyword>DRAW_OPT_LOGICAL_OR</keyword>
+                    <keyword>DRAW_OPT_LOGICAL_XOR</keyword>
+                    <keyword>DRAW_OPT_FILL_SHAPE</keyword>
+                    <keyword>DRAW_OPT_CLEAR_SCREEN_MODES</keyword>
+                    <keyword>DRAW_OPT_LOGICAL_OPERATIONS</keyword>
+                    <keyword>DRAW_OPT_POLYGON_POLYLINE</keyword>
+                    <keyword>DRAW_OPT_CLEAR_LINE</keyword>
+                    <keyword>DRAW_OPT_CLEAR_EOL</keyword>
                     <keyword>IN_1</keyword>
                     <keyword>IN_2</keyword>
                     <keyword>IN_3</keyword>
@@ -354,6 +370,71 @@
                     <keyword>SOUND_FAST_UP</keyword>
                     <keyword>SOUND_LOW_BEEP</keyword>
                     <keyword>SOUND_UP</keyword>
+                    <keyword>TONE_C3</keyword>
+                    <keyword>TONE_CS3</keyword>
+                    <keyword>TONE_D3</keyword>
+                    <keyword>TONE_DS3</keyword>
+                    <keyword>TONE_E3</keyword>
+                    <keyword>TONE_F3</keyword>
+                    <keyword>TONE_FS3</keyword>
+                    <keyword>TONE_G3</keyword>
+                    <keyword>TONE_GS3</keyword>
+                    <keyword>TONE_A3</keyword>
+                    <keyword>TONE_AS3</keyword>
+                    <keyword>TONE_B3</keyword>
+                    <keyword>TONE_C4</keyword>
+                    <keyword>TONE_CS4</keyword>
+                    <keyword>TONE_D4</keyword>
+                    <keyword>TONE_DS4</keyword>
+                    <keyword>TONE_E4</keyword>
+                    <keyword>TONE_F4</keyword>
+                    <keyword>TONE_FS4</keyword>
+                    <keyword>TONE_G4</keyword>
+                    <keyword>TONE_GS4</keyword>
+                    <keyword>TONE_A4</keyword>
+                    <keyword>TONE_AS4</keyword>
+                    <keyword>TONE_B4</keyword>
+                    <keyword>TONE_C5</keyword>
+                    <keyword>TONE_CS5</keyword>
+                    <keyword>TONE_D5</keyword>
+                    <keyword>TONE_DS5</keyword>
+                    <keyword>TONE_E5</keyword>
+                    <keyword>TONE_F5</keyword>
+                    <keyword>TONE_FS5</keyword>
+                    <keyword>TONE_G5</keyword>
+                    <keyword>TONE_GS5</keyword>
+                    <keyword>TONE_A5</keyword>
+                    <keyword>TONE_AS5</keyword>
+                    <keyword>TONE_B5</keyword>
+                    <keyword>TONE_C6</keyword>
+                    <keyword>TONE_CS6</keyword>
+                    <keyword>TONE_D6</keyword>
+                    <keyword>TONE_DS6</keyword>
+                    <keyword>TONE_E6</keyword>
+                    <keyword>TONE_F6</keyword>
+                    <keyword>TONE_FS6</keyword>
+                    <keyword>TONE_G6</keyword>
+                    <keyword>TONE_GS6</keyword>
+                    <keyword>TONE_A6</keyword>
+                    <keyword>TONE_AS6</keyword>
+                    <keyword>TONE_B6</keyword>
+                    <keyword>TONE_C7</keyword>
+                    <keyword>TONE_CS7</keyword>
+                    <keyword>TONE_D7</keyword>
+                    <keyword>TONE_DS7</keyword>
+                    <keyword>TONE_E7</keyword>
+                    <keyword>TONE_F7</keyword>
+                    <keyword>TONE_FS7</keyword>
+                    <keyword>TONE_G7</keyword>
+                    <keyword>TONE_GS7</keyword>
+                    <keyword>TONE_A7</keyword>
+                    <keyword>TONE_AS7</keyword>
+                    <keyword>TONE_B7</keyword>
+                    <keyword>NOTE_WHOLE</keyword>
+                    <keyword>NOTE_HALF</keyword>
+                    <keyword>NOTE_QUARTER</keyword>
+                    <keyword>NOTE_EIGHT</keyword>
+                    <keyword>NOTE_SIXTEEN</keyword>
                 </context>
 
                 <context id="common-defines" style-ref="common-defines" class="common-defines">
@@ -396,9 +477,11 @@
                     <keyword>OnRevRegPID</keyword>
                     <keyword>OnRevSync</keyword>
                     <keyword>OnRevSyncPID</keyword>
+                    <keyword>PlayFile</keyword>
                     <keyword>PlayFileEx</keyword>
                     <keyword>PlayTone</keyword>
                     <keyword>PlayToneEx</keyword>
+                    <keyword>PlayTones</keyword>
                     <keyword>PointOut</keyword>
                     <keyword>Precedes</keyword>
                     <keyword>Random</keyword>
@@ -418,6 +501,13 @@
                     <keyword>RotateMotorEx</keyword>
                     <keyword>RotateMotorExPID</keyword>
                     <keyword>RotateMotorPID</keyword>
+                    <keyword>RemoteConnectionIdle</keyword>
+                    <keyword>RemotePlayTone</keyword>
+                    <keyword>RemotePlaySoundFile</keyword>
+                    <keyword>RemoteResetMotorPosition</keyword>
+                    <keyword>RemoteStartProgramm</keyword>
+                    <keyword>RemoteStopProgramm</keyword>
+                    <keyword>RemoteStopSound</keyword>
                     <keyword>SendRemoteNumber</keyword>
                     <keyword>SendRemoteString</keyword>
                     <keyword>SendResponseNumber</keyword>
