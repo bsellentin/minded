@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
-from gi.repository import Gtk, Gdk, Gio, GObject
+from gi.repository import Gtk
 
-import logging
 logger = logging.getLogger(__name__)
 
-import nxt.locator
-import nxt.brick
 
-class BrickInfo(object):
+class BrickInfo():
 
-    def __init__(self, application, *args, **kwargs):
+    def __init__(self, application):
 
         self.app = application
         builder = Gtk.Builder()
@@ -42,7 +41,7 @@ class BrickInfo(object):
             logger.debug('got app.nxtbrick')
             self.brick_type = 'nxt'
         else:
-            logger.debug('no app.nxtbrick')    
+            logger.debug('no app.nxtbrick')
 
         if self.app.ev3brick:
             logger.debug('got app.ev3brick')
@@ -122,7 +121,7 @@ class BrickInfo(object):
             self.widgetlist[2].set_text(fw_version)
             self.widgetlist[2].set_xalign(0)
 
-            #except: 
+            #except:
                 #logger.debug('error getting ev3-brick info')
 
     def on_btn_brickname_clicked(self, button):
@@ -139,9 +138,9 @@ class BrickInfo(object):
         name.set_activates_default(True)
 
         # make OK button the default
-        okButton = dlg.get_widget_for_response(response_id=Gtk.ResponseType.OK)
-        okButton.set_can_default(True)
-        okButton.grab_default()
+        ok_button = dlg.get_widget_for_response(response_id=Gtk.ResponseType.OK)
+        ok_button.set_can_default(True)
+        ok_button.grab_default()
 
         content_area = dlg.get_content_area()
         content_area.add(name)
@@ -175,7 +174,7 @@ class BrickInfo(object):
         except:
             logger.warning('no app.brick')
 
-    def quit(self, *args):
+    def quit(self):
         'Quit the program'
         self.window.destroy()
         # needed! Else Window disappears, but App lives still.

@@ -17,11 +17,11 @@ class BrickHelper():
     Helper to put programms on brick
     '''
 
-    def __init__(self, application, *args, **kwargs):
+    def __init__(self, application):
 
         self.application = application
 
-    def nbc_proc(self, document, upload: bool=False):
+    def nbc_proc(self, document, upload: bool = False):
         '''
         compile and upload file to NXT brick
         returns (error, msg)
@@ -61,7 +61,7 @@ class BrickHelper():
                 msg = '\n'.join([str(i) for i in nbc_data[0].decode().split('\n')[-5:]])
                 return (nbc_proc.returncode, msg)
 
-    def evc_proc(self, document, upload: bool=False):
+    def evc_proc(self, document, upload: bool = False):
         '''
         compile and upload file to EV3 brick
         param upload false = compile only
@@ -136,7 +136,7 @@ class BrickHelper():
         outfile = str(Path(document.get_parent(), Path(document.get_basename()).stem))
         logger.debug('executable to write: {}'.format(outfile))
 
-        cplusplus =self.application.settings.get_boolean('cplusplus')
+        cplusplus = self.application.settings.get_boolean('cplusplus')
         if cplusplus:
             arm_exec = self.application.settings.get_string('armgplusplus')
             language = 'c++'
@@ -151,15 +151,15 @@ class BrickHelper():
         gcc_opts = (' -o %s -x %s %s -lev3api' % (shlex.quote(outfile), language, shlex.quote(infile)))
 
         # is multithreading?
-        with open(infile,  'rb', 0) as file, \
-            mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as s:
-            if s.find(b'pthread.h') != -1:
+        with open(infile, 'rb', 0) as file, \
+            mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as string:
+            if string.find(b'pthread.h') != -1:
                 gcc_opts += ' -lpthread'
         logger.debug('command: {}'.format(gcc_exec + gcc_opts))
 
         gcc_proc = subprocess.Popen(('%s %s' % (gcc_exec, gcc_opts)),
-                                        shell=True, stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+                                    shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
 
         gcc_data = gcc_proc.communicate()
         if gcc_proc.returncode:  # Error
@@ -196,4 +196,3 @@ class BrickHelper():
                 return (error, msg)
             else:
                 return (2, 'brick not ready\n')
-

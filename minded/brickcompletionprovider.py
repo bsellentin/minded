@@ -20,19 +20,19 @@ BrickCompletionProvider of MindEd
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
-from gi.repository import Gtk, Gdk, Gio, GObject, Pango
+from gi.repository import Gtk, GObject
 gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
-import logging
-logger = logging.getLogger(__name__)
-
 import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
+
+logger = logging.getLogger(__name__)
 
 
 class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
@@ -51,8 +51,8 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
 
     def set_completion_list(self, language):
         if language.get_name() == 'NXC':
-            self.funcs = nxc_funcs.nxc_funcs
-            self.consts = nxc_funcs.nxc_consts
+            self.funcs = nxc_funcs.NXC_FUNCS
+            self.consts = nxc_funcs.NXC_CONSTS
             self.lang = 'NXC'
         elif language.get_name() == 'EVC':
             self.funcs = evc_funcs.evc_funcs
@@ -64,7 +64,7 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             self.lang = ''
 
     def do_get_name(self):
-        return ('{}'.format(self.lang))
+        return '{}'.format(self.lang)
 
     def do_match(self, context):
         return True
@@ -117,13 +117,13 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             start_iter = lim_iter.copy()
             start_iter.backward_chars(len(completion_item.get_text()))
             start_open, end_open = start_iter.forward_search('(',
-                            Gtk.TextSearchFlags.VISIBLE_ONLY, lim_iter)
+                        Gtk.TextSearchFlags.VISIBLE_ONLY, lim_iter)
             start_iter = end_open.copy()
             start_close, end_close = start_iter.forward_search(')',
                         Gtk.TextSearchFlags.VISIBLE_ONLY, lim_iter)
             if end_open.equal(start_close):
-                    # no hint
-                    pass
+                # no hint
+                pass
             else:
                 # search for next ','
                 match = start_iter.forward_search(',',
@@ -138,4 +138,3 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
         buf.end_user_action()
 
         return True
-
