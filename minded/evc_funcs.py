@@ -553,7 +553,14 @@ evc_funcs = [
         '<span foreground="brown">speed</span>, ' +
         '<span foreground="brown">angle</span>)</b>\n\n' +
         'Rotate motor with given speed for a defined angle.\n' +
-        'Code stops till the angle is reached', 'Output'],
+        'Code stops till the angle is reached\n\n' +
+        '<b>Parameters</b>\n' +
+        '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+        '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
+        '  <span foreground="brown">speed</span>    \n' +
+        '  <span foreground="brown">angle</span>    Angle limit, in degree\n' +
+        '<b>Example:</b>\n' +
+        '  RotateMotor(OUT_A, 75, 180);', 'Output'],
     ['RotateMotorEx', 'RotateMotorEx(outputs, speed, angle, turn, sync, stop)',
         '<b>RotateMotorEx(' +
         '<span foreground="brown">outputs</span>,' +
@@ -567,6 +574,7 @@ evc_funcs = [
         '<b>Parameters</b>\n' +
         '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
         '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
+        '  <span foreground="brown">speed</span>\n' +
         '  <span foreground="brown">angle</span>    Angle limit, in degree.\n' +
         '  <span foreground="brown">turn</span>     Turn ratio in range [-200 - 200]\n' +
         '           0 both motors with same speed same direction\n'
@@ -585,7 +593,9 @@ evc_funcs = [
         '<b>RotateMotorNoWait(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">speed</span>, ' +
-        '<span foreground="brown">angle</span>)</b>\n\n', 'Output'],
+        '<span foreground="brown">angle</span>)</b>\n\n' +
+        'Rotate motor with given speed for a defined angle.\n' +
+        'Code does not stop till the angle is reached\n\n', 'Output'],
     ['SetDirection', 'SetDirection(outputs, direction)', '<b>SetDirection(' +
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">direction</span>)</b>\n\n' +
@@ -597,7 +607,9 @@ evc_funcs = [
         '<span foreground="brown">outputs</span>, ' +
         '<span foreground="brown">power</span>)</b>\n\n' +
         'Negative values forward, positive values backwards', 'Output'],
-    ['SetSpeed', 'SetSpeed(outputs, speed)', 'SetSpeed(outputs, speed)', 'Output'],
+    ['SetSpeed', 'SetSpeed(outputs, speed)', '<b>SetSpeed(' +
+        '<span foreground="brown">outputs</span>, ' +
+        '<span foreground="brown">speed</span>)</b>\n\n', 'Output'],
     ['SetSensorTouch', 'SetSensorTouch(input)', '<b>SetSensorTouch(' +
         '<span foreground="brown">input</span>)</b>\n\n' +
         'Allocate EV3 Touch Sensor to specified input port\n' +
