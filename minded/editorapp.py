@@ -22,6 +22,8 @@ Editor Application of MindEd
 
 from pathlib import Path
 import re
+from gettext import gettext as _
+import logging
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -30,12 +32,9 @@ from gi.repository import Gtk, Gdk, Gio, GObject, Pango
 gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
-import logging
-logger = logging.getLogger(__name__)
-
-from gettext import gettext as _
-
 from minded.brickcompletionprovider import BrickCompletionProvider
+
+LOGGER = logging.getLogger(__name__)
 
 SIMPLE_COMPLETE = 0
 
@@ -46,11 +45,15 @@ class MindEdDocument(GtkSource.File):
     def __init__(self, file_uri):
         GtkSource.File.__init__(self)
 
+        # bricks don't want prognames with non-alphanumeric characters
+        # returns None if non-alphanumeric character found
+        self.forbiddenchar = re.compile('^[a-zA-Z0-9_.]+$')
+
         if file_uri == 'untitled':
-           dirname = Path.home()
-           MindEdDocument.untitledDocCount += 1
-           filename = file_uri + str(MindEdDocument.untitledDocCount)
-           file_uri = Path(dirname, filename).as_uri()
+            dirname = Path.home()
+            MindEdDocument.untitledDocCount += 1
+            filename = file_uri + str(MindEdDocument.untitledDocCount)
+            file_uri = Path(dirname, filename).as_uri()
 
         self.gio_file = Gio.File.new_for_uri(file_uri)
         self.set_location(self.gio_file)
@@ -64,7 +67,7 @@ class MindEdDocument(GtkSource.File):
         old_uri = self.gio_file.get_uri()
         self.gio_file = Gio.File.new_for_uri(documenturi)
         self.set_location(self.gio_file)
-        logger.debug('old {} gio_file to new {}'.format(old_uri, self.gio_file.get_uri()))
+        LOGGER.debug('old {} gio_file to new {}'.format(old_uri, self.gio_file.get_uri()))
 
     def get_path(self):
         '''/path/to/the/file.ext'''
@@ -81,6 +84,29 @@ class MindEdDocument(GtkSource.File):
     def dec_untitled(self):
         MindEdDocument.untitledDocCount -= 1
 
+    def filename_is_valid(self, newname):
+        '''
+        p-bricks don't want prognames with non-alphanumeric characters
+        nxt max progname length is 15.3, ev3 20.3
+        '''
+        #if self.forbiddenchar.match(Path(newname).stem) is not None:
+        if self.forbiddenchar.match(newname.stem) is not None:
+            if newname.suffix == '.nxc' and len(newname.stem) > 15:
+                err_msg = _('Filename {} to long!').format(newname.stem)
+                hint_msg = _('Maximum allowable are 15 characters')
+                return (0, (err_msg, hint_msg))
+            if newname.suffix == '.evc' and len(newname.stem) > 20:
+                err_msg = _('Filename {} to long!').format(newname.stem)
+                hint_msg = _('Maximum allowable are 20 characters')
+                return (0, (err_msg, hint_msg))
+            #LOGGER.debug('valid: {}'.format(Path(newname).stem))
+            LOGGER.debug('valid: {}'.format(newname.stem))
+            return (1, (None, None))
+        else:
+            err_msg = _('Filename {} unvalid!').format(newname)
+            hint_msg = _('Filename contains non-alphanumeric characters.')
+            return (0, (err_msg, hint_msg))
+
 class EditorApp(Gtk.ScrolledWindow):
 
     def __init__(self, mindedappwin, file_uri):
@@ -92,7 +118,7 @@ class EditorApp(Gtk.ScrolledWindow):
 
         # look for settings
         srcdir = Path(__file__).parents[1]
-        logger.debug('SettingsDir: {}'.format(srcdir))
+        LOGGER.debug('SettingsDir: {}'.format(srcdir))
         if Path(srcdir, 'data').exists():
             # local schema for developping only
             schema_source = Gio.SettingsSchemaSource.new_from_directory(
@@ -100,7 +126,7 @@ class EditorApp(Gtk.ScrolledWindow):
                 Gio.SettingsSchemaSource.get_default(), False)
             schema = Gio.SettingsSchemaSource.lookup(
                 schema_source, 'org.gge-em.MindEd', False)
-            logger.debug('Gsettings schema: {}'.format(schema.get_path()))
+            LOGGER.debug('Gsettings schema: {}'.format(schema.get_path()))
             if not schema:
                 raise Exception("Cannot get GSettings schema")
             self.settings = Gio.Settings.new_full(schema, None, None)
@@ -115,31 +141,31 @@ class EditorApp(Gtk.ScrolledWindow):
         self.buffer.set_style_scheme(sid)
 
         self.settings.bind('linenumbers', self.codeview, 'show-line-numbers',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('showrightmargin', self.codeview, 'show-right-margin',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('setrightmargin', self.codeview, 'right-margin-position',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('autoindent', self.codeview, 'auto-indent',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         # selected lines are indented instead of being replaced, shift+tab unindents
         self.settings.bind('indentontab', self.codeview, 'indent-on-tab',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('tabwidth', self.codeview, 'tab-width',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('spacesinsteadtab', self.codeview, 'insert-spaces-instead-of-tabs',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('highlightcurrentline', self.codeview, 'highlight-current-line',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('highlightmatchingbrackets', self.buffer, 'highlight-matching-brackets',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('smartbackspace', self.codeview, 'smart-backspace',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
         self.settings.bind('linewrapmode', self.codeview, 'wrap-mode',
-                            Gio.SettingsBindFlags.DEFAULT)
+                           Gio.SettingsBindFlags.DEFAULT)
 
         self.codeview.override_font(Pango.FontDescription(
-                                    self.settings.get_string('fontname')))  # gedit like
+            self.settings.get_string('fontname')))  # gedit like
 
         targets = Gtk.TargetList.new(None)
         targets.add_uri_targets(0)
@@ -168,10 +194,6 @@ class EditorApp(Gtk.ScrolledWindow):
         #self.word_completion = self.codeview.get_completion()
         self.codeview_completion.add_provider(self.word_completion_provider)
 
-        # bricks don't want prognames with non-alphanumeric characters
-        # returns None if non-alphanumeric character found
-        self.forbiddenchar = re.compile('^[a-zA-Z0-9_.]+$')
-
         self.document = MindEdDocument(file_uri)
         # throws error if file not exists -> load empty buffer
         #try:
@@ -179,7 +201,7 @@ class EditorApp(Gtk.ScrolledWindow):
         #                                             Gio.FileQueryInfoFlags(0))
         #    self.load_file(self.document)
         #except Exception as e:
-        #    logger.debug(str(e))
+        #    LOGGER.debug(str(e))
         if self.document.gio_file.query_exists(None):
             self.load_file(self.document)
 
@@ -189,7 +211,7 @@ class EditorApp(Gtk.ScrolledWindow):
             loader = GtkSource.FileLoader.new(self.codeview.get_buffer(), document)
             loader.load_async(1, None, None, None, self.file_load_finish, document)
         except GObject.GError as e:
-            logger.warn("Error: " + e.message)
+            LOGGER.warning("Error: " + e.message)
 
     def file_load_finish(self, source, result, document):
         success = False
@@ -197,16 +219,16 @@ class EditorApp(Gtk.ScrolledWindow):
             success = source.load_finish(result)
         except GObject.GError as e:
             # happens on new file, if not exists <- hopefully no more
-            logger.warn(e.message)
+            LOGGER.warning(e.message)
         if success:
             self.set_completion(document)
-            logger.debug("NewlineType {}".format(document.get_newline_type()))
+            LOGGER.debug("NewlineType {}".format(document.get_newline_type()))
         else:
-            logger.debug('Could not load {}'.format(document.get_path()))
+            LOGGER.debug('Could not load {}'.format(document.get_path()))
 
     def save_file_as(self, close_tab):
 
-        logger.debug('dialog save_file_as: {}'.format(self.document.get_uri()))
+        LOGGER.debug('dialog save_file_as: {}'.format(self.document.get_uri()))
 
         save_dialog = Gtk.FileChooserDialog(_('Pick a file'), self.mindedappwin,
                                             Gtk.FileChooserAction.SAVE,
@@ -223,7 +245,7 @@ class EditorApp(Gtk.ScrolledWindow):
         try:
             save_dialog.set_uri(self.document.get_uri())
         except GObject.GError as e:
-            logger.error('# Error: {}'.format(e.message))
+            LOGGER.error('# Error: {}'.format(e.message))
 
         save_dialog.connect('response', self.save_file_as_response, close_tab)
         save_dialog.show()
@@ -237,25 +259,24 @@ class EditorApp(Gtk.ScrolledWindow):
             # check for right suffix
             if self.this_lang:
                 if self.this_lang.get_name() == 'EVC':
-                    if not filename.suffix == '.evc':
-                        logger.debug('No suffix')
+                    if filename.suffix != '.evc':
+                        LOGGER.debug('No suffix')
                         filename = filename.with_suffix('.evc')
-                        logger.debug('append suffix: {}'.format(filename.name))
+                        LOGGER.debug('append suffix: {}'.format(filename.name))
                 if self.this_lang.get_name() == 'NXC':
-                    if not filename.suffix == '.nxc':
-                        logger.debug('No suffix')
+                    if filename.suffix != '.nxc':
+                        LOGGER.debug('No suffix')
                         filename = filename.with_suffix('.nxc')
-                        logger.debug('append suffix: {}'.format(filename.name))
-
-            # TODO: check for max filename length: ev3 20.3 nxt 15.3
+                        LOGGER.debug('append suffix: {}'.format(filename.name))
 
             # check for valid filename
-            if self.forbiddenchar.match(filename.stem) is not None:
+            (valid, msgtupel) = self.document.filename_is_valid(filename)
+            if valid:
                 self.document.set_uri(filename.as_uri())
-                
-                if logger.isEnabledFor(logging.DEBUG):
+
+                if LOGGER.isEnabledFor(logging.DEBUG):
                     page_num = self.mindedappwin.notebook.page_num(self)
-                    logger.debug('func save_file_as_response: {} on tab {}, '
+                    LOGGER.debug('func save_file_as_response: {} on tab {}, '
                                  .format(self.document.get_uri(), page_num))
 
                 newline_types = {'linux': GtkSource.NewlineType.LF,
@@ -265,13 +286,11 @@ class EditorApp(Gtk.ScrolledWindow):
 
                 dialog.destroy()
             else:
-                self.mindedappwin.dlg_something_wrong(save_dialog,
-                    _('Filename {} unvalid!').format(filename.name),
-                    _('Filename contains non-alphanumeric characters.'))
+                self.mindedappwin.dlg_something_wrong(save_dialog, msgtupel[0], msgtupel[1])
                 save_dialog.set_uri(self.document.get_uri())
 
         elif response == Gtk.ResponseType.CANCEL:
-            logger.debug('cancelled: SAVE AS')
+            LOGGER.debug('cancelled: SAVE AS')
             dialog.destroy()
 
     def save_file_async(self, close_tab, newline_type):
@@ -279,9 +298,9 @@ class EditorApp(Gtk.ScrolledWindow):
         only saving: page_num = None
         save and close tab: page_num to close
         '''
-        logger.debug('NewlineType: {}'.format(newline_type))
+        LOGGER.debug('NewlineType: {}'.format(newline_type))
         if 'untitled' in self.document.get_basename():
-            logger.debug('Found untitled file: {}'.format(self.document.get_uri()))
+            LOGGER.debug('Found untitled file: {}'.format(self.document.get_uri()))
             self.save_file_as(close_tab)
         else:
             buf = self.get_buffer()
@@ -291,17 +310,17 @@ class EditorApp(Gtk.ScrolledWindow):
                 saver.set_newline_type(newline_type)
                 saver.save_async(1, None, None, None, self.on_save_async_finish, close_tab)
             except GObject.GError as e:
-                logger.error('# Error: {}'.format(e.message))
+                LOGGER.error('# Error: {}'.format(e.message))
 
     def on_save_async_finish(self, source, result, close_tab):
 
         try:
             # async saving, we have to wait for finish before removing
             success = source.save_finish(result)
-            logger.debug('file {} saved async {}'.format(self.document.get_uri(), success))
+            LOGGER.debug('file {} saved async {}'.format(self.document.get_uri(), success))
 
         except GObject.GError as e:
-            logger.error('problem saving file {}'.format(e.message))
+            LOGGER.error('problem saving file {}'.format(e.message))
             self.mindedappwin.dlg_something_wrong(self,
                 _('Could not save file {}').format(self.document.get_uri()),
                 e.message)
@@ -314,7 +333,7 @@ class EditorApp(Gtk.ScrolledWindow):
                 buf = self.get_buffer()
                 if buf.get_modified():
                     buf.set_modified(False)
-                    logger.debug('set buffer modified {}'.format(buf.get_modified()))
+                    LOGGER.debug('set buffer modified {}'.format(buf.get_modified()))
 
                 # change language according file extension, e.g. new created files
                 self.set_completion(self.document)
@@ -331,15 +350,15 @@ class EditorApp(Gtk.ScrolledWindow):
             if not self.buffer.get_highlight_syntax():
                 self.buffer.set_highlight_syntax(True)
             self.buffer.set_language(self.this_lang)
-            logger.debug('LanguageManager: {}'.format(self.this_lang.get_name()))
+            LOGGER.debug('LanguageManager: {}'.format(self.this_lang.get_name()))
             self.custom_completion_provider.set_completion_list(self.this_lang)
         else:
-            logger.warn('No language found for file {}'.format(document.get_path()))
+            LOGGER.warning('No language found for file {}'.format(document.get_path()))
             if self.buffer.get_highlight_syntax():
                 self.buffer.set_highlight_syntax(False)
             self.buffer.set_language(None)
 
-    def drag_motion(self,wid, context, x, y, time):
+    def drag_motion(self, wid, context, x, y, time):
         Gdk.drag_status(context, Gdk.DragAction.COPY | Gdk.DragAction.MOVE, time)
         return True
 
@@ -347,11 +366,11 @@ class EditorApp(Gtk.ScrolledWindow):
         info, etime):
 
         if selection.get_target().name() == 'text/uri-list':
-            logger.debug("DnD: got text-uri")
-            logger.debug('DnDaction {}'.format(context.get_actions()))
+            LOGGER.debug("DnD: got text-uri")
+            LOGGER.debug('DnDaction {}'.format(context.get_actions()))
             data = selection.get_data()
-            logger.debug('DnD dropped: {}'.format(data))
-            #logger.debug('Buffersize: %s ' % len(self.buffer.props.text))
+            LOGGER.debug('DnD dropped: {}'.format(data))
+            #LOGGER.debug('Buffersize: %s ' % len(self.buffer.props.text))
             # check if file already open
             for pagecount in range(self.mindedappwin.notebook.get_n_pages()-1, -1, -1):
                 editor = self.mindedappwin.notebook.get_nth_page(pagecount)
@@ -373,14 +392,14 @@ class EditorApp(Gtk.ScrolledWindow):
         #file_uris = selection.get_text()
         file_uris = selection.get_data()
         if context.get_actions() == Gdk.DragAction.COPY:
-            logger.debug(context.get_actions())
+            LOGGER.debug(context.get_actions())
             
             for f in file_uris:
-                logger.debug('dropped: %s' % file_uris)
+                LOGGER.debug('dropped: %s' % file_uris)
         else:
-            logger.debug('what happend?')
-            logger.debug(context.get_actions())
-            #logger.debug('dropped: %s' % file_uris)
+            LOGGER.debug('what happend?')
+            LOGGER.debug(context.get_actions())
+            #LOGGER.debug('dropped: %s' % file_uris)
             for t in context.list_targets():
                 print(t)
             #context.finish(False, False, etime)
@@ -403,7 +422,7 @@ class EditorApp(Gtk.ScrolledWindow):
             if selection:
                 start, end = selection
                 if not start.equal(end):
-                    logger.debug('someting selected true')
+                    LOGGER.debug('someting selected true')
                     doc.begin_user_action()
                     doc.delete(start, end)
                     doc.end_user_action()
@@ -411,13 +430,13 @@ class EditorApp(Gtk.ScrolledWindow):
 
         # auto_close_paren
         if self.is_opening_paren(ch):
-            logger.debug('opening_paren {}'.format(ch))
+            LOGGER.debug('opening_paren {}'.format(ch))
             # don't insert parens if right of opening_paren
             iter1 = doc.get_iter_at_mark(doc.get_insert())
             iter1.backward_char()
             lb = iter1.get_char()
             if lb in self.opening_parens:
-                logger.debug("there is opening paren, don't do twice")
+                LOGGER.debug("there is opening paren, don't do twice")
                 handled = True
             elif self.should_auto_close_paren(doc):
                 handled = self.auto_close_paren(doc, ch)
@@ -429,7 +448,7 @@ class EditorApp(Gtk.ScrolledWindow):
             iter1.backward_char()
             lb = iter1.get_char()
             if lb == '{' and rb == '}':
-                logger.debug('Insert new line and indent {}'.format(view.get_tab_width()))
+                LOGGER.debug('Insert new line and indent {}'.format(view.get_tab_width()))
                 text_to_insert = '\n' + self.get_current_line_indent(doc)
                 doc.begin_user_action()
                 mark = doc.get_insert()
@@ -445,7 +464,7 @@ class EditorApp(Gtk.ScrolledWindow):
                 handled = True
         # don't insert comma if left of one, instead move right
         if not handled and (ch == ',' or event.keyval == Gdk.KEY_Tab):
-            logger.debug('KeyEvent: {}'.format(ch))
+            LOGGER.debug('KeyEvent: {}'.format(ch))
             iter1 = doc.get_iter_at_mark(doc.get_insert())
             rb = iter1.get_char()
             if rb == ',':
@@ -456,7 +475,7 @@ class EditorApp(Gtk.ScrolledWindow):
                     # no hint
                     doc.place_cursor(iter1)
                 else:
-                    # select hint 
+                    # select hint
                     word_start = word_end.copy()
                     word_start.backward_word_start()
                     doc.select_range(word_start, word_end)
@@ -468,21 +487,21 @@ class EditorApp(Gtk.ScrolledWindow):
                 snippet = iter1.backward_search('skel',
                     Gtk.TextSearchFlags.VISIBLE_ONLY, line_start)
                 if snippet:
-                    logger.debug('insert snippet')
+                    LOGGER.debug('insert snippet')
                     language = doc.get_language()
                     if language:
                         if language.get_name() == 'EVC':
                             text_to_insert = ('#include "ev3.h"\n' +
-                            'int main(){\n\tInitEV3();\n\n\t$0\n\n' +
-                            '\tFreeEV3();\n\treturn 0;\n}')
+                                'int main(){\n\tInitEV3();\n\n\t$0\n\n' +
+                                '\tFreeEV3();\n\treturn 0;\n}')
                         elif language.get_name() == 'NXC':
-                            text_to_insert ='task main (){\n\t$0\n}'
+                            text_to_insert = 'task main (){\n\t$0\n}'
                         else:
-                            logger.debug('no snippet for language {}'.format(language.get_name()))
+                            LOGGER.debug('no snippet for language {}'.format(language.get_name()))
                             handled = False
                             return handled
 
-                        logger.debug('snippet for language {}'.format(language.get_name()))
+                        LOGGER.debug('snippet for language {}'.format(language.get_name()))
                         snip_start, snip_end = snippet
                         doc.delete(snip_start, snip_end)
                         doc.begin_user_action()
@@ -528,10 +547,10 @@ class EditorApp(Gtk.ScrolledWindow):
         iter1.backward_char()
         doc.place_cursor(iter1)
         doc.end_user_action()
-        logger.debug('autoclosed by {}'.format(closing_paren))
+        LOGGER.debug('autoclosed by {}'.format(closing_paren))
         return True
 
-    def get_matching_closing_paren(self,opener):
+    def get_matching_closing_paren(self, opener):
         try:
             return self.closing_parens[self.opening_parens.index(opener)]
         except ValueError:
@@ -545,7 +564,7 @@ class EditorApp(Gtk.ScrolledWindow):
         indentation = []
         while it_start.compare(it_end) < 0:
             char = it_start.get_char()
-            if char == ' ' or char == '\t':
+            if char in (' ', '\t'):
                 indentation.append(char)
             else:
                 break
@@ -561,6 +580,6 @@ class EditorApp(Gtk.ScrolledWindow):
             parens[1].append(brackets[i+1])
         self.opening_parens = parens[0]
         self.closing_parens = parens[1]
-        logger.debug('opening {}'.format(self.opening_parens))
-        logger.debug('closing {}'.format(self.closing_parens))
+        LOGGER.debug('opening {}'.format(self.opening_parens))
+        LOGGER.debug('closing {}'.format(self.closing_parens))
     # end bracket completion
