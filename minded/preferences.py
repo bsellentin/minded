@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+'''Preferences Dialog for MindEd'''
+
 import os
+import logging
 
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
-from gi.repository import Gtk, Gdk, Gio, GObject, Pango
+from gi.repository import Gtk, Gio, Pango
 
-import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
-class PreferencesDialog(object):
-    def __init__(self, application, *args, **kwargs):
+class PreferencesDialog():
+
+    def __init__(self, application):
 
         self.app = application
         builder = Gtk.Builder()
@@ -23,15 +26,15 @@ class PreferencesDialog(object):
         self.window.set_application(application)
 
         # look for settings
-        srcdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) 
-        logger.debug('srcdir: {}'.format(srcdir))
+        srcdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        LOGGER.debug('srcdir: {}'.format(srcdir))
         if os.path.exists(os.path.join(srcdir, 'data')):
-            logger.warn('Running from source tree, using local settings')
-            schema_source=Gio.SettingsSchemaSource.new_from_directory(
+            LOGGER.warning('Running from source tree, using local settings')
+            schema_source = Gio.SettingsSchemaSource.new_from_directory(
                 os.path.join(srcdir, 'data'), Gio.SettingsSchemaSource.get_default(), False)
-            schema=Gio.SettingsSchemaSource.lookup(
+            schema = Gio.SettingsSchemaSource.lookup(
                 schema_source, 'org.gge-em.MindEd', False)
-            logger.debug('Gsettings schema: {}'.format(schema.get_path()))
+            LOGGER.debug('Gsettings schema: {}'.format(schema.get_path()))
             if not schema:
                 raise Exception("Cannot get GSettings schema")
             settings = Gio.Settings.new_full(schema, None, None)
@@ -76,11 +79,15 @@ class PreferencesDialog(object):
         settings.bind('cplusplus', builder.get_object('c++-compiler'),
                       'active', Gio.SettingsBindFlags.DEFAULT)
 
+        # NXC
+        settings.bind('enhancedfw', builder.get_object('use_enhanced_firmware_checkbutton'),
+                      'active', Gio.SettingsBindFlags.DEFAULT)
+
         self.window.show_all()
         self.window.connect('delete-event', self.quit)
 
     def on_font_button_font_set(self, button):
-        logger.debug('Font set: {}'.format(button.get_font_name()))
+        LOGGER.debug('Font set: {}'.format(button.get_font_name()))
         for pagecount in range(self.app.win.notebook.get_n_pages()-1, -1, -1):
             editor = self.app.win.notebook.get_nth_page(pagecount)
             editor.codeview.override_font(Pango.FontDescription(button.get_font_name()))
@@ -98,11 +105,11 @@ class PreferencesDialog(object):
             #if(button.get_label()=='C++-compiler'):
         else:
             state = "off"
-        logger.debug("Button {} was turned {}".format(button.get_label(), state))
+        LOGGER.debug("Button {} was turned {}".format(button.get_label(), state))
 
 
     def quit(self, *args):
-        'Quit the program'
+        '''Close preferences-dialog'''
         self.window.destroy()
         # needed! Else Window disappears, but App lives still.
         return True
