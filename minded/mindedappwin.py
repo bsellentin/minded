@@ -638,7 +638,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         msg = ''
 
-        valid, msgtupel = document.filename_is_valid(Path(document.get_path()).name)
+        valid, msgtupel = document.filename_is_valid(Path(document.get_path()))
         if valid:
             (error, msg) = helper.evc_proc(document, upload)
         else:
