@@ -55,8 +55,8 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             self.consts = nxc_funcs.NXC_CONSTS
             self.lang = 'NXC'
         elif language.get_name() == 'EVC':
-            self.funcs = evc_funcs.evc_funcs
-            self.consts = evc_funcs.evc_consts
+            self.funcs = evc_funcs.EVC_FUNCS
+            self.consts = evc_funcs.EVC_CONSTS
             self.lang = 'EVC'
         else:
             self.funcs = []
