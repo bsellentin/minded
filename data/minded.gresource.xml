@@ -3,10 +3,11 @@
   <gresource prefix="/org/gge-em/MindEd">
     <file>minded.png</file>
     <file preprocess="xml-stripblanks">mindedappwin.ui</file>
+    <file preprocess="xml-stripblanks">app-menu.ui</file>
     <file preprocess="xml-stripblanks">minded-preferences-dialog.ui</file>
     <file preprocess="xml-stripblanks">about.ui</file>
     <file preprocess="xml-stripblanks">shortcuts.ui</file>
     <file preprocess="xml-stripblanks">brickinfo.ui</file>
-    <file preprocess="xml-stripblanks">app-menu.ui</file>
+    <file preprocess="xml-stripblanks">apiviewer.ui</file>
   </gresource>
 </gresources>
