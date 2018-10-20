@@ -27,6 +27,7 @@
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Brick name</property>
                 <property name="width_chars">20</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -39,9 +40,7 @@
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
                 <property name="width_chars">20</property>
-                <style>
-                  <class name="xalign=0"/>
-                </style>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -53,6 +52,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -65,9 +65,7 @@
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
                 <property name="selectable">True</property>
-                <style>
-                  <class name="xalign=0"/>
-                </style>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -79,6 +77,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -90,6 +89,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -101,6 +101,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -112,6 +113,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -123,6 +125,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -134,6 +137,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -145,6 +149,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -156,6 +161,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -167,6 +173,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -178,6 +185,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">label</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>

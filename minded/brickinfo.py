@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+''' Show information available from brick '''
+
 import logging
 
 import gi
@@ -8,7 +10,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
 from gi.repository import Gtk
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class BrickInfo():
@@ -27,105 +29,65 @@ class BrickInfo():
 
         self.widgetlist = self.grid.get_children()
 
-        self.widgetlist[15].set_text('Brickname')
-        self.widgetlist[15].set_xalign(0)
-        self.widgetlist[13].set_text('Host address:')
-        self.widgetlist[13].set_xalign(0)
-
-        self.widgetlist[5].set_text('Battery level:')
-        self.widgetlist[5].set_xalign(0)
-
         # Look for Brick
         self.brick_type = None
         if self.app.nxtbrick:
-            logger.debug('got app.nxtbrick')
+            LOGGER.debug('got app.nxtbrick')
             self.brick_type = 'nxt'
         else:
-            logger.debug('no app.nxtbrick')
+            LOGGER.debug('no app.nxtbrick')
 
         if self.app.ev3brick:
-            logger.debug('got app.ev3brick')
+            LOGGER.debug('got app.ev3brick')
             self.brick_type = 'ev3'
         else:
-            logger.debug('no app.ev3brick')
+            LOGGER.debug('no app.ev3brick')
 
         self.get_brickinfo()
 
     def get_brickinfo(self):
-
+        ''' get name, fimware-version, free memory etc. '''
         if self.brick_type == 'nxt':
-            try:
-                name, host, signal_strength, user_flash = self.app.nxtbrick.get_device_info()
-                self.widgetlist[14].set_text(name)
-                self.widgetlist[14].set_xalign(0)
-                logger.debug('NXT brick name: %s' % (name))
-                self.widgetlist[12].set_text(host)
-                self.widgetlist[12].set_xalign(0)
-                logger.debug('Host address: %s' % host)
-                self.widgetlist[11].set_text('BT signal strength:')
-                self.widgetlist[11].set_xalign(0)
-                self.widgetlist[10].set_text(str(signal_strength))
-                self.widgetlist[10].set_xalign(0)
-                logger.debug('Bluetooth signal strength: %s' % signal_strength)
-                self.widgetlist[9].set_text('Free user flash:')
-                self.widgetlist[9].set_xalign(0)
-                self.widgetlist[8].set_text(str(user_flash))
-                self.widgetlist[8].set_xalign(0)
-                logger.debug('Free user flash: %s' % user_flash)
-                prot_version, fw_version = self.app.nxtbrick.get_firmware_version()
-                self.widgetlist[7].set_text('Protocol version:')
-                self.widgetlist[7].set_xalign(0)
-                logger.debug('Protocol version %s.%s' % prot_version)
-                self.widgetlist[6].set_text(('%s.%s' % prot_version))
-                self.widgetlist[6].set_xalign(0)
+            #try:
+            name, host, signal_strength, user_flash = self.app.nxtbrick.get_device_info()
+            prot_version, fw_version = self.app.nxtbrick.get_firmware_version()
+            volts = self.app.nxtbrick.get_battery_level()/1000
 
-                volts = self.app.nxtbrick.get_battery_level()/1000
-                self.widgetlist[4].set_text(('%1.2f V' % volts))
-                self.widgetlist[4].set_xalign(0)
-                logger.debug('Battery level %s V' % volts)
-                self.widgetlist[3].set_text('Firmware version:')
-                self.widgetlist[3].set_xalign(0)
-                self.widgetlist[2].set_text(('%s.%s' % fw_version))
-                self.widgetlist[2].set_xalign(0)
-                logger.debug('Firmware version %s.%s' % fw_version)
+            nxclist = [('%s.%s' % fw_version), 'Firmware version:',
+                       ('%1.2f V' % volts), 'Battery level:',
+                       ('%s.%s' % prot_version), 'Protocol version:',
+                       ('%s' % user_flash), 'Free user flash:',
+                       ('%s' % signal_strength), 'BT signal strength:',
+                       host, 'Host address:',
+                       name, 'Brickname']
+            for x in range(2, 15):
+                self.widgetlist[x].set_text(nxclist[x-2])
 
-            except:
-                logger.debug('error getting nxt-brick info')
+            #except:
+                #LOGGER.debug('error getting nxt-brick info')
+
         if self.brick_type == 'ev3':
             #try:
             self.app.ev3brick.usb_ready()
             name = self.app.ev3brick.get_brickname()
             (hw_version, fw_version, os_version, free_mem) = self.app.ev3brick.get_brickinfo()
-            self.widgetlist[14].set_text(name)
-            self.widgetlist[14].set_xalign(0)
-            self.widgetlist[12].set_text('no WIFI')
-            self.widgetlist[12].set_xalign(0)
-            self.widgetlist[11].set_text('Brick Hardware:')
-            self.widgetlist[11].set_xalign(0)
-            self.widgetlist[10].set_text(hw_version)
-            self.widgetlist[10].set_xalign(0)
-            self.widgetlist[9].set_text('OS version:')
-            self.widgetlist[9].set_xalign(0)
-            self.widgetlist[8].set_text(os_version)
-            self.widgetlist[8].set_xalign(0)
-            self.widgetlist[7].set_text('Battery level:')
-            self.widgetlist[7].set_xalign(0)
-            self.widgetlist[6].set_text('%s V' % self.app.ev3brick.get_vbatt())
-            self.widgetlist[6].set_xalign(0)
-            self.widgetlist[5].set_text('Free user flash:')
-            self.widgetlist[5].set_xalign(0)
-            self.widgetlist[4].set_text('%d KB' % free_mem)
-            self.widgetlist[4].set_xalign(0)
-            self.widgetlist[3].set_text('Firmware version:')
-            self.widgetlist[3].set_xalign(0)
-            self.widgetlist[2].set_text(fw_version)
-            self.widgetlist[2].set_xalign(0)
+            volts = self.app.ev3brick.get_vbatt()
+
+            evclist = [fw_version, 'Firmware version:',
+                       ('%d KB' % free_mem), 'Free user flash:',
+                       ('%s V' % volts), 'Battery level:',
+                       os_version, 'OS version:',
+                       hw_version, 'Brick Hardware:',
+                       'no WIFI', 'Host address:',
+                       name, 'Brickname']
+            for x in range(2, 15):
+                self.widgetlist[x].set_text(evclist[x-2])
 
             #except:
-                #logger.debug('error getting ev3-brick info')
+                #LOGGER.debug('error getting ev3-brick info')
 
     def on_btn_brickname_clicked(self, button):
-
+        ''' rename brick '''
         dlg = Gtk.Dialog()
         dlg.set_title("Enter new brick name:")
         dlg.set_transient_for(self.window)
@@ -149,9 +111,9 @@ class BrickInfo():
         dlg.show_all()
 
     def on_dlg_brickname_response(self, widget, response, name):
-        logger.debug('response is %s' % response)
+        LOGGER.debug('response is %s' % response)
         if response == Gtk.ResponseType.OK:
-            logger.debug(name.get_text())
+            LOGGER.debug(name.get_text())
             if self.brick_type == 'nxt':
                 self.app.nxtbrick.set_brick_name(name.get_text())
             if self.brick_type == 'ev3':
@@ -168,13 +130,14 @@ class BrickInfo():
         pass
 
     def on_btn_refresh_clicked(self, button):
-        logger.debug('refresh clicked')
+        ''' reload brick-info '''
+        LOGGER.debug('refresh clicked')
         try:
             self.get_brickinfo()
         except:
-            logger.warning('no app.brick')
+            LOGGER.warning('no app.brick')
 
-    def quit(self):
+    def quit(self, *args):
         'Quit the program'
         self.window.destroy()
         # needed! Else Window disappears, but App lives still.
