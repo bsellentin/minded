@@ -3,11 +3,10 @@
 
 import struct
 import threading
-import time
 import logging
 import usb.core
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 class DirCmdError(Exception):
     """
@@ -36,12 +35,13 @@ class EV3():
         # gives USBError.timeout
         #self.device.read(EP_IN, 1024, EV3_USB_TIMEOUT)
 
-    def __del__(self): pass
+    def __del__(self):
+        pass
 
     def close(self) -> None:
 
         self.device = None
-        logger.debug('USB connection closed.')
+        LOGGER.debug('USB connection closed.')
 
     def do_nothing(self) -> None:
         cmd = opNop
@@ -92,26 +92,26 @@ class EV3():
 
         success = 0
         rpl_cnt = 0
-        for i in range(0,3):
+        for i in range(0, 3):
             if rpl_cnt == 0 or rpl_cnt > msg_cnt:
-                logger.debug('usb_ready attempt %d' % int(i+1))
+                LOGGER.debug('usb_ready attempt %d' % int(i+1))
                 try:
                     reply = bytes(self.device.read(EP_IN, 1024, EV3_USB_TIMEOUT))
                     reply_counter = reply[2:4]
                     rpl_cnt = struct.unpack('<H', reply_counter)[0]
-                    logger.warning('USB ready: want %s, got %s' %(msg_cnt, rpl_cnt))
+                    LOGGER.warning('USB ready: want %s, got %s' %(msg_cnt, rpl_cnt))
                     if msg_cnt == rpl_cnt:
                         success = 1
                         break
                 except usb.core.USBError as e:
                     if e.args == ('Operation timed out',):
-                        logger.info(e)
+                        LOGGER.info(e)
                         continue
 
         if success:
             len_data = struct.unpack('<H', reply[:2])[0] + 2
-            if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(print_hex('Recv', reply[:len_data]))
+            if LOGGER.isEnabledFor(logging.DEBUG):
+                LOGGER.debug(print_hex('Recv', reply[:len_data]))
             (busy,) = struct.unpack('b', reply[5:len_data])
             if not busy:   # 0 = Ready, 1 = Busy
                 return True
@@ -326,11 +326,11 @@ class EV3():
         parent = path.rsplit('/', 1)[0] + '/'
         folder = path.rsplit('/', 1)[1]
         num = self.get_folders(parent)
-        logger.debug('parentdir has {} folders'.format(num))
+        LOGGER.debug('parentdir has {} folders'.format(num))
         for i in range(num):
             subdir = self.get_subfolder_name(parent, i)
             if subdir == folder:
-                logger.debug('found subfolder {} num {}'.format(subdir, i))
+                LOGGER.debug('found subfolder {} num {}'.format(subdir, i))
                 found = True
                 cmd = b''.join([
                     opFile,
@@ -397,7 +397,7 @@ class EV3():
                 })
         return {'files': files, 'folders': folders}
 
-    def write_file(self, path:str, data: bytes) -> None:
+    def write_file(self, path: str, data: bytes) -> None:
         size = len(data)
         cmd = b''.join([
             BEGIN_DOWNLOAD,
@@ -418,7 +418,7 @@ class EV3():
             self.send_system_cmd(cmd)
             rest -= part_size
 
-    def read_file(self, path:str) -> bytes:
+    def read_file(self, path: str) -> bytes:
         cmd = b''.join([
             BEGIN_UPLOAD,
             struct.pack('<H', 1012),    # SIZE
@@ -448,7 +448,7 @@ class EV3():
                 raise SysCmdError("end of file not reached")
         return data
 
-    def send_direct_cmd(self, ops: bytes, local_mem: int=0, global_mem: int=0) -> bytes:
+    def send_direct_cmd(self, ops: bytes, local_mem: int = 0, global_mem: int = 0) -> bytes:
 
         if global_mem > 0:
             cmd_type = DIRECT_COMMAND_REPLY
@@ -471,8 +471,8 @@ class EV3():
             ops
         ])
         self.device.write(EP_OUT, cmd, EV3_USB_TIMEOUT)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(print_hex('Sent', cmd))
+        if LOGGER.isEnabledFor(logging.DEBUG):
+            LOGGER.debug(print_hex('Sent', cmd))
 
         if cmd[4:5] == DIRECT_COMMAND_NO_REPLY:
             return msg_cnt
@@ -483,10 +483,10 @@ class EV3():
                 rpl_cnt = struct.unpack('<H', reply_counter)[0]
                 len_data = struct.unpack('<H', reply[:2])[0] + 2
                 if msg_cnt != struct.unpack('<H', reply_counter)[0]:
-                    logger.warning('not for me, want %s, got %s' % (msg_cnt, rpl_cnt))
+                    LOGGER.warning('not for me, want %s, got %s' % (msg_cnt, rpl_cnt))
                 else:
-                    if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug(print_hex('Recv', reply[:len_data]))
+                    if LOGGER.isEnabledFor(logging.DEBUG):
+                        LOGGER.debug(print_hex('Recv', reply[:len_data]))
                     if reply[4:5] != DIRECT_REPLY:
                         raise DirCmdError(
                             "direct command {:02X}:{:02X} replied error".format(
@@ -496,7 +496,7 @@ class EV3():
                         )
                     return reply[:len_data]
 
-    def send_system_cmd(self, ops: bytes, reply: bool=True) -> bytes:
+    def send_system_cmd(self, ops: bytes, reply: bool = True) -> bytes:
         if reply:
             cmd_type = SYSTEM_COMMAND_REPLY
         else:
@@ -519,7 +519,7 @@ class EV3():
         self.device.write(EP_OUT, cmd, EV3_USB_TIMEOUT)
 
         counter = struct.unpack('<H', cmd[2:4])[0]
-        logger.debug('msg_cnt: %s, counter: %s' % (msg_cnt, counter))
+        LOGGER.debug('msg_cnt: %s, counter: %s' % (msg_cnt, counter))
         if not reply:
             return counter
         else:
@@ -529,12 +529,15 @@ class EV3():
             reply_counter = reply[2:4]
             rpl_cnt = struct.unpack('<H', reply_counter)[0]
             if msg_cnt != struct.unpack('<H', reply_counter)[0]:
-                logger.debug('not for me, want %s, got %s' % (msg_cnt, rpl_cnt))
+                LOGGER.debug('not for me, want %s, got %s' % (msg_cnt, rpl_cnt))
             else:
                 #print("sysreply: ", reply[4:5], "SYSTEM_REPLY", SYSTEM_REPLY)
                 if reply[4:5] != SYSTEM_REPLY:  # ! reply = bytes(read)
+                    #TODO: send errorcode
                     raise SysCmdError("SysCmdError: {:02X}".format(reply[6]))
-                logger.debug('reply: %s' % reply[:len_data])
+                    #LOGGER.debug("SysCmdError: {:02X}".format(reply[6]))
+                    #return reply[6]
+                LOGGER.debug('reply: %s' % reply[:len_data])
                 return reply[:len_data]
 
     def wait_for_system_reply(self, counter: bytes) -> bytes:
@@ -545,11 +548,11 @@ def LCX(value: int) -> bytes:
     """
     create a LC0, LC1, LC2, LC4, dependent from the value
     """
-    if   value >=    -32 and value <      0:
+    if   value >= -32 and value < 0:
         return struct.pack('b', 0x3F & (value + 64))
-    elif value >=      0 and value <     32:
+    elif value >= 0 and value < 32:
         return struct.pack('b', value)
-    elif value >=   -127 and value <=   127:
+    elif value >= -127 and value <= 127:
         return b'\x81' + struct.pack('<b', value)
     elif value >= -32767 and value <= 32767:
         return b'\x82' + struct.pack('<h', value)
@@ -566,11 +569,11 @@ def LVX(value: int) -> bytes:
     """
     create a LV0, LV1, LV2, LV4, dependent from the value
     """
-    if value   <     0:
+    if value < 0:
         raise RuntimeError('No negative values allowed')
-    elif value <    32:
+    elif value < 32:
         return struct.pack('b', 0x40 | value)
-    elif value <   256:
+    elif value < 256:
         return b'\xc1' + struct.pack('<b', value)
     elif value < 65536:
         return b'\xc2' + struct.pack('<h', value)
