@@ -683,7 +683,7 @@ class BrickFiler():
             else:
                 logger.debug('No file selected')
 
-    def quit(self):
+    def quit(self, *args):
         'Quit the program'
         self.window.destroy()
         return True
