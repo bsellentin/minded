@@ -88,8 +88,8 @@ class MindEdDocument(GtkSource.File):
         '''
         p-bricks don't want prognames with non-alphanumeric characters
         nxt max progname length is 15.3, ev3 20.3
-        '''
-        #if self.forbiddenchar.match(Path(newname).stem) is not None:
+        :param newname:  filename as Path '''
+
         if self.forbiddenchar.match(newname.stem) is not None:
             if newname.suffix == '.nxc' and len(newname.stem) > 15:
                 err_msg = _('Filename {} to long!').format(newname.stem)
@@ -99,7 +99,6 @@ class MindEdDocument(GtkSource.File):
                 err_msg = _('Filename {} to long!').format(newname.stem)
                 hint_msg = _('Maximum allowable are 20 characters')
                 return (0, (err_msg, hint_msg))
-            #LOGGER.debug('valid: {}'.format(Path(newname).stem))
             LOGGER.debug('valid: {}'.format(newname.stem))
             return (1, (None, None))
         else:
@@ -108,6 +107,12 @@ class MindEdDocument(GtkSource.File):
             return (0, (err_msg, hint_msg))
 
 class EditorApp(Gtk.ScrolledWindow):
+    '''This class handels all editing tasks.
+    opening and saving MindEdDocuments, setting language manager
+    completion is done by class BrickCompletionProvider
+    bracket completion
+    key event handling
+    '''
 
     def __init__(self, mindedappwin, file_uri):
         Gtk.ScrolledWindow.__init__(self)
@@ -206,7 +211,8 @@ class EditorApp(Gtk.ScrolledWindow):
             self.load_file(self.document)
 
     def load_file(self, document):
-        # load into GtkSource.Buffer as GtkSource.File
+        '''load MindEdDocument async into GtkSource.Buffer'''
+
         try:
             loader = GtkSource.FileLoader.new(self.codeview.get_buffer(), document)
             loader.load_async(1, None, None, None, self.file_load_finish, document)
@@ -227,6 +233,7 @@ class EditorApp(Gtk.ScrolledWindow):
             LOGGER.debug('Could not load {}'.format(document.get_path()))
 
     def save_file_as(self, close_tab):
+        '''save MindEdDocument async'''
 
         LOGGER.debug('dialog save_file_as: {}'.format(self.document.get_uri()))
 
@@ -415,18 +422,16 @@ class EditorApp(Gtk.ScrolledWindow):
         handled = False
         doc = view.get_buffer()
         ch = self.to_char(event.keyval)
-        '''
         # first handel selection
         if ch:
             selection = doc.get_selection_bounds()
             if selection:
                 start, end = selection
                 if not start.equal(end):
-                    LOGGER.debug('someting selected true')
+                    LOGGER.debug('something selected true')
                     doc.begin_user_action()
                     doc.delete(start, end)
                     doc.end_user_action()
-        '''
 
         # auto_close_paren
         if self.is_opening_paren(ch):
@@ -435,8 +440,8 @@ class EditorApp(Gtk.ScrolledWindow):
             iter1 = doc.get_iter_at_mark(doc.get_insert())
             iter1.backward_char()
             lb = iter1.get_char()
-            if lb in self.opening_parens:
-                LOGGER.debug("there is opening paren, don't do twice")
+            if lb == ch and lb in self.opening_parens:
+                LOGGER.debug("there is same opening paren, don't do twice")
                 handled = True
             elif self.should_auto_close_paren(doc):
                 handled = self.auto_close_paren(doc, ch)
@@ -462,11 +467,15 @@ class EditorApp(Gtk.ScrolledWindow):
                 doc.place_cursor(iter2)
                 doc.end_user_action()
                 handled = True
+        # move selection to next hint
         # don't insert comma if left of one, instead move right
         if not handled and (ch == ',' or event.keyval == Gdk.KEY_Tab):
             LOGGER.debug('KeyEvent: {}'.format(ch))
             iter1 = doc.get_iter_at_mark(doc.get_insert())
             rb = iter1.get_char()
+            if rb == '"': 
+                iter1.forward_char()
+                rb = iter1.get_char()
             if rb == ',':
                 iter1.forward_char()
                 word_end = iter1.copy()
@@ -535,7 +544,12 @@ class EditorApp(Gtk.ScrolledWindow):
         iter1 = doc.get_iter_at_mark(doc.get_insert())
         if iter1.is_end() or iter1.ends_line():
             return True
+        #if doc.get_has_selection():
+        #    return True
         char = iter1.get_char()
+        mark = iter1.get_marks
+        LOGGER.debug('%s' % char)
+        #LOGGER.debug('%s' % mark)
         # don't close inside words
         return not (char.isalnum() or char == '_')
 
