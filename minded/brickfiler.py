@@ -38,6 +38,7 @@ DRAG_ACTION = Gdk.DragAction.COPY
 
 def read_file(brick, file_uri):
     '''read file from NXT brick'''
+    # TODO use Gio.File
     file_path = urlparse(unquote(file_uri))
     file_name = Path(file_path.path).name
 
@@ -61,6 +62,7 @@ def write_files(brick, file_uris):
     for file_uri in file_uris:
         if file_uri:
             logger.debug('File: {} Type {}'.format(file_uri, type(file_uri)))
+            #TODO use Gio.File
             file_path = urlparse(unquote(file_uri))
             file_name = Path(file_path.path).name
 
@@ -82,18 +84,16 @@ class BrickListing(Gtk.ListStore):
     get files and directories of given path from brick and
     put them into a liststore
     '''
-    def __init__(self, brick=None, brick_type=None, path=None):
+    def __init__(self, brick=None, path=None):
         Gtk.ListStore.__init__(self, str, Pixbuf, int, bool)
         #self.set_sort_column_id(0, 0)
-
-        self.brick_type = brick_type
 
         if brick:
             self.populate(brick, path)
 
     def populate(self, brick, path):
 
-        if self.brick_type == 'nxt':
+        if brick.__class__.__name__ == 'Brick':
             self.clear()
             filelist = []
 
@@ -117,7 +117,7 @@ class BrickListing(Gtk.ListStore):
                 for row in self:
                     logger.debug('{} {}'.format(row[COLUMN_PATH], row[COLUMN_SIZE]))
 
-        elif self.brick_type == 'ev3':
+        elif brick.__class__.__name__ == 'EV3':
             self.clear()
             dirlist = []
             filelist = []
@@ -219,6 +219,7 @@ class FileIconView(Gtk.IconView):
         self.props.item_padding = 0
         self.props.row_spacing = 2
         self.props.item_width = 70
+        self.props.selection_mode = Gtk.SelectionMode.MULTIPLE
         self.set_model(model)
         self.set_pixbuf_column(COLUMN_PIXBUF)
         self.set_text_column(COLUMN_PATH)
@@ -226,7 +227,33 @@ class FileIconView(Gtk.IconView):
         self.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
                                       [],
                                       DRAG_ACTION)
-        self.enable_model_drag_dest([], DRAG_ACTION)
+        
+        targets = Gtk.TargetEntry.new('text/uri-list', 8, 0)
+        self.enable_model_drag_dest([targets], DRAG_ACTION)
+        '''
+        self.iconview.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
+        self.iconview.connect("item-activated", self.iv_icon_activated)
+        self.iconview.connect("button-press-event", self.on_mouse_click)
+        self.iconview.connect("motion-notify-event", self.on_pointer_motion)
+
+    def on_pointer_motion(self, widget, event):
+        path= self.iconview.get_path_at_pos(event.x, event.y)
+        if path !=None:
+                self.iconview.select_path(path)
+        #If we're outside of an item, deselect all items (turn off highlighting)
+        if path == None:
+            self.iconview.unselect_all()
+
+    def on_mouse_click(self,widget, event):
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            path=self.iconview.get_selected_items()[0]
+           #if right click activate a pop-up menu
+            if event.button == 3 and path != None:
+                self.popup.popup(None, None, None, None, event.button, event.time)
+           #if left click, activate the item to execute
+            if event.button == 1 and path != None:
+                self.iv_icon_activated(widget, path)
+            '''
 
 class FileInfoBar(Gtk.Frame):
     ''' Show information about selection in lower right corner '''
@@ -275,7 +302,7 @@ class BrickFiler():
     '''
     file explorer for NXT- and EV3-bricks
     '''
-    TARGETS = []
+    #TARGETS = []
 
     def __init__(self, application):
 
@@ -295,28 +322,16 @@ class BrickFiler():
         hpaned.set_position(300)
 
         # Look for Brick
-        self.brick_type = None
-        if self.app.nxtbrick:
-            logger.info('got app.nxtbrick')
-            self.brick_type = 'nxt'
-        else:
-            logger.info('no app.nxtbrick')
-
-        if self.app.ev3brick:
-            logger.info('got app.ev3brick')
-            self.brick_type = 'ev3'
-        else:
-            logger.info('no app.ev3brick')
-
-        if self.brick_type == 'nxt':
-            self.nxt_model = BrickListing(self.app.nxtbrick, self.brick_type,
+        if self.app.nxt_brick:
+            logger.info('got app.nxt_brick')
+            self.nxt_model = BrickListing(self.app.nxt_brick,
                                           '*.*')
-            hpaned.add1(self.make_brickfile_panel(str(self.app.nxtbrick.sock),
+            hpaned.add1(self.make_brickfile_panel(str(self.app.nxt_brick.sock),
                                                   self.nxt_model))
-        elif self.brick_type == 'ev3':
+        elif self.app.ev3_brick:
+            logger.info('got app.ev3_brick')
             self.current_ev3_directory = self.app.settings.get_string('prjsstore')
-            #self.current_ev3_directory = '/home/root/lms2012/prjs'
-            self.ev3_model = BrickListing(self.app.ev3brick, self.brick_type,
+            self.ev3_model = BrickListing(self.app.ev3_brick,
                                           self.current_ev3_directory)
             hpaned.add1(self.make_brickfile_panel('EV3', self.ev3_model))
         else:
@@ -338,12 +353,13 @@ class BrickFiler():
         host_view = FileIconView(model)
         host_view.connect("item-activated", self.on_host_item_activated)
         host_view.connect("selection-changed", self.on_host_selection_changed)
+        #host_view.connect('key-press-event', self.on_key_pressed)
 
         host_view.drag_source_add_uri_targets()
-        host_view.connect("drag_data_get", self.drag_data_get_hostdata)
+        host_view.connect("drag_data_get", self.drag_data_get_host_data)
 
         host_view.drag_dest_add_text_targets()
-        host_view.connect("drag_data_received", self.drag_data_received_nxtdata)
+        host_view.connect("drag_data_received", self.drag_data_received_brick_data)
 
         return host_view
 
@@ -351,10 +367,11 @@ class BrickFiler():
 
         brick_view = FileIconView(model)
         brick_view.connect("item-activated", self.on_brick_item_activated)
-        brick_view.connect("selection-changed", self.on_nxt_selection_changed)
+        brick_view.connect("selection-changed", self.on_brick_selection_changed)
+        brick_view.connect('key-press-event', self.on_key_pressed)
 
-        brick_view.drag_source_add_text_targets()
-        brick_view.connect("drag_data_get", self.drag_data_get_data)
+        brick_view.drag_source_add_uri_targets()
+        brick_view.connect("drag_data_get", self.drag_data_get_brick_data)
 
         brick_view.drag_dest_add_uri_targets()
         brick_view.connect("drag_data_received", self.drag_data_received_data)
@@ -402,13 +419,13 @@ class BrickFiler():
         image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
         self.del_button.add(image)
         self.del_button.set_tooltip_text("delete")
-        self.del_button.connect("clicked", self.on_delete_clicked)
+        self.del_button.connect("clicked", self.on_delete_btn_clicked)
         self.del_button.drag_dest_set(Gtk.DestDefaults.ALL, [], DRAG_ACTION)
-        self.del_button.drag_dest_add_text_targets()
-        self.del_button.connect("drag_data_received", self.drag_data_received_nxtdeldata)
+        self.del_button.drag_dest_add_uri_targets()
+        self.del_button.connect("drag_data_received", self.drag_data_received_brick_deldata)
         tool_bar.attach(self.del_button, 0, 0, 1, 1)
 
-        if self.brick_type == 'ev3':
+        if self.app.ev3_brick:
             self.ev3_up_button = Gtk.Button()
             icon = Gio.ThemedIcon(name="go-previous-symbolic")
             image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
@@ -457,9 +474,10 @@ class BrickFiler():
         path = model[item][COLUMN_PATH]
         is_dir = model[item][COLUMN_ISDIR]
         logger.debug('double click on {}, is_dir {}'.format(path, is_dir))
-        if self.brick_type == 'ev3' and is_dir:
+
+        if self.app.ev3_brick and is_dir:
             self.current_ev3_directory = str(Path(self.current_ev3_directory, path))
-            self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
+            self.ev3_model.populate(self.app.ev3_brick, self.current_ev3_directory)
             self.ev3location.set_text(self.current_ev3_directory)
             if not self.ev3_up_button.get_sensitive():
                 self.ev3_up_button.set_sensitive(True)
@@ -470,15 +488,15 @@ class BrickFiler():
 
     def on_host_selection_changed(self, widget):
         try:
-            iter_path = widget.get_selected_items()[0]
+            #iter_path = widget.get_selected_items()[0]
             self.hostinfoframe.update(widget)
             self.hostinfoframe.show()
         except:
             self.hostinfoframe.hide()
 
-    def on_nxt_selection_changed(self, widget):
+    def on_brick_selection_changed(self, widget):
         try:
-            iter_path = widget.get_selected_items()[0]
+            #iter_path = widget.get_selected_items()[0]
             self.brickinfoframe.update(widget)
             self.brickinfoframe.show()
         except:
@@ -497,7 +515,7 @@ class BrickFiler():
     def on_ev3_prev_dir_clicked(self, widget):
         '''walk one EV3 directory higher'''
         self.current_ev3_directory = str(Path(self.current_ev3_directory).parent)
-        self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
+        self.ev3_model.populate(self.app.ev3_brick, self.current_ev3_directory)
         self.ev3location.set_text(self.current_ev3_directory)
         sensitive = True
         if self.current_ev3_directory == "/":
@@ -507,28 +525,41 @@ class BrickFiler():
             if self.del_button.get_sensitive():
                 self.del_button.set_sensitive(False)
 
-    def drag_data_get_data(self, iconview, context, selection, target_id,
-                           etime):
-        '''set the selected NXT-file to copy to host'''
+    def on_key_pressed(self, widget, event):
+        if event.keyval == Gdk.KEY_Delete:
+            self.on_delete_btn_clicked(widget)
 
-        selected_path = iconview.get_selected_items()[0]
-        selected_iter = iconview.get_model().get_iter(selected_path)
-        file_name = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
-        success = selection.set_text(file_name, -1)
+    def drag_data_get_brick_data(self, iconview, context, selection, target_id,
+                           etime):
+        '''
+        brick is drag source
+        select NXT-file(s) to copy to host or to delete
+        '''
+        file_uris = []
+        for item in iconview.get_selected_items():
+            selected_iter = iconview.get_model().get_iter(item)
+            file_uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
+            file_uris.append(file_uri)
+        logger.debug(file_uris)
+        success = selection.set_uris(file_uris)
         if logger.isEnabledFor(logging.DEBUG):
             if success:
-                logger.debug(selection.get_text())
+                logger.debug(selection.get_uris())
             else:
-                logger.debug('selection set text NOT okay')
+                logger.debug('selection set uri(s) NOT okay')
 
-    def drag_data_get_hostdata(self, iconview, context, selection, target_id,
+    def drag_data_get_host_data(self, iconview, context, selection, target_id,
                                etime):
-        '''set the selected uri to copy to NXT-brick'''
-
-        selected_path = iconview.get_selected_items()[0]
-        selected_iter = iconview.get_model().get_iter(selected_path)
-        name = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
-        file_uris = [Path(self.current_directory, name).as_uri()]
+        '''
+        host is drag source
+        set the selected uri(s) to copy to brick
+        '''
+        file_uris = []
+        for item in iconview.get_selected_items():
+            selected_iter = iconview.get_model().get_iter(item)
+            uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
+            name = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
+            file_uris.append(Path(self.current_directory, name).as_uri())
         logger.debug('dragged: {}'.format(file_uris))
         success = selection.set_uris(file_uris)
         if logger.isEnabledFor(logging.DEBUG):
@@ -539,12 +570,15 @@ class BrickFiler():
 
     def drag_data_received_data(self, iconview, context, x, y, selection,
                                 info, etime):
-        '''write file to brick from host '''
+        '''
+        brick is drag destination
+        write file to brick from host 
+        '''
         file_uris = selection.get_uris()
 
         if context.get_actions() == DRAG_ACTION:
-            logger.debug(context.get_actions())
-            if self.brick_type == 'nxt':
+
+            if self.app.nxt_brick:
                 # Accept only these files (File write)
                 # Download firmware              *.rfw
                 # Download user defined programs *.rxe
@@ -556,10 +590,9 @@ class BrickFiler():
                 for file in file_uris:
                     if file.endswith(tuple(ext)):
                         logger.debug('dropped: {}'.format(file_uris))
-                        wnames = write_files(self.app.nxtbrick, file_uris) # returns ('fname', 'size')
-                        self.nxt_model.populate(self.app.nxtbrick, '*.*')
+                        wnames = write_files(self.app.nxt_brick, file_uris) # returns ('fname', 'size')
+                        self.nxt_model.populate(self.app.nxt_brick, '*.*')
                         context.finish(True, False, etime)
-                        return
                     else:
                         logger.debug("don't want {}".format(file_uris))
                         # TODO: Give feedback
@@ -569,122 +602,194 @@ class BrickFiler():
                         #bar.get_content_area().pack_start(
                         #gtk.Label("What shall I do with this?"), False, False)
                         context.finish(False, False, etime)
-                        return
-            if (self.brick_type == 'ev3' and
+            if (self.app.ev3_brick and
                     self.current_ev3_directory.startswith('/home/root/lms2012/prjs')):
                 for file in file_uris:
                     # TODO: which files will we accept?
-                    file_path = urlparse(unquote(file))
-                    infile = str(Path(self.current_ev3_directory, Path(file_path.path).name))
-                    outfile = file_path.path
-                    logger.debug('dropped: {}'.format(outfile))
-                    logger.debug('write to: {}'.format(infile))
-                    data = open(outfile, 'rb').read()
-                    self.app.ev3brick.write_file(infile, data)
-                    self.ev3_model.populate(self.app.ev3brick, self.current_ev3_directory)
+                    gfile = Gio.File.new_for_uri(file)
+                    info = gfile.query_file_type(Gio.FileQueryInfoFlags.NONE, None)
+                    if info == Gio.FileType.DIRECTORY:
+                        prj = gfile.get_basename()
+                        logger.debug('URI is directory')
+                        infos = gfile.enumerate_children('standard::name',
+                                                         Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,
+                                                         None)
+                        for info in infos:
+                            child = infos.get_child(info)
+                            infile = str(Path(self.current_ev3_directory,
+                                         prj, child.get_basename()))
+                            outfile = child.get_parse_name()
+                            logger.debug('dropped: {}'.format(outfile))
+                            logger.debug('write to: {}'.format(infile))
+                            data = open(outfile, 'rb').read()
+                            self.app.ev3_brick.write_file(infile, data)
+                    else:
+                        infile = str(Path(self.current_ev3_directory, gfile.get_basename()))
+                        outfile = gfile.get_parse_name()
+                        logger.debug('dropped: {}'.format(outfile))
+                        logger.debug('write to: {}'.format(infile))
+                        data = open(outfile, 'rb').read()
+                        #data = gfile.read()
+                        self.app.ev3_brick.write_file(infile, data)
+                        #TypeError: object of type 'GLocalFileInputStream' has no len()
+
+                    self.ev3_model.populate(self.app.ev3_brick, self.current_ev3_directory)
                     context.finish(True, False, etime)
-                    return
         else:
             logger.debug('what happend?')
             logger.debug(context.get_actions())
             context.finish(False, False, etime)
-            return
 
-    def drag_data_received_nxtdata(self, iconview, context, x, y, selection,
-        info, etime):
-        '''read file from NXT-brick and write to host '''
-        file_name = selection.get_text()
+    def drag_data_received_brick_data(self, iconview, context, x, y, selection,
+                                   info, etime):
+        '''
+        host is drag destination
+        read file from brick and write to host
+        '''
+        # TODO: ev3
+        file_uris = selection.get_uris()
 
         if context.get_actions() == DRAG_ACTION:
-            logger.debug(context.get_actions())
-            logger.debug(selection.get_text())
-            logger.debug(self.current_directory)
-            file_uri = Path(self.current_directory, file_name).as_uri()
-            nxtfile = read_file(self.app.nxtbrick, file_uri)
+
+            if self.app.nxt_brick:
+                logger.debug(context.get_actions())
+                logger.debug(selection.get_uris())
+                logger.debug(self.current_directory)
+                for uri in file_uris:
+                    host_uri = Path(self.current_directory, uri).as_uri()
+                    nxtfile = read_file(self.app.nxt_brick, host_uri)
+
+            if self.app.ev3_brick:
+                for uri in file_uris:
+                    for row in self.ev3_model:
+                        if row[COLUMN_PATH] == uri:
+                            logger.debug('{} is directory: {}'.format(uri, row[COLUMN_ISDIR]))
+                            if row[COLUMN_ISDIR]:
+
+                                gfile = Gio.File.new_for_path(str(Path(self.current_directory, uri)))
+                                gfile.make_directory(None)
+
+                                content = self.app.ev3_brick.list_dir(str(Path(self.current_ev3_directory, uri)))
+                                for file in content['files']:
+                                    logger.debug(file['name'])
+                                    host_uri = str(Path(self.current_directory, uri, file['name']))
+                                    gfile = Gio.File.new_for_path(host_uri)
+                                    ev3_uri = str(Path(self.current_ev3_directory, uri, file['name']))
+                                    data = self.app.ev3_brick.read_file(ev3_uri)
+                                    gfile.replace_contents(data, None, False,
+                                                           Gio.FileCreateFlags.NONE, None)
+                            else:
+                                host_uri = str(Path(self.current_directory, uri))
+                                gfile = Gio.File.new_for_path(host_uri)
+                                logger.debug(host_uri)
+                                ev3_uri = str(Path(self.current_ev3_directory, uri))
+                                data = self.app.ev3_brick.read_file(ev3_uri)
+                                gfile.replace_contents(data, None, False,
+                                                       Gio.FileCreateFlags.NONE, None)
+                            break
             self.host_model.populate(self.current_directory)
             context.finish(True, False, etime)
-            return
         else:
             logger.debug('what happend?')
             logger.debug(context.get_actions())
             context.finish(False, False, etime)
 
-    def drag_data_received_nxtdeldata(self, iconview, context, x, y, selection,
-        info, etime):
-        '''delete button as drag target'''
-        file_name = selection.get_text()
-        logger.debug('selected to delete: {}'.format(file_name))
+    def drag_data_received_brick_deldata(self, iconview, context, x, y, selection,
+                                      info, etime):
+        '''
+        delete button as drag destination
+        '''
+        file_uris = selection.get_uris()
+        logger.debug('selected to delete: {}'.format(file_uris))
 
-        if self.brick_type == 'nxt':
-            if context.get_actions() == DRAG_ACTION:
-                try:
-                    self.app.nxtbrick.delete(file_name)
-                    logger.debug('deleted: {}'.format(file_name))
-                    self.nxt_model.populate(self.app.nxtbrick, '*.*')
-                    context.finish(True, False, etime)
-                    return
-                except:
-                    logger.debug('File not deleted')
-            else:
-                context.finish(False, False, etime)
+        if context.get_actions() == DRAG_ACTION:
+            if self.app.nxt_brick:
+                for uri in selection.get_uris():
+                    try:
+                        self.app.nxt_brick.delete(uri)
+                        logger.debug('deleted {}'.format(uri))
+                    except:
+                        logger.debug('uri {} not deleted'.format(uri))
+                self.nxt_model.populate(self.app.nxt_brick, '*.*')
+                context.finish(True, False, etime)
 
-        if self.brick_type == 'ev3':
-            logger.debug('Drag del EV3 TODO')
+            if self.app.ev3_brick:
+                for uri in selection.get_uris():
+                    for row in self.ev3_model:
+                        if row[COLUMN_PATH] == uri:
+                            logger.debug('{} is directory: {}'.format(uri, row[COLUMN_ISDIR]))
+                            file_name = str(Path(self.current_ev3_directory,
+                                                 row[COLUMN_PATH]))
+                            if row[COLUMN_ISDIR]:
+                                self.app.ev3_brick.del_dir(file_name)
+                            else:
+                                self.app.ev3_brick.del_file(file_name)
+                            break
+                self.ev3_model.populate(self.app.ev3_brick, self.current_ev3_directory)
+                context.finish(True, False, etime)
+        else:
+            context.finish(False, False, etime)
 
-    def on_delete_clicked(self, button):
-        ''' delete file on brick'''
-        if self.brick_type == 'nxt':
+    def on_delete_btn_clicked(self, button):
+        '''delete file on brick'''
+        if self.app.nxt_brick:
             self.delete_nxt_file()
-        if self.brick_type == 'ev3':
+        if self.app.ev3_brick:
             self.delete_ev3_file()
 
     def delete_nxt_file(self):
+        '''delete file(s) on nxt-brick'''
         if self.nxt_model:
-            iter_path = self.brick_view.get_selected_items()[0]
-            model = self.brick_view.get_model()
-            selected_iter = model.get_iter(iter_path)
-            if selected_iter is not None:
-                file_name = model.get_value(selected_iter, 0)
-                logger.debug('selected to delete: {}'.format(file_name))
-                try:
-                    self.app.nxtbrick.delete(file_name)
-                    logger.debug('deleted: {}'.format(file_name))
-                    model.remove(selected_iter)
-                except:
-                    logger.debug('File not deleted')
-            else:
-                logger.debug('No file selected')
 
-    def delete_ev3_file(self):
-        if self.ev3_model and self.brick_view.get_selected_items():
-            iter_path = self.brick_view.get_selected_items()[0]
-            model = self.brick_view.get_model()
-            selected_iter = model.get_iter(iter_path)
-            if selected_iter is not None:
-                file_name = str(Path(self.current_ev3_directory,
-                                     model.get_value(selected_iter, COLUMN_PATH)))
-                logger.debug('selected to delete: {}'.format(file_name))
-                if model.get_value(selected_iter, COLUMN_ISDIR):
-                    # is Dir
+            for item in self.brick_view.get_selected_items():
+                logger.debug('{}'.format(item))
+
+                selected_iter = self.nxt_model.get_iter(item)
+                if selected_iter is not None:
+                    file_name = self.nxt_model.get_value(selected_iter, 0)
+                    logger.debug('selected to delete: {}'.format(file_name))
                     try:
-                        self.app.ev3brick.del_dir(file_name)
-                        logger.debug('Directory {} deleted'.format(file_name))
-                        model.remove(selected_iter)
-                    except:
-                        logger.debug('Directory not deleted')
-                else:
-                    # is File
-                    try:
-                        self.app.ev3brick.del_file(file_name)
+                        self.app.nxt_brick.delete(file_name)
                         logger.debug('deleted: {}'.format(file_name))
-                        model.remove(selected_iter)
+                        self.nxt_model.remove(selected_iter)
                     except:
                         logger.debug('File not deleted')
-            else:
-                logger.debug('No file selected')
+
+    def delete_ev3_file(self):
+        '''delete file(s) on ev3-brick'''
+        if self.ev3_model:
+            blacklist = ['BrkDL_SAVE', 'BrkProg_SAVE', 'SD_Card']
+            
+            for item in  self.brick_view.get_selected_items():
+                logger.debug('item {}'.format(item))
+                selected_iter = self.ev3_model.get_iter(item)
+                if selected_iter is not None:
+                    name = self.ev3_model.get_value(selected_iter, COLUMN_PATH)
+                    file_name = str(Path(self.current_ev3_directory, name))
+                    logger.debug('selected to delete: {}'.format(file_name))
+                    if name in blacklist:
+                        continue
+                    if self.ev3_model.get_value(selected_iter, COLUMN_ISDIR):
+                        # is Dir
+                        try:
+                            self.app.ev3_brick.del_dir(file_name)
+                            logger.debug('Directory {} deleted'.format(file_name))
+                            self.ev3_model.remove(selected_iter)
+                        except:
+                            logger.debug('Directory not deleted')
+                    else:
+                        # is File
+                        try:
+                            self.app.ev3_brick.del_file(file_name)
+                            logger.debug('deleted: {}'.format(file_name))
+                            self.ev3_model.remove(selected_iter)
+                        except:
+                            logger.debug('File not deleted')
+                else:
+                    logger.debug('No file selected')
 
     def quit(self, *args):
-        'Quit the program'
+        '''Quit brickfiler'''
         self.window.destroy()
         return True
 
