@@ -4,6 +4,8 @@
     <file>minded.png</file>
     <file preprocess="xml-stripblanks">mindedappwin.ui</file>
     <file preprocess="xml-stripblanks">app-menu.ui</file>
+    <file preprocess="xml-stripblanks">app-menu-traditional.ui</file>
+    <file preprocess="xml-stripblanks">minded-tab-label.ui</file>
     <file preprocess="xml-stripblanks">minded-preferences-dialog.ui</file>
     <file preprocess="xml-stripblanks">about.ui</file>
     <file preprocess="xml-stripblanks">shortcuts.ui</file>
