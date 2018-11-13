@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-21 20:07+0200\n"
-"PO-Revision-Date: 2018-03-10 19:10+0100\n"
+"POT-Creation-Date: 2018-11-12 22:00+0100\n"
+"PO-Revision-Date: 2018-11-12 22:14+0100\n"
 "Last-Translator: Bernd Sellentin <sel@gge-em.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -16,6 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.2\n"
 
 #: editorapp.py:96 editorapp.py:100
 msgid "Filename {} to long!"
@@ -29,85 +30,109 @@ msgstr "Maximal erlaubt sind 15 Zeichen."
 msgid "Maximum allowable are 20 characters"
 msgstr "Maximal erlaubt sind 20 Zeichen."
 
-#: editorapp.py:107
+#: editorapp.py:106
 msgid "Filename {} unvalid!"
 msgstr "Dateiname {} ungültig!"
 
-#: editorapp.py:108
+#: editorapp.py:107
 msgid "Filename contains non-alphanumeric characters."
 msgstr "Dateiname enthält ungültige Zeichen."
 
-#: editorapp.py:234
-msgid "Pick a file"
-msgstr "Datei auswählen"
-
-#: editorapp.py:241
-msgid "Line Ending"
-msgstr ""
-
-#: editorapp.py:326
+#: editorapp.py:315
 msgid "Could not save file {}"
 msgstr "Konnte Datei {} nicht speichern."
 
-#: mindedappwin.py:274 mindedappwin.py:300
-msgid "You have to save first!"
-msgstr "Zuerst speichern!"
-
-#: mindedappwin.py:275 mindedappwin.py:301
-msgid "The compiler works on the real file."
-msgstr "Der Compiler arbeitet mit der echten Datei."
-
-#: mindedappwin.py:290 mindedappwin.py:316
-msgid "# Error: unknown file extension, expected: .nxc or .evc"
-msgstr ""
-
-#: mindedappwin.py:384 mindedappwin.py:594
-msgid "INS"
-msgstr "EINF"
-
-#: mindedappwin.py:592
-msgid "OVR"
-msgstr "ÜBS"
-
-#: mindedappwin.py:626
-msgid "No NBC-executable found!"
-msgstr "NBC-Compiler nicht gefunden!"
-
-#: mindedappwin.py:627
-msgid "not in /usr/bin, not in /usr/local/bin"
-msgstr "weder in /usr/bin, noch in /usr/local/bin"
-
-#: mindedappwin.py:669
+#: widgets.py:64
 msgid "Please choose a file"
 msgstr "Datei auswählen"
 
-#: mindedappwin.py:681
+#: widgets.py:76
 msgid "Brick files"
 msgstr "Brick Dateien"
 
-#: mindedappwin.py:687
+#: widgets.py:82
 msgid "Any files"
 msgstr "Alle Dateien"
 
-#: mindedappwin.py:697
+#: widgets.py:92
+msgid "Pick a file"
+msgstr "Datei auswählen"
+
+#: widgets.py:141
+msgid "Line Ending"
+msgstr "Zeilenende"
+
+#: widgets.py:166
 msgid "Save changes to document {} before closing?"
 msgstr "Änderunge am Dokument {} speichern?"
 
-#: mindedappwin.py:698
+#: widgets.py:168
 msgid "Close without Saving"
 msgstr "Schließen ohne speichern"
 
-#: mindedappwin.py:699
+#: widgets.py:169
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: mindedappwin.py:700
+#: widgets.py:170
 msgid "Save"
 msgstr "Speichern"
 
-#: mindedappwin.py:701
+#: widgets.py:172
 msgid "Changes to document {} will be permanently lost."
 msgstr "Änderungen am Dokument {} gehen verloren."
+
+#: mindedappwin.py:300 mindedappwin.py:326
+msgid "You have to save first!"
+msgstr "Zuerst speichern!"
+
+#: mindedappwin.py:301 mindedappwin.py:327
+msgid "The compiler works on the real file."
+msgstr "Der Compiler arbeitet mit der echten Datei."
+
+#: mindedappwin.py:316 mindedappwin.py:342
+msgid "# Error: unknown file extension, expected: .nxc or .evc"
+msgstr ""
+
+#: mindedappwin.py:414 mindedappwin.py:593
+msgid "INS"
+msgstr "EINF"
+
+#: mindedappwin.py:591
+msgid "OVR"
+msgstr "ÜBS"
+
+#: mindedappwin.py:606
+msgid "Ln {}, Col {}"
+msgstr "Z. {}, Sp. {}"
+
+#: mindedappwin.py:625
+msgid "No NBC-executable found!"
+msgstr "NBC-Compiler nicht gefunden!"
+
+#: mindedappwin.py:626
+msgid "not in /usr/bin, not in /usr/local/bin"
+msgstr "weder in /usr/bin, noch in /usr/local/bin"
+
+#: preferences.py:69
+msgid "choose NBC-file"
+msgstr "wähle NBC-Datei"
+
+#: preferences.py:76
+msgid "choose gcc-file"
+msgstr "wähle gcc-Datei"
+
+#: preferences.py:82
+msgid "choose C++-file"
+msgstr "wähle C++-Datei"
+
+#: preferences.py:88
+msgid "choose libev3api-file"
+msgstr "wähle libev3api-Datei"
+
+#: preferences.py:94
+msgid "choose ev3-header"
+msgstr "wähle ev3.h-Header"
 
 #: ../data/shortcuts.ui:13
 msgid "Documents"
@@ -147,7 +172,7 @@ msgstr "Zum vorherigen Dokument wechseln"
 
 #: ../data/shortcuts.ui:66
 msgid "Compiler"
-msgstr ""
+msgstr "Compiler"
 
 #: ../data/shortcuts.ui:70
 msgid "Compile the program"
@@ -201,181 +226,240 @@ msgstr "Markierung"
 msgid "Select all text"
 msgstr "Alles auswählen"
 
-#: ../data/mindedappwin.ui:16
-msgid "Create a new document"
-msgstr "Ein neue Datei anlegen"
+#: ../data/mindedappwin.ui:14
+msgid "text"
+msgstr ""
 
-#: ../data/mindedappwin.ui:37
-msgid "Open a file"
-msgstr "Eine Datei öffnen"
-
-#: ../data/mindedappwin.ui:61
-msgid "Save the current file"
-msgstr "Die geöffnete Datei speichern"
-
-#: ../data/mindedappwin.ui:98
-msgid "Transmit"
-msgstr "Übertragen"
-
-#: ../data/mindedappwin.ui:123
-msgid "Compile"
-msgstr "Compilieren"
-
-#: ../data/mindedappwin.ui:215
-msgid "compiler-log"
-msgstr "Compiler Log"
-
-#: ../data/mindedappwin.ui:291
+#: ../data/mindedappwin.ui:15 ../data/mindedappwin.ui:323
 msgid "Text"
 msgstr ""
 
-#: ../data/mindedappwin.ui:405
-msgid "Print…"
-msgstr "Drucken…"
-
-#: ../data/mindedappwin.ui:411
-msgid "Save As…"
-msgstr "Speichern unter…"
-
-#: ../data/mindedappwin.ui:417
-msgid "Tools"
-msgstr "Werkzeuge"
-
-#: ../data/mindedappwin.ui:421 ../data/brickinfo.ui:7
-msgid "Brick Info"
-msgstr "Stein-Info"
-
-#: ../data/mindedappwin.ui:425
-msgid "Brick Filer"
-msgstr "Brick Dateimanager"
-
-#: ../data/mindedappwin.ui:434
-msgid "API Help"
-msgstr "API-Hilfe"
-
-#: ../data/minded-preferences-dialog.ui:20 ../data/app-menu.ui:7
-msgid "Preferences"
-msgstr "Einstellungen"
-
-#: ../data/minded-preferences-dialog.ui:44
-msgid "Display line numbers"
-msgstr "Zeilennummern anzeigen"
-
-#: ../data/minded-preferences-dialog.ui:57
-msgid "Display right margin at column"
-msgstr "Rechten Rand anzeigen in Spalte"
-
-#: ../data/minded-preferences-dialog.ui:110
-msgid "Text wrapping"
+#: ../data/mindedappwin.ui:18
+msgid "nxc"
 msgstr ""
 
-#: ../data/minded-preferences-dialog.ui:127
-msgid "Enable text wrapping"
-msgstr ""
-
-#: ../data/minded-preferences-dialog.ui:159
-msgid "Highlighting"
-msgstr "Hervorhebungen"
-
-#: ../data/minded-preferences-dialog.ui:176
-msgid "Highlight current line"
-msgstr "Aktuelle Zeile hervorheben"
-
-#: ../data/minded-preferences-dialog.ui:189
-msgid "Highlight matching brackets"
-msgstr "Übereinstimmende Klammern hervorheben"
-
-#: ../data/minded-preferences-dialog.ui:220
-msgid "Tab Stops"
-msgstr "Tabulatoren"
-
-#: ../data/minded-preferences-dialog.ui:240
-msgid "Insert spaces instead of tabs"
-msgstr "An Stelle von Tabulatoren Leerzeichen einfügen"
-
-#: ../data/minded-preferences-dialog.ui:253
-msgid "Enable automatic indentation"
-msgstr "Automatischen Einzug aktivieren"
-
-#: ../data/minded-preferences-dialog.ui:269
-msgid "Tab width:"
-msgstr "Tabulatorbreite:"
-
-#: ../data/minded-preferences-dialog.ui:289
-msgid "Indent selection on tab"
-msgstr "Auswahl mit Tabulator einrücken"
-
-#: ../data/minded-preferences-dialog.ui:329
-msgid "Font"
-msgstr "Zeichensatz"
-
-#: ../data/minded-preferences-dialog.ui:350
-msgid "Editor font:"
-msgstr "Editor Zeichensatz"
-
-#: ../data/minded-preferences-dialog.ui:390
-msgid "Editor"
-msgstr ""
-
-#: ../data/minded-preferences-dialog.ui:404 ../data/brickinfo.ui:40
-#: ../data/brickinfo.ui:55 ../data/brickinfo.ui:66 ../data/brickinfo.ui:81
-#: ../data/brickinfo.ui:92 ../data/brickinfo.ui:103 ../data/brickinfo.ui:114
-#: ../data/brickinfo.ui:125 ../data/brickinfo.ui:136 ../data/brickinfo.ui:147
-#: ../data/brickinfo.ui:158 ../data/brickinfo.ui:169 ../data/brickinfo.ui:180
-msgid "label"
-msgstr ""
-
-#: ../data/minded-preferences-dialog.ui:420
+#: ../data/mindedappwin.ui:19 ../data/minded-preferences-dialog.ui:475
+#: ../data/apiviewer.ui:89
 msgid "NXC"
 msgstr "NXC"
 
-#: ../data/minded-preferences-dialog.ui:439
-msgid "no c executable found"
-msgstr "kein C-Compiler gefunden"
+#: ../data/mindedappwin.ui:22
+msgid "evc"
+msgstr ""
 
-#: ../data/minded-preferences-dialog.ui:450
-msgid "no c++ executable found"
-msgstr "kein C++-Compiler gefunden"
-
-#: ../data/minded-preferences-dialog.ui:484
-msgid "C-compiler:"
-msgstr "C-Compiler"
-
-#: ../data/minded-preferences-dialog.ui:500
-msgid "C++-compiler:"
-msgstr "C++-Compiler"
-
-#: ../data/minded-preferences-dialog.ui:538
+#: ../data/mindedappwin.ui:23 ../data/minded-preferences-dialog.ui:697
+#: ../data/apiviewer.ui:124
 msgid "EVC"
 msgstr "EVC"
 
-#: ../data/minded-preferences-dialog.ui:559
-msgid "Help"
-msgstr "Hilfe"
+#: ../data/mindedappwin.ui:26
+msgid "python"
+msgstr ""
+
+#: ../data/mindedappwin.ui:27
+msgid "Python"
+msgstr "Python"
+
+#: ../data/mindedappwin.ui:46
+msgid "Create a new document"
+msgstr "Ein neue Datei anlegen"
+
+#: ../data/mindedappwin.ui:67
+msgid "Open a file"
+msgstr "Eine Datei öffnen"
+
+#: ../data/mindedappwin.ui:91
+msgid "Save the current file"
+msgstr "Die geöffnete Datei speichern"
+
+#: ../data/mindedappwin.ui:131
+msgid "Transmit"
+msgstr "Übertragen"
+
+#: ../data/mindedappwin.ui:156
+msgid "Compile"
+msgstr "Compilieren"
+
+#: ../data/mindedappwin.ui:248
+msgid "compiler-log"
+msgstr "Compiler Log"
+
+#: ../data/mindedappwin.ui:431
+msgid "language"
+msgstr ""
+
+#: ../data/mindedappwin.ui:449
+msgid "Print…"
+msgstr "Drucken…"
+
+#: ../data/mindedappwin.ui:455
+msgid "Save As…"
+msgstr "Speichern unter…"
+
+#: ../data/mindedappwin.ui:461
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: ../data/mindedappwin.ui:465 ../data/brickinfo.ui:7
+msgid "Brick Info"
+msgstr "Stein-Info"
+
+#: ../data/mindedappwin.ui:469
+msgid "Brick Filer"
+msgstr "Brick Dateimanager"
+
+#: ../data/mindedappwin.ui:478
+msgid "API Help"
+msgstr "API-Hilfe"
+
+#: ../data/app-menu-traditional.ui:7 ../data/minded-preferences-dialog.ui:20
+#: ../data/app-menu.ui:7
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: ../data/app-menu-traditional.ui:11 ../data/app-menu.ui:15
+msgid "About"
+msgstr "Über"
+
+#: ../data/app-menu-traditional.ui:17 ../data/app-menu.ui:21
+msgid "Quit"
+msgstr "Beenden"
+
+#: ../data/minded-preferences-dialog.ui:47
+msgid "Display line numbers"
+msgstr "Zeilennummern anzeigen"
+
+#: ../data/minded-preferences-dialog.ui:60
+msgid "Display right margin at column"
+msgstr "Rechten Rand anzeigen in Spalte"
+
+#: ../data/minded-preferences-dialog.ui:112
+msgid "Text wrapping"
+msgstr "Textumbruch"
+
+#: ../data/minded-preferences-dialog.ui:129
+msgid "Enable text wrapping"
+msgstr "Textumbruch aktivieren"
+
+#: ../data/minded-preferences-dialog.ui:160
+msgid "Highlighting"
+msgstr "Hervorhebungen"
+
+#: ../data/minded-preferences-dialog.ui:177
+msgid "Highlight current line"
+msgstr "Aktuelle Zeile hervorheben"
+
+#: ../data/minded-preferences-dialog.ui:190
+msgid "Highlight matching brackets"
+msgstr "Übereinstimmende Klammern hervorheben"
+
+#: ../data/minded-preferences-dialog.ui:221
+msgid "Tab Stops"
+msgstr "Tabulatoren"
+
+#: ../data/minded-preferences-dialog.ui:241
+msgid "Insert spaces instead of tabs"
+msgstr "An Stelle von Tabulatoren Leerzeichen einfügen"
+
+#: ../data/minded-preferences-dialog.ui:254
+msgid "Enable automatic indentation"
+msgstr "Automatischen Einzug aktivieren"
+
+#: ../data/minded-preferences-dialog.ui:270
+msgid "Tab width:"
+msgstr "Tabulatorbreite:"
+
+#: ../data/minded-preferences-dialog.ui:290
+msgid "Indent selection on tab"
+msgstr "Auswahl mit Tabulator einrücken"
+
+#: ../data/minded-preferences-dialog.ui:330
+msgid "Font"
+msgstr "Zeichensatz"
+
+#: ../data/minded-preferences-dialog.ui:351
+msgid "Editor font:"
+msgstr "Editor Zeichensatz"
+
+#: ../data/minded-preferences-dialog.ui:391
+msgid "Editor"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:413
+msgid "NBC-compiler"
+msgstr "NBC-Compiler"
+
+#: ../data/minded-preferences-dialog.ui:424
+msgid "no NBC executable found"
+msgstr "NBC-Compiler nicht gefunden"
+
+#: ../data/minded-preferences-dialog.ui:448
+msgid "use enhanced NBC/NQC-firmware"
+msgstr "verbesserte NBC/NQC-Firmware nutzen"
+
+#: ../data/minded-preferences-dialog.ui:497
+msgid "C-compiler"
+msgstr "C-Compiler"
+
+#: ../data/minded-preferences-dialog.ui:511
+msgid "Path to libev3api"
+msgstr "Pfad zur libev3api"
+
+#: ../data/minded-preferences-dialog.ui:525
+msgid "Path to headers"
+msgstr "Pfad zu EV3-Header"
+
+#: ../data/minded-preferences-dialog.ui:539
+msgid "C++-compiler"
+msgstr "C++-Compiler"
+
+#: ../data/minded-preferences-dialog.ui:550
+msgid "no c executable found"
+msgstr "C-Compiler nicht gefunden"
+
+#: ../data/minded-preferences-dialog.ui:561
+msgid "no library found"
+msgstr "libev3api nicht gefunden"
 
 #: ../data/minded-preferences-dialog.ui:572
-msgid "Close"
-msgstr "Schließen"
+msgid "no headers found"
+msgstr "EV3-Header nicht gefunden"
+
+#: ../data/minded-preferences-dialog.ui:583
+msgid "no c++ executable found"
+msgstr "C++-Compiler nicht gefunden"
 
 #: ../data/brickinfo.ui:28
 msgid "Brick name"
 msgstr "Stein-Name"
 
-#: ../data/brickinfo.ui:251
+#: ../data/brickinfo.ui:41 ../data/brickinfo.ui:54 ../data/brickinfo.ui:66
+#: ../data/brickinfo.ui:79 ../data/brickinfo.ui:91 ../data/brickinfo.ui:103
+#: ../data/brickinfo.ui:115 ../data/brickinfo.ui:127 ../data/brickinfo.ui:139
+#: ../data/brickinfo.ui:151 ../data/brickinfo.ui:163 ../data/brickinfo.ui:175
+#: ../data/brickinfo.ui:187 ../data/apiviewer.ui:153 ../data/apiviewer.ui:167
+msgid "label"
+msgstr ""
+
+#: ../data/brickinfo.ui:259
 msgid "Refresh"
 msgstr "Neu laden"
+
+#: ../data/minded-tab-label.ui:17
+msgid "Close Document"
+msgstr "Dokument schließen"
 
 #: ../data/app-menu.ui:11
 msgid "Keyboard Shortcuts"
 msgstr "Tastenkürzel"
 
-#: ../data/app-menu.ui:15
-msgid "About"
-msgstr "Über"
+#: ../data/apiviewer.ui:75
+msgid "NXC functions"
+msgstr "NXC-Funktionen"
 
-#: ../data/app-menu.ui:21
-msgid "Quit"
-msgstr "Beenden"
+#: ../data/apiviewer.ui:110
+msgid "EVC functions"
+msgstr "EVC-Funktionen"
 
 #: ../data/about.ui:11
 msgid "An Editor for LEGO Mindstorms Bricks"
@@ -384,3 +468,15 @@ msgstr "Ein Editor für LEGO Mindstorms Steine"
 #: ../data/about.ui:13
 msgid "MindEd Website"
 msgstr "Minded Website"
+
+#~ msgid "C-compiler:"
+#~ msgstr "C-Compiler"
+
+#~ msgid "C++-compiler:"
+#~ msgstr "C++-Compiler"
+
+#~ msgid "Help"
+#~ msgstr "Hilfe"
+
+#~ msgid "Close"
+#~ msgstr "Schließen"
