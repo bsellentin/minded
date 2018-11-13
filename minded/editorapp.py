@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 '''
@@ -33,12 +32,14 @@ gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
 from minded.brickcompletionprovider import BrickCompletionProvider
+from minded.widgets import ErrorDialog, FileSaveDialog
 
 LOGGER = logging.getLogger(__name__)
 
-SIMPLE_COMPLETE = 0
-
 class MindEdDocument(GtkSource.File):
+    '''
+    representation of a file
+    '''
 
     untitledDocCount = 0
 
@@ -145,28 +146,23 @@ class EditorApp(Gtk.ScrolledWindow):
         sid = GtkSource.StyleSchemeManager.get_scheme(sm, 'minded')
         self.buffer.set_style_scheme(sid)
 
-        self.settings.bind('linenumbers', self.codeview, 'show-line-numbers',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('showrightmargin', self.codeview, 'show-right-margin',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('setrightmargin', self.codeview, 'right-margin-position',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('autoindent', self.codeview, 'auto-indent',
-                           Gio.SettingsBindFlags.DEFAULT)
-        # selected lines are indented instead of being replaced, shift+tab unindents
-        self.settings.bind('indentontab', self.codeview, 'indent-on-tab',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('tabwidth', self.codeview, 'tab-width',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('spacesinsteadtab', self.codeview, 'insert-spaces-instead-of-tabs',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('highlightcurrentline', self.codeview, 'highlight-current-line',
-                           Gio.SettingsBindFlags.DEFAULT)
+        setters = [
+            ['linenumbers', 'show-line-numbers'],
+            ['showrightmargin', 'show-right-margin'],
+            ['setrightmargin', 'right-margin-position'],
+            ['autoindent', 'auto-indent'],
+            ['indentontab', 'indent-on-tab'],
+            ['tabwidth', 'tab-width'],
+            ['spacesinsteadtab', 'insert-spaces-instead-of-tabs'],
+            ['highlightcurrentline', 'highlight-current-line'],
+            ['smartbackspace', 'smart-backspace'],
+            ['linewrapmode', 'wrap-mode']
+        ]
+        for setter in setters:
+            self.settings.bind(setter[0], self.codeview, setter[1], Gio.SettingsBindFlags.DEFAULT)
+        del setters
+
         self.settings.bind('highlightmatchingbrackets', self.buffer, 'highlight-matching-brackets',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('smartbackspace', self.codeview, 'smart-backspace',
-                           Gio.SettingsBindFlags.DEFAULT)
-        self.settings.bind('linewrapmode', self.codeview, 'wrap-mode',
                            Gio.SettingsBindFlags.DEFAULT)
 
         self.codeview.override_font(Pango.FontDescription(
@@ -233,35 +229,20 @@ class EditorApp(Gtk.ScrolledWindow):
             LOGGER.debug('Could not load {}'.format(document.get_path()))
 
     def save_file_as(self, close_tab):
-        '''save MindEdDocument async'''
+        '''
+        save MindEdDocument async
+        '''
 
         LOGGER.debug('dialog save_file_as: {}'.format(self.document.get_uri()))
-
-        save_dialog = Gtk.FileChooserDialog(_('Pick a file'), self.mindedappwin,
-                                            Gtk.FileChooserAction.SAVE,
-                                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                             Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
-        save_dialog.set_do_overwrite_confirmation(True)
-        save_dialog.set_local_only(False)
-
-        save_dialog.add_choice('newline_type', _('Line Ending'),
-            ['linux', 'mac', 'windows'],
-            ['Unix/Linux', 'Mac OS', 'Windows'])
-        save_dialog.set_choice('newline_type', 'windows')
-
-        try:
-            save_dialog.set_uri(self.document.get_uri())
-        except GObject.GError as e:
-            LOGGER.error('# Error: {}'.format(e.message))
-
+        save_dialog = FileSaveDialog(self.mindedappwin, self.document)
         save_dialog.connect('response', self.save_file_as_response, close_tab)
         save_dialog.show()
 
     def save_file_as_response(self, dialog, response, close_tab):
 
-        save_dialog = dialog
+        #save_dialog = dialog
         if response == Gtk.ResponseType.ACCEPT:
-            filename = Path(save_dialog.get_filename())  # or uri?
+            filename = Path(dialog.get_filename())  # or uri?
 
             # check for right suffix
             if self.this_lang:
@@ -289,12 +270,13 @@ class EditorApp(Gtk.ScrolledWindow):
                 newline_types = {'linux': GtkSource.NewlineType.LF,
                                  'mac' : GtkSource.NewlineType.CR,
                                  'windows': GtkSource.NewlineType.CR_LF}
-                self.save_file_async(close_tab, newline_types.get(save_dialog.get_choice('newline_type')))
+                self.save_file_async(close_tab,
+                                     newline_types.get(dialog.get_choice('newline_type')))
 
                 dialog.destroy()
             else:
-                self.mindedappwin.dlg_something_wrong(save_dialog, msgtupel[0], msgtupel[1])
-                save_dialog.set_uri(self.document.get_uri())
+                ErrorDialog(dialog, msgtupel[0], msgtupel[1])
+                dialog.set_uri(self.document.get_uri())
 
         elif response == Gtk.ResponseType.CANCEL:
             LOGGER.debug('cancelled: SAVE AS')
@@ -320,15 +302,16 @@ class EditorApp(Gtk.ScrolledWindow):
                 LOGGER.error('# Error: {}'.format(e.message))
 
     def on_save_async_finish(self, source, result, close_tab):
-
+        '''
+        wait for async-saving to finish
+        '''
         try:
-            # async saving, we have to wait for finish before removing
             success = source.save_finish(result)
             LOGGER.debug('file {} saved async {}'.format(self.document.get_uri(), success))
 
         except GObject.GError as e:
             LOGGER.error('problem saving file {}'.format(e.message))
-            self.mindedappwin.dlg_something_wrong(self,
+            ErrorDialog(self,
                 _('Could not save file {}').format(self.document.get_uri()),
                 e.message)
         else:
@@ -350,8 +333,15 @@ class EditorApp(Gtk.ScrolledWindow):
                 # change headerbar
                 self.mindedappwin.set_title(self.document)
 
+        if not self.mindedappwin.can_close:
+            # there was window-delete-event, but modified document
+            self.mindedappwin.can_close = True
+            self.mindedappwin.gtk_main_quit()
+
     def set_completion(self, document):
-        ''' set syntax highlight and completion '''
+        '''
+        set syntax highlight and completion
+        '''
         self.this_lang = self.lm.guess_language(document.get_path(), None)
         if self.this_lang:
             if not self.buffer.get_highlight_syntax():
@@ -491,10 +481,26 @@ class EditorApp(Gtk.ScrolledWindow):
                 handled = True
             # snippets
             else:
-                line_start = iter1.copy()
-                line_start.backward_visible_line()
-                snippet = iter1.backward_search('skel',
-                    Gtk.TextSearchFlags.VISIBLE_ONLY, line_start)
+                # this runs on Debian Buster, but not on Ubuntu Xenial
+                #line_start = iter1.copy()
+                #line_start.backward_visible_line()
+                #snippet = iter1.backward_search('skel',
+                #    Gtk.TextSearchFlags.VISIBLE_ONLY, line_start)
+
+                # idea from gedit-3.18/plugins/snippets/document.py L600
+                start = iter1.copy()
+                while start.backward_char():
+                    c = start.get_char()
+                    if start.starts_word():
+                        break
+                if not start.equal(iter1):
+                    word = doc.get_text(start, iter1, False)
+                    LOGGER.debug(word)
+                    if word == 'skel':
+                        snippet = (start, iter1)
+                    else:
+                        snippet = None
+
                 if snippet:
                     LOGGER.debug('insert snippet')
                     language = doc.get_language()
@@ -526,6 +532,9 @@ class EditorApp(Gtk.ScrolledWindow):
                             doc.place_cursor(token_start)
                         doc.end_user_action()
                         handled = True
+                else:
+                    LOGGER.debug('no snippet')
+
         return handled
 
     def to_char(self, keyval_or_char):
