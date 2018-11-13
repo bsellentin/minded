@@ -31,17 +31,17 @@ class BrickInfo():
 
         # Look for Brick
         self.brick_type = None
-        if self.app.nxtbrick:
-            LOGGER.debug('got app.nxtbrick')
+        if self.app.nxt_brick:
+            LOGGER.debug('got app.nxt_brick')
             self.brick_type = 'nxt'
         else:
-            LOGGER.debug('no app.nxtbrick')
+            LOGGER.debug('no app.nxt_brick')
 
-        if self.app.ev3brick:
-            LOGGER.debug('got app.ev3brick')
+        if self.app.ev3_brick:
+            LOGGER.debug('got app.ev3_brick')
             self.brick_type = 'ev3'
         else:
-            LOGGER.debug('no app.ev3brick')
+            LOGGER.debug('no app.ev3_brick')
 
         self.get_brickinfo()
 
@@ -49,9 +49,9 @@ class BrickInfo():
         ''' get name, fimware-version, free memory etc. '''
         if self.brick_type == 'nxt':
             #try:
-            name, host, signal_strength, user_flash = self.app.nxtbrick.get_device_info()
-            prot_version, fw_version = self.app.nxtbrick.get_firmware_version()
-            volts = self.app.nxtbrick.get_battery_level()/1000
+            name, host, signal_strength, user_flash = self.app.nxt_brick.get_device_info()
+            prot_version, fw_version = self.app.nxt_brick.get_firmware_version()
+            volts = self.app.nxt_brick.get_battery_level()/1000
 
             nxclist = [('%s.%s' % fw_version), 'Firmware version:',
                        ('%1.2f V' % volts), 'Battery level:',
@@ -68,10 +68,10 @@ class BrickInfo():
 
         if self.brick_type == 'ev3':
             #try:
-            self.app.ev3brick.usb_ready()
-            name = self.app.ev3brick.get_brickname()
-            (hw_version, fw_version, os_version, free_mem) = self.app.ev3brick.get_brickinfo()
-            volts = self.app.ev3brick.get_vbatt()
+            self.app.ev3_brick.usb_ready()
+            name = self.app.ev3_brick.get_brickname()
+            (hw_version, fw_version, os_version, free_mem) = self.app.ev3_brick.get_brickinfo()
+            volts = self.app.ev3_brick.get_vbatt()
 
             evclist = [fw_version, 'Firmware version:',
                        ('%d KB' % free_mem), 'Free user flash:',
@@ -115,9 +115,9 @@ class BrickInfo():
         if response == Gtk.ResponseType.OK:
             LOGGER.debug(name.get_text())
             if self.brick_type == 'nxt':
-                self.app.nxtbrick.set_brick_name(name.get_text())
+                self.app.nxt_brick.set_brick_name(name.get_text())
             if self.brick_type == 'ev3':
-                self.app.ev3brick.set_brickname(name.get_text())
+                self.app.ev3_brick.set_brickname(name.get_text())
             self.get_brickinfo()
 
         elif response == Gtk.ResponseType.CANCEL:
