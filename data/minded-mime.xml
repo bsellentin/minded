@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/x-evc">
-    <comment>MindEd EV3 file</comment>
+    <comment>MindEd EVC-file</comment>
+    <comment xml:lang="de">MindEd EVC-Datei</comment>
+    <sub-class-of type="text/plain"/>
+    <generic-icon name="text-x-generic"/>
     <glob pattern="*.evc"/>
   </mime-type>
   <mime-type type="application/x-nxc">
-    <comment>MindEd NXT file</comment>
+    <comment>MindEd NXC-file</comment>
+    <comment xml:lang="de">MindEd NXC-Datei</comment>
+    <sub-class-of type="text/plain"/>
+    <generic-icon name="text-x-generic"/>
     <glob pattern="*.nxc"/>
   </mime-type>
 </mime-info>
