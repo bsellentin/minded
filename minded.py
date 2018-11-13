@@ -24,6 +24,13 @@
 import sys
 from pathlib import Path
 
+
+# internationalization
+import locale
+import gettext
+
+import logging
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
@@ -38,11 +45,6 @@ import nxt.locator
 from minded.mindedappwin import MindEdAppWin
 from minded.preferences import PreferencesDialog
 
-# internationalization
-import locale
-import gettext
-
-import logging
 LOGGER = logging.getLogger(__name__)
 
 APP_NAME = "minded"
@@ -71,15 +73,15 @@ class MindEdApp(Gtk.Application):
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
-        self.version = "0.7.9"
+        self.version = "0.7.11"
 
         self.args = ()
         self.filelist = []
         self.settings = ''
         # USB client
         self.client = None
-        self.nxtbrick = None
-        self.ev3brick = None
+        self.nxt_brick = None
+        self.ev3_brick = None
 
         self.add_main_option_entries([
             make_option("debug", description="Show debug information on the console"),
@@ -143,88 +145,25 @@ class MindEdApp(Gtk.Application):
         self.set_accels_for_action('app.quit', ['<Control>Q'])
 
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/gge-em/MindEd/app-menu.ui')
+        if Gtk.get_minor_version() > 18:
+            # use GtkShortcutsWindow
+            builder.add_from_resource('/org/gge-em/MindEd/app-menu.ui')
+        else:
+            builder.add_from_resource('/org/gge-em/MindEd/app-menu-traditional.ui')
         self.set_app_menu(builder.get_object("appmenu"))
 
     def do_activate(self):
+
         # Listen to uevent
         self.client = GUdev.Client(subsystems=["usb"])
         self.client.connect("uevent", self.on_uevent)
 
-        # Look for brick
-
         for device in self.client.query_by_subsystem("usb"):
-            # NXT
-            if (device.get_property('ID_VENDOR') == '0694' and
-                    device.get_property('ID_MODEL') == '0002'):
-                if LOGGER.isEnabledFor(logging.DEBUG):
-                    for device_key in device.get_property_keys():
-                        LOGGER.debug("   device property %s: %s", device_key,
-                                     device.get_property(device_key))
-                try:
-                    LOGGER.debug("NXT-lib: %s", nxt.locator.__file__)
-                    #self.brick = nxt.locator.find_one_brick(keyword_arguments.get('host',None))
-                    self.nxtbrick = nxt.locator.find_one_brick()
-                except:
-                    LOGGER.warning('nxt-python failure')
+            if self.look_for_brick(device):
+                break
 
-            # EV3
-            if (device.get_property('ID_VENDOR_ID') == '0694' and
-                    device.get_property('ID_MODEL_ID') == '0005'):
-                if LOGGER.isEnabledFor(logging.DEBUG):
-                    for device_key in device.get_property_keys():
-                        LOGGER.debug("   device property %s: %s", device_key,
-                                     device.get_property(device_key))
-                try:
-                    self.ev3brick = ev3.EV3()
-                    self.ev3brick.do_nothing()
-                except:
-                    LOGGER.warning('ev3-python failure')
-
-        # nbc compiler
-        if not self.settings.get_string('nbcpath'):
-            if Path('/usr/bin/nbc').is_file():
-                self.settings.set_string('nbcpath', '/usr/bin/nbc')
-            elif Path('/usr/local/bin/nbc').is_file():
-                self.settings.set_string('nbcpath', '/usr/local/bin/nbc')
-            else:
-                LOGGER.warning('no nbc executable found')
-        # c compiler
-        if not self.settings.get_string('armgcc'):
-            if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():              # Debian-stretch
-                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-6')   # package gcc-6-arm-linux-gnueabi
-            elif Path('/usr/bin/arm-linux-gnueabi-gcc').is_file():              # Ubuntu xenial
-                self.settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-5')
-            else:
-                LOGGER.warning('no arm-gcc executable found')
-        # c++ compiler
-        if not self.settings.get_string('armgplusplus'):
-            if Path('/usr/bin/arm-linux-gnueabi-g++-6').is_file():
-                self.settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-6')
-            elif Path('/usr/bin/arm-linux-gnueabi-g++-5').is_file():            # Ubuntu xenial
-                self.settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-5')   # package g++-5-arm-linux-gnueabi
-            else:
-                LOGGER.warning('no arm-g++ executable found')
-        # check for ev3-library, development first
-        if Path('./EV3-API/API/libev3api.a').is_file():
-            self.settings.set_string('ldflags', ' -L' + str(Path('./EV3-API/API').resolve()))
-        # systemwide installation
-        elif not self.settings.get_string('ldflags'):
-            if Path('/usr/lib/c4ev3/libev3api.a').is_file():
-                self.settings.set_string('ldflags', ' -L/usr/lib/c4ev3')
-            else:
-                LOGGER.warning('EV3 library not found')
-        if Path('./EV3-API/API').is_dir():
-            self.settings.set_string('incs', ' -I' + str(Path('./EV3-API/API').resolve()))
-        elif not self.settings.get_string('incs'):
-            if Path('/usr/lib/c4ev3').is_dir():
-                self.settings.set_string('incs', ' -I/usr/lib/c4ev3')
-            else:
-                LOGGER.warning('EV3 headers not found')
-
-        if not self.settings.get_string('prjsstore'):
-            self.settings.set_string('prjsstore', '/home/root/lms2012/prjs')
-            #TODO: if SD-card, check avaibility
+        #self.look_for_settings(self.settings)
+        look_for_settings(self.settings)
 
         if not self.win:
             self.win = MindEdAppWin(self.filelist, application=self)
@@ -255,6 +194,39 @@ class MindEdApp(Gtk.Application):
         self.activate()
         return 0
 
+    def look_for_brick(self, device):
+        '''
+        look for LEGO-brick and initialize it
+        '''
+
+        if '694/2' in device.get_property('PRODUCT'):
+            LOGGER.debug('found NXT')
+            #if LOGGER.isEnabledFor(logging.DEBUG):
+            #    for device_key in device.get_property_keys():
+            #        LOGGER.debug("   device property %s: %s", device_key,
+            #                     device.get_property(device_key))
+            try:
+                #LOGGER.debug("NXT-lib: %s", nxt.locator.__file__)
+                self.nxt_brick = nxt.locator.find_one_brick()
+                return 'nxt'
+            except Exception as e:
+                LOGGER.warning('nxt-python failure: %s' % e)
+
+        elif '694/5' in device.get_property('PRODUCT'):
+            LOGGER.debug('found EV3')
+            #if LOGGER.isEnabledFor(logging.DEBUG):
+            #    for device_key in device.get_property_keys():
+            #        LOGGER.debug("   device property %s: %s", device_key,
+            #                     device.get_property(device_key))
+            try:
+                self.ev3_brick = ev3.EV3()
+                #self.ev3_brick.do_nothing()
+                return 'ev3'
+            except Exception as e:
+                LOGGER.warning('ev3-python failure: %s' % e)
+
+        return None
+
     def on_uevent(self, client, action, device):
         ''' report plugin-event to application'''
         if LOGGER.isEnabledFor(logging.DEBUG):
@@ -264,33 +236,20 @@ class MindEdApp(Gtk.Application):
 
         if action == "add":
             # only LEGO-devices
-            if (device.get_property('ID_VENDOR') == '0694' or
-                    device.get_property('ID_VENDOR_ID') == '0694'):
-                # NXT
-                if device.get_property('ID_MODEL') == '0002':
-                    LOGGER.debug(' uevent: added NXT')
-                    self.win.brick_status.push(self.win.brick_status_id, "NXT")
-                    self.win.transmit_action.set_enabled(True)
-
-                    try:
-                        self.nxtbrick = nxt.locator.find_one_brick()
-                    except:
-                        LOGGER.warning('nxt-python failure')
-
-                    try:
-                        self.win.nxt_filer.nxt_model.populate(self.brick, '*.*')
-                    except AttributeError:
-                        pass
-                # EV3
-                elif device.get_property('ID_MODEL_ID') == '0005':
-                    LOGGER.debug(' uevent: added EV3')
-                    self.win.brick_status.push(self.win.brick_status_id, "EV3")
-                    self.win.transmit_action.set_enabled(True)
-                    try:
-                        self.ev3brick = ev3.EV3()
-                        self.ev3brick.do_nothing()
-                    except:
-                        LOGGER.warning('ev3-python failure')
+            if self.look_for_brick(device) == 'nxt':
+                LOGGER.debug(' uevent: added NXT')
+                self.win.brick_status.push(self.win.brick_status_id, "NXT")
+                self.win.transmit_action.set_enabled(True)
+                #try:
+                #    self.win.nxt_filer.nxt_model.populate(self.brick, '*.*')
+                #except AttributeError:
+                #    pass
+            elif self.look_for_brick(device) == 'ev3':
+                LOGGER.debug(' uevent: added EV3')
+                self.win.brick_status.push(self.win.brick_status_id, "EV3")
+                self.win.transmit_action.set_enabled(True)
+            else:
+                pass
 
         # newer libgudev returns on remove ID_VENDOR None
         if action == 'remove':
@@ -299,16 +258,13 @@ class MindEdApp(Gtk.Application):
                 LOGGER.debug(' uevent: removed EV3')
                 self.win.brick_status.pop(self.win.brick_status_id)
                 self.win.transmit_action.set_enabled(False)
-                self.ev3brick.close()
+                self.ev3_brick = None
             if '694/2' in device.get_property('PRODUCT'):
                 # NXT PRODUCT 694/2/0
                 LOGGER.debug(' uevent: removed NXT')
                 self.win.brick_status.pop(self.win.brick_status_id)
                 self.win.transmit_action.set_enabled(False)
-                try:
-                    self.win.nxt_filer.nxt_model.clear()
-                except AttributeError:
-                    pass
+                self.nxt_brick = None
 
     def on_preferences(self, action, param):
         ''' Gio.SimpleAction preferences '''
@@ -321,20 +277,78 @@ class MindEdApp(Gtk.Application):
         ''' Gio.SimpleAction shortcuts '''
         builder = Gtk.Builder()
         builder.add_from_resource('/org/gge-em/MindEd/shortcuts.ui')
-        self.shortcuts_win = builder.get_object('shortcuts-minded')
-        self.shortcuts_win.show_all()
+        shortcuts_win = builder.get_object('shortcuts-minded')
+        shortcuts_win.set_transient_for(self.win)
+        shortcuts_win.show_all()
 
     def on_about(self, action, param):
         ''' Gio.SimpleAction about '''
         builder = Gtk.Builder()
         builder.add_from_resource('/org/gge-em/MindEd/about.ui')
-        self.about_win = builder.get_object('about-dlg')
-        self.about_win.set_version(self.version)
-        self.about_win.set_transient_for(self.win)
-        self.about_win.show_all()
+        about_win = builder.get_object('about-dlg')
+        about_win.set_version(self.version)
+        about_win.set_transient_for(self.win)
+        about_win.show_all()
 
     def on_quit(self, action, param):
+        '''
+        quit application
+        '''
         self.win.gtk_main_quit()
+
+def look_for_settings(settings):
+    '''
+    look for settings, if none - set defaults
+    '''
+    # nbc compiler
+    if not Path(settings.get_string('nbcpath')).is_file():
+        if Path('/usr/bin/nbc').is_file():
+            settings.set_string('nbcpath', '/usr/bin/nbc')
+        elif Path('/usr/local/bin/nbc').is_file():
+            settings.set_string('nbcpath', '/usr/local/bin/nbc')
+        else:
+            LOGGER.warning('no nbc executable found')
+    # arm-c compiler
+    if not Path(settings.get_string('armgcc')).is_file():
+        # Debian-stretch
+        if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():
+            # package gcc-6-arm-linux-gnueabi
+            settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-6')
+        # Ubuntu xenial
+        elif Path('/usr/bin/arm-linux-gnueabi-gcc-5').is_file():
+            settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-5')
+        else:
+            LOGGER.warning('no arm-gcc executable found')
+    # c++ compiler
+    if not Path(settings.get_string('armgplusplus')).is_file():
+        if Path('/usr/bin/arm-linux-gnueabi-g++-6').is_file():
+            settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-6')
+        # Ubuntu xenial
+        elif Path('/usr/bin/arm-linux-gnueabi-g++-5').is_file():
+            # package g++-5-arm-linux-gnueabi
+            settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-5')
+        else:
+            LOGGER.warning('no arm-g++ executable found')
+    # check for ev3-library, development first
+    if Path('./EV3-API/API/libev3api.a').is_file():
+        settings.set_string('ldflags', str(Path('./EV3-API/API').resolve()))
+    # systemwide installation
+    elif not Path(settings.get_string('ldflags')).is_file():
+        if Path('/usr/lib/c4ev3/libev3api.a').is_file():
+            settings.set_string('ldflags', '/usr/lib/c4ev3')
+        else:
+            LOGGER.warning('EV3 library not found')
+    if Path('./EV3-API/API').is_dir():
+        settings.set_string('incs', str(Path('./EV3-API/API').resolve()))
+    elif not Path(settings.get_string('incs')).is_dir():
+        if Path('/usr/lib/c4ev3').is_dir():
+            settings.set_string('incs', '/usr/lib/c4ev3')
+        else:
+            LOGGER.warning('EV3 headers not found')
+
+    if not settings.get_string('prjsstore'):
+        settings.set_string('prjsstore', '/home/root/lms2012/prjs')
+        #TODO: if SD-card, check avaibility
 
 if __name__ == "__main__":
     APP = MindEdApp()
