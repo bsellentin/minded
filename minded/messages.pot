@@ -1,0 +1,469 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-12 22:00+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: editorapp.py:96 editorapp.py:100
+msgid "Filename {} to long!"
+msgstr ""
+
+#: editorapp.py:97
+msgid "Maximum allowable are 15 characters"
+msgstr ""
+
+#: editorapp.py:101
+msgid "Maximum allowable are 20 characters"
+msgstr ""
+
+#: editorapp.py:106
+msgid "Filename {} unvalid!"
+msgstr ""
+
+#: editorapp.py:107
+msgid "Filename contains non-alphanumeric characters."
+msgstr ""
+
+#: editorapp.py:315
+msgid "Could not save file {}"
+msgstr ""
+
+#: widgets.py:64
+msgid "Please choose a file"
+msgstr ""
+
+#: widgets.py:76
+msgid "Brick files"
+msgstr ""
+
+#: widgets.py:82
+msgid "Any files"
+msgstr ""
+
+#: widgets.py:92
+msgid "Pick a file"
+msgstr ""
+
+#: widgets.py:141
+msgid "Line Ending"
+msgstr ""
+
+#: widgets.py:166
+msgid "Save changes to document {} before closing?"
+msgstr ""
+
+#: widgets.py:168
+msgid "Close without Saving"
+msgstr ""
+
+#: widgets.py:169
+msgid "Cancel"
+msgstr ""
+
+#: widgets.py:170
+msgid "Save"
+msgstr ""
+
+#: widgets.py:172
+msgid "Changes to document {} will be permanently lost."
+msgstr ""
+
+#: mindedappwin.py:300 mindedappwin.py:326
+msgid "You have to save first!"
+msgstr ""
+
+#: mindedappwin.py:301 mindedappwin.py:327
+msgid "The compiler works on the real file."
+msgstr ""
+
+#: mindedappwin.py:316 mindedappwin.py:342
+msgid "# Error: unknown file extension, expected: .nxc or .evc"
+msgstr ""
+
+#: mindedappwin.py:414 mindedappwin.py:593
+msgid "INS"
+msgstr ""
+
+#: mindedappwin.py:591
+msgid "OVR"
+msgstr ""
+
+#: mindedappwin.py:606
+msgid "Ln {}, Col {}"
+msgstr ""
+
+#: mindedappwin.py:625
+msgid "No NBC-executable found!"
+msgstr ""
+
+#: mindedappwin.py:626
+msgid "not in /usr/bin, not in /usr/local/bin"
+msgstr ""
+
+#: preferences.py:69
+msgid "choose NBC-file"
+msgstr ""
+
+#: preferences.py:76
+msgid "choose gcc-file"
+msgstr ""
+
+#: preferences.py:82
+msgid "choose C++-file"
+msgstr ""
+
+#: preferences.py:88
+msgid "choose libev3api-file"
+msgstr ""
+
+#: preferences.py:94
+msgid "choose ev3-header"
+msgstr ""
+
+#: ../data/shortcuts.ui:13
+msgid "Documents"
+msgstr ""
+
+#: ../data/shortcuts.ui:17
+msgid "Create new document"
+msgstr ""
+
+#: ../data/shortcuts.ui:23
+msgid "Open a document"
+msgstr ""
+
+#: ../data/shortcuts.ui:29
+msgid "Save the document"
+msgstr ""
+
+#: ../data/shortcuts.ui:35
+msgid "Save document as"
+msgstr ""
+
+#: ../data/shortcuts.ui:41
+msgid "Close the document"
+msgstr ""
+
+#: ../data/shortcuts.ui:47
+msgid "Print the document"
+msgstr ""
+
+#: ../data/shortcuts.ui:53
+msgid "Switch to the next document"
+msgstr ""
+
+#: ../data/shortcuts.ui:59
+msgid "Switch to the previous document"
+msgstr ""
+
+#: ../data/shortcuts.ui:66
+msgid "Compiler"
+msgstr ""
+
+#: ../data/shortcuts.ui:70
+msgid "Compile the program"
+msgstr ""
+
+#: ../data/shortcuts.ui:76
+msgid "Transmit program to brick"
+msgstr ""
+
+#: ../data/shortcuts.ui:83
+msgid "Windows"
+msgstr ""
+
+#: ../data/shortcuts.ui:87
+msgid "Quit the application"
+msgstr ""
+
+#: ../data/shortcuts.ui:94
+msgid "Copy and Paste"
+msgstr ""
+
+#: ../data/shortcuts.ui:98
+msgid "Copy selected text to clipboard"
+msgstr ""
+
+#: ../data/shortcuts.ui:104
+msgid "Cut selected text to clipboard"
+msgstr ""
+
+#: ../data/shortcuts.ui:110
+msgid "Paste text from clipboard"
+msgstr ""
+
+#: ../data/shortcuts.ui:117
+msgid "Undo and Redo"
+msgstr ""
+
+#: ../data/shortcuts.ui:121
+msgid "Undo previous command"
+msgstr ""
+
+#: ../data/shortcuts.ui:127
+msgid "Redo previous command"
+msgstr ""
+
+#: ../data/shortcuts.ui:134
+msgid "Selection"
+msgstr ""
+
+#: ../data/shortcuts.ui:138
+msgid "Select all text"
+msgstr ""
+
+#: ../data/mindedappwin.ui:14
+msgid "text"
+msgstr ""
+
+#: ../data/mindedappwin.ui:15 ../data/mindedappwin.ui:323
+msgid "Text"
+msgstr ""
+
+#: ../data/mindedappwin.ui:18
+msgid "nxc"
+msgstr ""
+
+#: ../data/mindedappwin.ui:19 ../data/minded-preferences-dialog.ui:475
+#: ../data/apiviewer.ui:89
+msgid "NXC"
+msgstr ""
+
+#: ../data/mindedappwin.ui:22
+msgid "evc"
+msgstr ""
+
+#: ../data/mindedappwin.ui:23 ../data/minded-preferences-dialog.ui:697
+#: ../data/apiviewer.ui:124
+msgid "EVC"
+msgstr ""
+
+#: ../data/mindedappwin.ui:26
+msgid "python"
+msgstr ""
+
+#: ../data/mindedappwin.ui:27
+msgid "Python"
+msgstr ""
+
+#: ../data/mindedappwin.ui:46
+msgid "Create a new document"
+msgstr ""
+
+#: ../data/mindedappwin.ui:67
+msgid "Open a file"
+msgstr ""
+
+#: ../data/mindedappwin.ui:91
+msgid "Save the current file"
+msgstr ""
+
+#: ../data/mindedappwin.ui:131
+msgid "Transmit"
+msgstr ""
+
+#: ../data/mindedappwin.ui:156
+msgid "Compile"
+msgstr ""
+
+#: ../data/mindedappwin.ui:248
+msgid "compiler-log"
+msgstr ""
+
+#: ../data/mindedappwin.ui:431
+msgid "language"
+msgstr ""
+
+#: ../data/mindedappwin.ui:449
+msgid "Print…"
+msgstr ""
+
+#: ../data/mindedappwin.ui:455
+msgid "Save As…"
+msgstr ""
+
+#: ../data/mindedappwin.ui:461
+msgid "Tools"
+msgstr ""
+
+#: ../data/mindedappwin.ui:465 ../data/brickinfo.ui:7
+msgid "Brick Info"
+msgstr ""
+
+#: ../data/mindedappwin.ui:469
+msgid "Brick Filer"
+msgstr ""
+
+#: ../data/mindedappwin.ui:478
+msgid "API Help"
+msgstr ""
+
+#: ../data/app-menu-traditional.ui:7 ../data/minded-preferences-dialog.ui:20
+#: ../data/app-menu.ui:7
+msgid "Preferences"
+msgstr ""
+
+#: ../data/app-menu-traditional.ui:11 ../data/app-menu.ui:15
+msgid "About"
+msgstr ""
+
+#: ../data/app-menu-traditional.ui:17 ../data/app-menu.ui:21
+msgid "Quit"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:47
+msgid "Display line numbers"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:60
+msgid "Display right margin at column"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:112
+msgid "Text wrapping"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:129
+msgid "Enable text wrapping"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:160
+msgid "Highlighting"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:177
+msgid "Highlight current line"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:190
+msgid "Highlight matching brackets"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:221
+msgid "Tab Stops"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:241
+msgid "Insert spaces instead of tabs"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:254
+msgid "Enable automatic indentation"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:270
+msgid "Tab width:"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:290
+msgid "Indent selection on tab"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:330
+msgid "Font"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:351
+msgid "Editor font:"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:391
+msgid "Editor"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:413
+msgid "NBC-compiler"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:424
+msgid "no NBC executable found"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:448
+msgid "use enhanced NBC/NQC-firmware"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:497
+msgid "C-compiler"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:511
+msgid "Path to libev3api"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:525
+msgid "Path to headers"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:539
+msgid "C++-compiler"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:550
+msgid "no c executable found"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:561
+msgid "no library found"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:572
+msgid "no headers found"
+msgstr ""
+
+#: ../data/minded-preferences-dialog.ui:583
+msgid "no c++ executable found"
+msgstr ""
+
+#: ../data/brickinfo.ui:28
+msgid "Brick name"
+msgstr ""
+
+#: ../data/brickinfo.ui:41 ../data/brickinfo.ui:54 ../data/brickinfo.ui:66
+#: ../data/brickinfo.ui:79 ../data/brickinfo.ui:91 ../data/brickinfo.ui:103
+#: ../data/brickinfo.ui:115 ../data/brickinfo.ui:127 ../data/brickinfo.ui:139
+#: ../data/brickinfo.ui:151 ../data/brickinfo.ui:163 ../data/brickinfo.ui:175
+#: ../data/brickinfo.ui:187 ../data/apiviewer.ui:153 ../data/apiviewer.ui:167
+msgid "label"
+msgstr ""
+
+#: ../data/brickinfo.ui:259
+msgid "Refresh"
+msgstr ""
+
+#: ../data/minded-tab-label.ui:17
+msgid "Close Document"
+msgstr ""
+
+#: ../data/app-menu.ui:11
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: ../data/apiviewer.ui:75
+msgid "NXC functions"
+msgstr ""
+
+#: ../data/apiviewer.ui:110
+msgid "EVC functions"
+msgstr ""
+
+#: ../data/about.ui:11
+msgid "An Editor for LEGO Mindstorms Bricks"
+msgstr ""
+
+#: ../data/about.ui:13
+msgid "MindEd Website"
+msgstr ""
