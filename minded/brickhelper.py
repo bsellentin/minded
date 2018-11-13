@@ -144,8 +144,8 @@ class BrickHelper():
             arm_exec = self.application.settings.get_string('armgcc')
             language = 'c'
 
-        ldflags = self.application.settings.get_string('ldflags')
-        incs = self.application.settings.get_string('incs')
+        ldflags = ' -L' + self.application.settings.get_string('ldflags')
+        incs = ' -I' + self.application.settings.get_string('incs')
 
         gcc_exec = arm_exec + ldflags + incs + ' -Os'
         gcc_opts = (' -o %s -x %s %s -lev3api' % (shlex.quote(outfile), language, shlex.quote(infile)))
