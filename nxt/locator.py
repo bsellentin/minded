@@ -127,35 +127,11 @@ name, strict, or method) are provided."""
                                if k in ('bluetooth', 'usb', 'device')})
     if not strict: strict = True
     if not method: method = Method()
+
     if debug:
         print("Host: %s Name: %s Strict: %s" % (host, name, str(strict)))
         print("USB: %s BT: %s Fantom: %s FUSB: %s FBT: %s" % (method.usb, method.bluetooth, method.fantom, method.fantomusb, method.fantombt))
 
-    '''for s in find_bricks(host, name, silent, method):
-        try:
-            if host and 'host' in dir(s) and s.host != host:
-                if debug:
-                    print("Warning: the brick found does not match the host provided (s.host).")
-                if strict: continue
-            b = s.connect()
-            info = b.get_device_info()
-            if host and info[1] != host:
-                if debug:
-                    print("Warning: the brick found does not match the host provided (get_device_info).")
-                if strict:
-                    s.close()
-                    continue
-            if name and info[0].strip('\0') != name:
-                if debug:
-                    print("Warning; the brick found does not match the name provided.")
-                if strict:
-                    s.close()
-                    continue
-            return b
-        except:
-            if debug:
-                traceback.print_exc()
-                print("Failed to connect to possible brick")'''
     for s in find_bricks(host, name, silent, method):
         try:
             if host and 'host' in dir(s) and s.host != host:
