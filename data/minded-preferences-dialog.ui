@@ -403,6 +403,47 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
+                      
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">NBC-compiler</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="nbcexecfile">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="placeholder_text" translatable="yes">no NBC executable found</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="choosenbc">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="create_folders">False</property>
+                        <property name="local_only">False</property>
+                        <property name="title" translatable="yes"/>
+                        <signal name="file-set" handler="on_nbcfile_set" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkCheckButton" id="use_enhanced_firmware_checkbutton">
                         <property name="label" translatable="yes">use enhanced NBC/NQC-firmware</property>
                         <property name="visible">True</property>
@@ -412,17 +453,9 @@
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="top_attach">1</property>
+                        <property name="width">3</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -455,10 +488,13 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkEntry" id="cexecfile">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="placeholder_text" translatable="yes">no c executable found</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">C-compiler</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -466,10 +502,13 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="cplusexecfile">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="placeholder_text" translatable="yes">no c++ executable found</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Path to libev3api</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -477,33 +516,135 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFileChooserButton" id="choosec">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="hexpand">True</property>
-                        <property name="create_folders">False</property>
-                        <property name="local_only">False</property>
-                        <property name="title" translatable="yes"/>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Path to headers</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">C++-compiler</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="gccfile">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="placeholder_text" translatable="yes">no c executable found</property>
                       </object>
                       <packing>
                         <property name="left_attach">2</property>
                         <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="ldflagsfile">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="placeholder_text" translatable="yes">no library found</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="incsfile">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="placeholder_text" translatable="yes">no headers found</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="cplusfile">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="placeholder_text" translatable="yes">no c++ executable found</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="choosegcc">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="create_folders">False</property>
+                        <property name="local_only">True</property>
+                        <property name="title" translatable="yes"/>
+                        <signal name="file-set" handler="on_cfile_set" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">3</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="chooseldflags">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="create_folders">False</property>
+                        <property name="local_only">True</property>
+                        <property name="title" translatable="yes"/>
+                        <signal name="file-set" handler="on_ldfile_set" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">3</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="chooseincs">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="create_folders">False</property>
+                        <property name="local_only">True</property>
+                        <signal name="file-set" handler="on_incfolder_set" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">3</property>
+                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFileChooserButton" id="choosecplus">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="create_folders">False</property>
+                        <property name="local_only">True</property>
                         <property name="title" translatable="yes"/>
+                        <signal name="file-set" handler="on_cplusfile_set" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">1</property>
+                        <property name="left_attach">3</property>
+                        <property name="top_attach">3</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="c-compiler">
-                        <property name="label" translatable="yes">C-compiler:</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -519,7 +660,6 @@
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="c++-compiler">
-                        <property name="label" translatable="yes">C++-compiler:</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -530,8 +670,14 @@
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
+                        <property name="top_attach">3</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
