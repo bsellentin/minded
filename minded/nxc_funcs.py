@@ -258,8 +258,8 @@ NXC_FUNCS = [
     ['OnFwd', 'OnFwd(outputs, pwr)',
      '<b>OnFwd (<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">pwr</span>)</b>\n\n' +
-     'Run motors forward. Set outputs to forward direction and\n' +
-     'turn them on.\n\n' +
+     'Run motors forward. Set outputs to forward direction\n' +
+     'and turn them on.\n\n' +
      '<b>Parameters:</b>\n' +
      '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
      '  <span foreground="brown">pwr</span>      Output power, 0 to 100.\n' +
@@ -269,8 +269,8 @@ NXC_FUNCS = [
     ['OnRev', 'OnRev(outputs, pwr)',
      '<b>OnRev (<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">pwr</span>)</b>\n\n' +
-     'Run motors backward. Set outputs to reverse direction and\n' +
-     'turn them on.\n\n' +
+     'Run motors backward. Set outputs to reverse direction\n' +
+     'and turn them on.\n\n' +
      '<b>Parameters:</b>\n' +
      '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
      '  <span foreground="brown">pwr</span>      Output power, 0 to 100.\n' +
@@ -326,12 +326,12 @@ NXC_FUNCS = [
      '  <span foreground="brown">pwr</span>      Output power, 0 to 100.\n' +
      '           Can be negative to reverse direction.\n' +
      '  <span foreground="brown">turnpct</span>  Turn ratio, -100 to 100.\n' +
-     '           Negative TurnRatio values shift power toward the\n' +
-     '           left motor while positive values shift power toward\n' +
-     '           the right motor. An absolute value of 50 results in\n' +
-     '           one motor stopping. An absolute value of 100 usually\n' +
-     '           results in two motors turning in opposite directions\n' +
-     '           at equal power.\n' +
+     '           Negative TurnRatio values shift power toward\n' +
+     '           the left motor while positive values shift\n' +
+     '           power toward the right motor. An absolute value\n' +
+     '           of 50 results in one motor stopping. An absolute\n' +
+     '           value of 100 usually results in two motors turning\n' +
+     '           in opposite directions at equal power.\n' +
      '<b>Example:</b>\n' +
      '  OnFwdSync(OUT_AB, 75, -100); // spin right', 'Output'],
     ['OnFwdSyncPID', 'OnFwdSyncPID(outputs, pwr, turnpct, p, i, d)',
@@ -343,9 +343,9 @@ NXC_FUNCS = [
      '<span foreground="brown">i</span>, ' +
      '<span foreground="brown">d</span>)</b>\n\n' +
      'Run motors forward synchronised with PID factors.\n' +
-     'Run the specified outputs forward with regulated synchronization\n' +
-     'using the specified turn ratio. Specify proportional, integral\n' +
-     'and derivative factors.\n' +
+     'Run the specified outputs forward with regulated\n' +
+     'synchronization using the specified turn ratio.\n' +
+     'Specify proportional, integral and derivative factors.\n' +
      '<b>Parameters:</b>\n' +
      '  <span foreground="brown">outputs</span>    Desired output ports.\n' +
      '  <span foreground="brown">pwr</span>        Output power, 0 to 100.\n' +
@@ -422,9 +422,9 @@ NXC_FUNCS = [
      '<span foreground="brown">i</span>, ' +
      '<span foreground="brown">d</span>)</b>\n\n' +
      'Run motors backward synchronised with PID factors.\n' +
-     'Run the specified outputs reverse with regulated synchronization\n' +
-     'using the specified turn ratio. Specify proportional, integral\n' +
-     'and derivative factors.\n' +
+     'Run the specified outputs reverse with regulated\n' +
+     'synchronization using the specified turn ratio.\n' +
+     'Specify proportional, integral and derivative factors.\n' +
      '<b>Parameters:</b>\n' +
      '  <span foreground="brown">outputs</span>    Desired output ports.\n' +
      '  <span foreground="brown">pwr</span>        Output power, 0 to 100.\n' +
@@ -616,8 +616,8 @@ NXC_FUNCS = [
     ['ResetTachoCount', 'ResetTachoCount(outputs)',
      '<b>ResetTachoCount (' +
      '<span foreground="brown">outputs</span>)</b>\n\n' +
-     'Reset the tachometer count and tachometer limit goal for the\n' +
-     'specified outputs.\n\n' +
+     'Reset the tachometer count and tachometer limit goal\n' +
+     'for the specified outputs.\n\n' +
      '<b>Parameters:</b>\n' +
      '  <span foreground="brown">outputs</span>    Desired output ports.\n' +
      '<b>Example:</b>\n' +
@@ -654,10 +654,10 @@ NXC_FUNCS = [
      '<span foreground="brown">turnpct</span>, ' +
      '<span foreground="brown">sync</span>, ' +
      '<span foreground="brown">stop</span>)</b>\n\n' +
-     'Run the specified outputs forward for the specified number of degrees.\n' +
-     'Also specify synchronization, turn percentage, and braking options.\n'  +
-     'Use this function primarily with more than one motor specified via the\n' +
-     'outputs parameter.\n\n' +
+     'Run the specified outputs forward for the specified number\n' +
+     'of degrees. Also specify synchronization, turn percentage,\n'  +
+     'and braking options. Use this function primarily with more\n' +
+     'than one motor specified via the outputs parameter.\n\n' +
      '<b>Parameters:</b>\n' +
      '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
      '  <span foreground="brown">pwr</span>      Output power, 0 to 100.\n' +
@@ -665,8 +665,9 @@ NXC_FUNCS = [
      '  <span foreground="brown">angle</span>    Angle limit, in degree.\n' +
      '           Can be negative to reverse direction.\n' +
      '  <span foreground="brown">turnpct</span>  Turn ratio, -100 to 100.\n' +
-     '  <span foreground="brown">sync</span>     Synchronise two motors. Should be set to true if a non-zero\n' +
-     '           turn percent is specified or no turning will occur.\n' +
+     '  <span foreground="brown">sync</span>     Synchronise two motors. Should be set to true\n' +
+     '           if a non-zero turn percent is specified\n' +
+     '           or no turning will occur.\n' +
      '  <span foreground="brown">stop</span>     Specify whether the motor(s) should brake at the end of the\n' +
      '           rotation.\n' +
      '<b>Example:</b>:\n' +
@@ -680,8 +681,9 @@ NXC_FUNCS = [
      '<span foreground="brown">i</span>, ' +
      '<span foreground="brown">d</span>)</b>\n\n' +
      'Rotate motor with PID factors.\n' +
-     'Run the specified outputs forward for the specified number of\n' +
-     'degrees. Specify proportional, integral, and derivative factors.\n\n' +
+     'Run the specified outputs forward for the specified\n' +
+     'number of degrees. Specify proportional, integral\n' +
+     'and derivative factors.\n\n' +
      '<b>Parameters:</b>\n' +
      '  <span foreground="brown">outputs</span>    Desired output ports.\n' +
      '  <span foreground="brown">pwr</span>        Output power, 0 to 100.\n' +
