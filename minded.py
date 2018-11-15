@@ -110,9 +110,10 @@ class MindEdApp(Gtk.Application):
                 raise Exception("Cannot get GSettings schema")
             self.settings = Gio.Settings.new_full(schema, None, None)
             # Translation stuff
-            locale.bindtextdomain('minded', srcdir.resolve())
+            # older versions want str not PosixPath
+            locale.bindtextdomain('minded', str(srcdir.resolve()))
             locale.textdomain('minded')
-            gettext.bindtextdomain('minded', srcdir.resolve())
+            gettext.bindtextdomain('minded', str(srcdir.resolve()))
             gettext.textdomain('minded')
         # systemwide installation
         else:
@@ -313,20 +314,20 @@ def look_for_settings(settings):
         # Debian-stretch
         if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():
             # package gcc-6-arm-linux-gnueabi
-            settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-6')
+            settings.set_string('armgcc', '/usr/bin/arm-linux-gnueabi-gcc-6')
         # Ubuntu xenial
         elif Path('/usr/bin/arm-linux-gnueabi-gcc-5').is_file():
-            settings.set_string('armgcc', 'arm-linux-gnueabi-gcc-5')
+            settings.set_string('armgcc', '/usr/bin/arm-linux-gnueabi-gcc-5')
         else:
             LOGGER.warning('no arm-gcc executable found')
     # c++ compiler
     if not Path(settings.get_string('armgplusplus')).is_file():
         if Path('/usr/bin/arm-linux-gnueabi-g++-6').is_file():
-            settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-6')
+            settings.set_string('armgplusplus', '/usr/bin/arm-linux-gnueabi-g++-6')
         # Ubuntu xenial
         elif Path('/usr/bin/arm-linux-gnueabi-g++-5').is_file():
             # package g++-5-arm-linux-gnueabi
-            settings.set_string('armgplusplus', 'arm-linux-gnueabi-g++-5')
+            settings.set_string('armgplusplus', '/usr/bin/arm-linux-gnueabi-g++-5')
         else:
             LOGGER.warning('no arm-g++ executable found')
     # check for ev3-library, development first
