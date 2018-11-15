@@ -413,15 +413,15 @@ class EditorApp(Gtk.ScrolledWindow):
         doc = view.get_buffer()
         ch = self.to_char(event.keyval)
         # first handel selection
-        if ch:
-            selection = doc.get_selection_bounds()
-            if selection:
-                start, end = selection
-                if not start.equal(end):
-                    LOGGER.debug('something selected true')
-                    doc.begin_user_action()
-                    doc.delete(start, end)
-                    doc.end_user_action()
+        #if ch:
+        #    selection = doc.get_selection_bounds()
+        #    if selection:
+        #        start, end = selection
+        #        if not start.equal(end):
+        #            LOGGER.debug('something selected true')
+        #            doc.begin_user_action()
+        #            doc.delete(start, end)
+        #            doc.end_user_action()
 
         # auto_close_paren
         if self.is_opening_paren(ch):
@@ -553,12 +553,13 @@ class EditorApp(Gtk.ScrolledWindow):
         iter1 = doc.get_iter_at_mark(doc.get_insert())
         if iter1.is_end() or iter1.ends_line():
             return True
-        #if doc.get_has_selection():
-        #    return True
+        if doc.get_has_selection():
+            selection = doc.get_selection_bounds()
+            start, end = selection
+            doc.delete(start, end)
+            return True
         char = iter1.get_char()
-        mark = iter1.get_marks
         LOGGER.debug('%s' % char)
-        #LOGGER.debug('%s' % mark)
         # don't close inside words
         return not (char.isalnum() or char == '_')
 
