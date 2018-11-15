@@ -90,7 +90,7 @@ class BrickHelper():
                 msg += err_msg
 
                 if not errora and not errorb:
-                    self.application.ev3brick.play_sound('./ui/DownloadSucces')
+                    self.application.ev3_brick.play_sound('./ui/DownloadSucces')
 
         return (0, msg)
 
@@ -172,7 +172,7 @@ class BrickHelper():
         '''
         upload file to EV3 brick
         '''
-        brick = self.application.ev3brick
+        brick = self.application.ev3_brick
         if brick:
             if brick.usb_ready():
 
