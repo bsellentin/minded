@@ -7,8 +7,9 @@
     + <a href="#rudolf">Rudolf stellt sich vor</a>
     + <a href="#always">Grundgerüst</a>
 + <a href="#fahre">Rudolf fährt um den Block</a>
++ <a href = "#loops">Schleifen</a>
 + <a href = "#variables">Variablen</a>
-+ Kontrollstrukturen
++ Verzweigungen
 + <a href="#sensors">Sensoren</a>
     + <a href="#touch">Berührungssensor</a>
     + <a href="#light">Farbsensor</a>
@@ -283,12 +284,16 @@ Hast du es ausprobiert? Dann hast du sicher gemerkt, warum es so nichts taugt.
 Garantiert stimmt die Zeit nicht für eine 90° Kurve, du musst ewig ausprobieren
 und jedesmal an vier Stellen die Zeiten ändern. Zwischenzeitlich sinkt die
 Spannung der Batterien und wieder stimmt die Zeit nicht. Wäre es mit `OutputTimeSpeed`
-besser? Nein, eher noch schlimmer. Was tun? Damit Rudolf einmal um das Quadrat
+besser? Nein, eher noch schlimmer. Was tun? 
+
+<h2 id = "loops">Schleifen</h2>
+
+Damit Rudolf einmal um das Quadrat
 fährt, muss er viermal das gleiche machen, aber nicht du, denn dafür gibt es
 Schleifen. Hier bietet sich eine Zählschleife an:
 
 ```
-for(Initialisierung; Test, Fortsetzung){
+for(Initialisierung; Bedingung; Aktualisierung){
   Anweisungen;
 }
 ```
@@ -300,13 +305,20 @@ Initialisierung des Zählers
 ```c
 ...
   int i;
-  for(i=0;i<9;i++){
-    LcdPrintf(1,"Zahl: %d\n", i);
+  for(i=0; i<9; i++){
+    LcdPrintf(1, "Zahl: %d\n", i);
     Wait(500);
   }
   ButtonWaitForAnyPress(10000);
 ...
 ```
+Mit `i=0` wird der Variablen i der Anfangswert 0 zugewiesen, mit der Bedingung `i<9` 
+wird dann überprüft, ob i kleiner als 9 ist. Falls das **wahr** ist, werden die
+Anweisungen ausgeführt - hier die Ausgabe des Wertes von i auf dem Bildschirm.
+Danach wird die Variable aktualisiert, `i++` bedeutet, das sie um 1 erhöht wird.  
+Jetzt wird die Schleife erneut durchlaufen: ist die Bedingung noch **wahr**? Dann
+mache die Anweisungen. Ist die Bedingung **falsch**? Dann verlasse die Schleife und
+mache danach weiter.
 
 ```c
 ...
@@ -333,7 +345,8 @@ Kiste vermerken, was drin ist. Damit sind wir bei den Datentypen.
 
 ### Datentypen
 
-Bevor man Variablen verwendet, sollte man sich überlegen, was man darin speichern oder verarbeiten möchte:
+Bevor man Variablen verwendet, sollte man sich überlegen, was man darin speichern 
+oder verarbeiten möchte:
 
 + Zeichen
 + Text
@@ -367,7 +380,7 @@ FreeEV3();
 |double     |64 Bit ||
 |long double|64 Bit ||
 
-## Kontrollstrukturen
+## Verzweigungen
 
 <h2 id="sensors">Sensoren</h2>
 
