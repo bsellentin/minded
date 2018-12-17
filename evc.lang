@@ -287,6 +287,8 @@
         <keyword>BTNCENTER</keyword>
         <keyword>BTNUP</keyword>
         <keyword>BTNDOWN</keyword>
+        <keyword>DRAW_OPT_NORMAL</keyword>
+        <keyword>DRAW_OPT_FILL_SHAPE</keyword>
         <keyword>LCD_WIDTH</keyword>
         <keyword>LCD_HEIGHT</keyword>
         <keyword>ICONTYPE_NORMAL</keyword>
@@ -393,6 +395,10 @@
         <keyword>SOUND_DOWN</keyword>
         <keyword>SOUND_LOW_BEEP</keyword>
         <keyword>SOUND_FAST_UP</keyword>
+        <keyword>FONTTYPE_NORMAL</keyword>
+        <keyword>FONTTYPE_SMALL</keyword>
+        <keyword>FONTTYPE_LARGE</keyword>
+        <keyword>FONTTYPE_TINY</keyword>
         <keyword>S_ICON_CHARGING</keyword>
         <keyword>S_ICON_BATT_4</keyword>
         <keyword>S_ICON_BATT_3</keyword>
@@ -502,8 +508,12 @@
         <keyword>ButtonWaitForPress</keyword>
         <keyword>ButtonWaitForAnyPress</keyword>
         <keyword>CircleOut</keyword>
+        <keyword>CircleOutEx</keyword>
         <keyword>CurrentTick</keyword>
         <keyword>EllipseOut</keyword>
+        <keyword>EllipseOutEx</keyword>
+        <keyword>LedPattern</keyword>
+        <keyword>LedWarning</keyword>
         <keyword>LcdText</keyword>
         <keyword>LcdTextf</keyword>
         <keyword>LcdBmpFile</keyword>
@@ -521,11 +531,13 @@
         <keyword>OutputInit</keyword>
         <keyword>OutputExit</keyword>
         <keyword>OnFwd</keyword>
+        <keyword>OnFwdEx</keyword>
         <keyword>OnFwdReg</keyword>
         <keyword>OnFwdSync</keyword>
         <keyword>OnFwdSyncEx</keyword>
         <keyword>OnFor</keyword>
         <keyword>OnRev</keyword>
+        <keyword>OnRevEx</keyword>
         <keyword>OnRevReg</keyword>
         <keyword>OnRevSync</keyword>
         <keyword>OnRevSyncEx</keyword>
@@ -548,6 +560,7 @@
         <keyword>PointOut</keyword>
         <keyword>Random</keyword>
         <keyword>RectOut</keyword>
+        <keyword>RectOutEx</keyword>
         <keyword>ResetGyro</keyword>
         <keyword>ResetTachoCount</keyword>
         <keyword>ResetRotationCount</keyword>

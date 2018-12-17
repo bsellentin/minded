@@ -4,16 +4,16 @@
 
 EVC_FUNCS = [
     ['InitEV3', 'InitEV3()', '<b>InitEV3()</b>\n\n' +
-     'Initialization of all EV3-Functions.\n' +
+     'Initialization of all EV3-Functions. ' +
      'Should be the first command in main.\n\n' +
      '<b>Example:</b>\n' +
-     '  #include "ev3.h"\n' +
-     '  int main(){\n' +
-     '      InitEV3();\n' +
-     '      // do something\n' +
-     '      FreeEV3();\n' +
-     '      return 0;\n' +
-     '  }', 'General'],
+     '\t#include "ev3.h"\n' +
+     '\tint main(){\n' +
+     '\t    InitEV3();\n' +
+     '\t    // do something\n' +
+     '\t    FreeEV3();\n' +
+     '\t    return 0;\n' +
+     '\t}', 'General'],
     #['CloseEV3', 'CloseEV3()', 'CloseEV3()\n', 'General'],
     #['ExitEV3', 'ExitEV3()', 'ExitEV3()\n', 'General'],
     ['FreeEV3', 'FreeEV3()', '<b>FreeEV3()</b>\n\n' +
@@ -23,27 +23,27 @@ EVC_FUNCS = [
      'Check if button is pressed or not.\n' +
      'Returns 1: true, 0: false\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">button</span>   BTNEXIT   BTN1 The exit (escape) button.\n' +
-     '           BTNRIGHT  BTN2 The right button.\n' +
-     '           BTNLEFT   BTN3 The left button.\n' +
-     '           BTNCENTER BTN4 The enter button.\n' +
-     '           BTNUP     BTN5 The up button.\n' +
-     '           BTNDOWN   BTN6 The down button.\n' +
+     '\t<span foreground="brown">button</span>\tBTNEXIT\tBTN1 The exit (escape) button.\n' +
+     '\t\tBTNRIGHT\tBTN2 The right button.\n' +
+     '\t\tBTNLEFT\tBTN3 The left button.\n' +
+     '\t\tBTNCENTER\tBTN4 The enter button.\n' +
+     '\t\tBTNUP\tBTN5 The up button.\n' +
+     '\t\tBTNDOWN\tBTN6 The down button.\n' +
      '<b>Example:</b>\n' +
-     '  while(!ButtonIsDown(BTNCENTER)){ //do something }', 'Button'],
+     '\twhile(!ButtonIsDown(BTNCENTER)){ //do something }', 'Button'],
     ['ButtonIsUp', 'ButtonIsUp(button)', '<b>ButtonIsUp(' +
      '<span foreground="brown">button</span>)</b>\n\n' +
      'Check if button is not pressed or not.\n' +
      'Returns 1: true, 0: false\n\n'+
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">button</span>   BTNEXIT   BTN1 The exit (escape) button.\n' +
-     '           BTNRIGHT  BTN2 The right button.\n' +
-     '           BTNLEFT   BTN3 The left button.\n' +
-     '           BTNCENTER BTN4 The enter button.\n' +
-     '           BTNUP     BTN5 The up button.\n' +
-     '           BTNDOWN   BTN6 The down button.\n' +
+     '\t<span foreground="brown">button</span>\tBTNEXIT\tBTN1 The exit (escape) button.\n' +
+     '\t\tBTNRIGHT\tBTN2 The right button.\n' +
+     '\t\tBTNLEFT\tBTN3 The left button.\n' +
+     '\t\tBTNCENTER\tBTN4 The enter button.\n' +
+     '\t\tBTNUP\tBTN5 The up button.\n' +
+     '\t\tBTNDOWN\tBTN6 The down button.\n' +
      '<b>Example:</b>\n' +
-     '  while(ButtonIsUp(BTNCENTER)){ //do something }', 'Button'],
+     '\twhile(ButtonIsUp(BTNCENTER)){ //do something }', 'Button'],
     ['ButtonWaitForAnyPress', 'ButtonWaitForAnyPress(time)',
      '<b>ButtonWaitForAnyPress(<span foreground="brown">time</span>)</b>\n\n' +
      'Waiting for any button press for given time.\n\n' +
@@ -78,6 +78,17 @@ EVC_FUNCS = [
      'This function lets you draw a circle on the screen\n' +
      'with its center at the specified x and y location,\n' +
      'using the specified radius.', 'Display'],
+    ['CircleOutEx', 'CircleOutEx(x, y, radius, options)', '<b>CircleOutEx(' +
+     '<span foreground="brown">x</span>, ' +
+     '<span foreground="brown">y</span>, ' +
+     '<span foreground="brown">radius</span>, ' +
+     '<span foreground="brown">options</span>)</b>\n\n' +
+     'This function lets you draw a circle on the screen\n' +
+     'with its center at the specified x and y location,\n' +
+     'using the specified radius.\n\n' +
+     '<b>Parameters</b>\n' +
+     '\t<span foreground="brown">options</span>\tDRAW_OPT_NORMAL\n' +
+     '\t\tDRAW_OPT_FILL_SHAPE', 'Display'],
     ['CurrentTick', 'CurrentTick()', '<b>CurrentTick()</b>\n\n' +
      'Read the current system tick.\n\n' +
      '<b>Example:</b>\n' +
@@ -88,9 +99,21 @@ EVC_FUNCS = [
      '<span foreground="brown">y</span>, ' +
      '<span foreground="brown">radiusX</span>, ' +
      '<span foreground="brown">radiusY</span>)</b>\n\n' +
-     'This function lets you draw an ellipse on the screen\n' +
-     'with its center at the specified x and y location,\n' +
+     'This function lets you draw an ellipse on the screen ' +
+     'with its center at the specified x and y location, ' +
      'using the specified radii.', 'Display'],
+    ['EllipseOutEx', 'EllipseOutEx(x, y, radiusX, radiusY, options)', '<b>EllipseOutEx(' +
+     '<span foreground="brown">x</span>, ' +
+     '<span foreground="brown">y</span>, ' +
+     '<span foreground="brown">radiusX</span>, ' +
+     '<span foreground="brown">radiusY</span>, ' +
+     '<span foreground="brown">options</span>)</b>\n\n' +
+     'This function lets you draw an ellipse on the screen ' +
+     'with its center at the specified x and y location, ' +
+     'using the specified radii.\n'+
+     '<b>Parameters</b>\n' +
+     '\t<span foreground="brown">options</span>\tDRAW_OPT_NORMAL\n' +
+     '\t\tDRAW_OPT_FILL_SHAPE', 'Display'],
     ['LcdText', 'LcdText(color, x, y, str)', '<b>LcdText(' +
      '<span foreground="brown">color</span>, ' +
      '<span foreground="brown">x</span>, ' +
@@ -98,23 +121,23 @@ EVC_FUNCS = [
      '<span foreground="brown">str</span>)</b>\n\n' +
      'Draw a text value on the screen at the specified x and y location.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">color</span>  1: black text, 0: white text on black background\n' +
-     '  <span foreground="brown">x</span>      The x value for the start of the number output.\n' +
-     '  <span foreground="brown">y</span>      The text line number for the number output.\n' +
-     '  <span foreground="brown">str</span>    The text to output to the LCD screen.\n' +
+     '\t<span foreground="brown">color</span>\t1: black text, 0: white text on black background\n' +
+     '\t<span foreground="brown">x</span>\tThe x value for the start of the number output.\n' +
+     '\t<span foreground="brown">y</span>\tThe text line number for the number output.\n' +
+     '\t<span foreground="brown">str</span>\tThe text to output to the LCD screen.\n' +
      '<b>Example:</b>\n' +
-     '  LcdText(1, 0, <span foreground="green">LCD_LINE1</span>, "Hello World!");', 'Display'],
+     '\tLcdText(1, 0, <span foreground="green">LCD_LINE1</span>, "Hello World!");', 'Display'],
     ['TextOut', 'TextOut(x, y, str)', '<b>TextOut (' +
      '<span foreground="brown">x</span>, ' +
      '<span foreground="brown">y</span>, ' +
      '<span foreground="brown">str</span>)</b>\n\n' +
      'Draw a text value on the screen at the specified x and y location.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">x</span>      The x value for the start of the text output.\n' +
-     '  <span foreground="brown">y</span>      The y value for the text output.\n' +
-     '  <span foreground="brown">str</span>    The text to output to the LCD screen.\n' +
+     '\t<span foreground="brown">x</span>\tThe x value for the start of the text output.\n' +
+     '\t<span foreground="brown">y</span>\tThe y value for the text output.\n' +
+     '\t<span foreground="brown">str</span>\tThe text to output to the LCD screen.\n' +
      '<b>Example:</b>\n' +
-     '  TextOut(0, <span foreground="green">LCD_LINE1</span>, "Hello World!");', 'Display'],
+     '\tTextOut(0, <span foreground="green">LCD_LINE1</span>, "Hello World!");', 'Display'],
     ['LcdTextf', 'LcdTextf(color, x, y, str, fmt)', '<b>LcdTextf(' +
      '<span foreground="brown">color</span>, ' +
      '<span foreground="brown">x</span>, ' +
@@ -122,13 +145,13 @@ EVC_FUNCS = [
      '<span foreground="brown">fmt</span>,...)</b>\n\n' +
      'Print text with variables, works like printf()\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">color</span>   1: black text, 0: white text with black background\n' +
-     '  <span foreground="brown">x</span>       The x value for the start of the string output.\n' +
-     '  <span foreground="brown">y</span>       The y value for the string output.\n' +
-     '  <span foreground="brown">fmt</span>     The string to output to the LCD screen.\n' +
+     '\t<span foreground="brown">color</span>\t1: black text, 0: white text with black background\n' +
+     '\t<span foreground="brown">x</span>\tThe x value for the start of the string output.\n' +
+     '\t<span foreground="brown">y</span>\tThe y value for the string output.\n' +
+     '\t<span foreground="brown">fmt</span>\tThe string to output to the LCD screen.\n' +
      '<b>Example:</b>\n' +
-     '  int x = 1234567890;\n' +
-     '  LcdTextf(1, 10, LCD_LINE7, "Variable: %d", x);', 'Display'],
+     '\tint x = 1234567890;\n' +
+     '\tLcdTextf(1, 10, LCD_LINE7, "Variable: %d", x);', 'Display'],
     ['LcdBmpFile', 'LcdBmpFile(color, x, y, name)', '<b>LcdBmpFile(' +
      '<span foreground="brown">color</span>, ' +
      '<span foreground="brown">x</span>, ' +
@@ -176,14 +199,14 @@ EVC_FUNCS = [
      'from x1, y1 to x2, y2.', 'Display'],
     ['MotorBusy', 'MotorBusy(outputs)', '<b>MotorBusy(' +
      '<span foreground="brown">outputs</span>)</b>\n\n' +
-     'This function enables the program to test if a output port is busy.\n' +
+     'This function enables the program to test if a output port is busy. ' +
      'Returns 1 if output is busy, 0 if not.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>   Desired output ports.\n' +
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
      '<b>Example:</b>\n' +
-     ' while(MotorBusy(OUT_B)){\n' +
-     '     Wait(2);  // 2ms between checks\n' +
-     ' }', 'Output'],
+     '\twhile(MotorBusy(OUT_B)){\n' +
+     '\t  Wait(2);  // 2ms between checks\n' +
+     '\t}', 'Output'],
     ['MotorRotationCount', 'MotorRotationCount(output)', '<b>MotorRotationCount(' +
      '<span foreground="brown">output</span>)</b>\n\n' +
      'This function enables the program to read the tacho count in degrees as\n' +
@@ -201,35 +224,35 @@ EVC_FUNCS = [
      '<span foreground="brown">power</span>)</b>\n\n' +
      'Run motors forward with given power.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>   Desired output ports.\n' +
-     '  <span foreground="brown">power</span>     Output power, 0 to 127.\n' +
-     '            Can be negative to reverse direction.\n' +
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">power</span>\tOutput power, 0 to 127.\n' +
+     '\t\tCan be negative to reverse direction.\n' +
      '<b>Example:</b>\n' +
-     ' OnFwd(OUT_BC, 127);', 'Output'],
+     '\tOnFwd(OUT_BC, 127);', 'Output'],
     ['OnFor', 'OnFor(outputs, time, power)', '<b>OnFor(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">time</span>, <span foreground="brown">power</span>)</b>\n\n' +
      'Run motors for given time with given power.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>   Desired output ports.\n' +
-     '  <span foreground="brown">time</span>      Desired time in milliseconds.\n' +
-     '  <span foreground="brown">power</span>     Output power, 0 to 127.\n' +
-     '            Can be negative to reverse direction.\n' +
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">time</span>\tDesired time in milliseconds.\n' +
+     '\t<span foreground="brown">power</span>\tOutput power, 0 to 127.\n' +
+     '\t\tCan be negative to reverse direction.\n' +
      '<b>Example:</b>\n' +
-     '  OnFor(OUT_BC, 1000, 50);', 'Output'],
+     '\tOnFor(OUT_BC, 1000, 50);', 'Output'],
     ['OnFwdEx', 'OnFwdEx(outputs, power, reset)', '<b>OnFwdEx(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">power</span>, ' +
      '<span foreground="brown">reset</span>)</b>\n\n' +
      'Run motors forward and reset counters.\n\n'
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
-     '  <span foreground="brown">power</span>    Output power, 0 to 127.\n' +
-     '           Can be negative to reverse direction.\n' +
-     '  <span foreground="brown">reset</span>    constants to specify which of the three\n' +
-     '           tachometer counters should be reset.\n\n' +
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">power</span>\tOutput power, 0 to 127.\n' +
+     '\t\tCan be negative to reverse direction.\n' +
+     '\t<span foreground="brown">reset</span>\tconstants to specify which of the three\n' +
+     '\t\ttachometer counters should be reset.\n\n' +
      '<b>Example:</b>\n' +
-     '  OnFwdEx(OUT_BC, 75, RESET_ALL);', 'Output'],
+     '\tOnFwdEx(OUT_BC, 75, RESET_ALL);', 'Output'],
     ['OnFwdReg', 'OnFwdReg(outputs, speed)', '<b>OnFwdReg(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">speed</span>)</b>\n\n' +
@@ -243,26 +266,26 @@ EVC_FUNCS = [
      '<span foreground="brown">speed</span>,' +
      '<span foreground="brown">turn</span>, ' +
      '<span foreground="brown">reset</span>)</b>\n\n' +
-     'Run two motors synchronized forwards with given speed and given turn ratio.\n' +
+     'Run two motors synchronized forwards with given speed and given turn ratio.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
-     '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
-     '  <span foreground="brown">speed</span>    Angle limit, in degree.\n' +
-     '  <span foreground="brown">turn</span>     Turn ratio in range [-200 - 200]\n' +
-     '           0  : Motors will run with same power\n'
-     '           100: One motor will run with specified power while the other\n' +
-     '                will be close to zero\n' +
-     '           200: One motor will run with specified power forward while the other\n' +
-     '                will run in the opposite direction at the same power level.\n' +
-     '  <span foreground="brown">reset</span>    RESET_NONE           No counters will be reset\n' +
-     '           RESET_COUNT          Reset the internal tachometer counter\n' +
-     '           RESET_BLOCK_COUNT    Reset the block tachometer counter\n' +
-     '           RESET_ROTATION_COUNT Reset the rotation counter\n' +
-     '           RESET_BLOCKANDTACHO  Reset both the internal counter and\n' +
-     '                                the block counter\n' +
-     '           RESET_ALL            Reset all tachometer counters\n' +
+     '\t<span foreground="brown">outputs</span>\tHas to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+     '\t\tOUT_BD or OUT_CD. Anything else is invalid.\n' +
+     '\t<span foreground="brown">speed</span>\tAngle limit, in degree.\n' +
+     '\t<span foreground="brown">turn</span>\tTurn ratio in range [-200 - 200]\n' +
+     '\t\t0  : Motors will run with same power\n'
+     '\t\t100: One motor will run with specified power while the other\n' +
+     '\t\t     will be close to zero\n' +
+     '\t\t200: One motor will run with specified power forward while the other\n' +
+     '\t\t     will run in the opposite direction at the same power level.\n' +
+     '\t<span foreground="brown">reset</span>\tRESET_NONE\tNo counters will be reset\n' +
+     '\t\tRESET_COUNT\tReset the internal tachometer\n' +
+     '\t\tRESET_BLOCK_COUNT\tReset the block tachometer\n' +
+     '\t\tRESET_ROTATION_COUNT\tReset the rotation counter\n' +
+     '\t\tRESET_BLOCKANDTACHO\tReset both the internal counter\n' +
+     '\t\t\tand the block counter\n' +
+     '\t\tRESET_ALL\tReset all tachometer counters\n' +
      '<b>Example:</b>\n' +
-     ' OnFwdSyncEx(OUT_BC, 50, 30, RESET_NONE);', 'Output'],
+     '\tOnFwdSyncEx(OUT_BC, 50, 30, RESET_NONE);', 'Output'],
     ['OnForSync', 'OnForSync(outputs, time, speed)', '<b>OnForSync(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">time</span>, ' +
@@ -278,24 +301,24 @@ EVC_FUNCS = [
      '<span foreground="brown">power</span>)</b>\n\n' +
      'Run motors backwards with given power.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>   Desired output ports.\n' +
-     '  <span foreground="brown">power</span>     Output power, 0 to 127.\n' +
-     '            Can be negative to reverse direction.\n' +
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">power</span>\tOutput power, 0 to 127.\n' +
+     '\t\tCan be negative to reverse direction.\n' +
      '<b>Example:</b>\n' +
-     '  OnRev(OUT_BC, 127);', 'Output'],
+     '\tOnRev(OUT_BC, 127);', 'Output'],
     ['OnRevEx', 'OnRevEx(outputs, power, reset)', '<b>OnRevEx(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">power</span>, ' +
      '<span foreground="brown">reset</span>)</b>\n\n' +
      'Run motors backward and reset counters. \n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
-     '  <span foreground="brown">power</span>    Output power, 0 to 127.\n' +
-     '           Can be negative to reverse direction.\n' +
-     '  <span foreground="brown">reset</span>    constants to specify which of the three\n' +
-     '           tachometer counters should be reset.\n\n' +
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">power</span>\tOutput power, 0 to 127.\n' +
+     '\t\tCan be negative to reverse direction.\n' +
+     '\t<span foreground="brown">reset</span>\tconstants to specify which of the three\n' +
+     '\t\ttachometer counters should be reset.\n\n' +
      '<b>Example:</b>\n' +
-     '  OnRevEx(OUT_BC, 75, RESET_ALL);', 'Output'],
+     '\tOnRevEx(OUT_BC, 75, RESET_ALL);', 'Output'],
     ['OnRevReg', 'OnRevReg(outputs, speed)', '<b>OnRevReg(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">speed</span>)</b>\n\n' +
@@ -311,54 +334,54 @@ EVC_FUNCS = [
      '<span foreground="brown">reset</span>)</b>\n\n' +
      'Run two motors synchronized backwards with given speed and given turn ratio.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
-     '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
-     '  <span foreground="brown">speed</span>    Angle limit, in degree.\n' +
-     '  <span foreground="brown">turn</span>     Turn ratio in range [-200 - 200]\n' +
-     '           0 both motors with same speed same direction\n'
-     '           0 - 99 same direction, higher port with lower speed\n' +
-     '           100 only lower port rotates,\n' +
-     '           101 - 200 motors run in opposite direction, higher port\n' +
-     '           with lower speed.\n' +
-     '           Negative values regulate lower port\n' +
-     '  <span foreground="brown">reset</span>    RESET_NONE           No counters will be reset\n' +
-     '           RESET_COUNT          Reset the internal tachometer counter\n' +
-     '           RESET_BLOCK_COUNT    Reset the block tachometer counter\n' +
-     '           RESET_ROTATION_COUNT Reset the rotation counter\n' +
-     '           RESET_BLOCKANDTACHO  Reset both the internal counter and\n' +
-     '                                the block counter\n' +
-     '           RESET_ALL            Reset all tachometer counters\n' +
+     '\t<span foreground="brown">outputs</span>\tHas to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+     '\t\tOUT_BD or OUT_CD. Anything else is invalid.\n' +
+     '\t<span foreground="brown">speed</span>\tAngle limit, in degree.\n' +
+     '\t<span foreground="brown">turn</span>\tTurn ratio in range [-200 - 200]\n' +
+     '\t\t0 both motors with same speed same direction\n'
+     '\t\t0 - 99 same direction, higher port with lower speed\n' +
+     '\t\t100 only lower port rotates,\n' +
+     '\t\t101 - 200 motors run in opposite direction, higher port\n' +
+     '\t\twith lower speed.\n' +
+     '\t\tNegative values regulate lower port\n' +
+     '\t<span foreground="brown">reset</span>\tRESET_NONE\tNo counters will be reset\n' +
+     '\t\tRESET_COUNT\tReset the internal tachometer counter\n' +
+     '\t\tRESET_BLOCK_COUNT\tReset the block tachometer counter\n' +
+     '\t\tRESET_ROTATION_COUNT\tReset the rotation counter\n' +
+     '\t\tRESET_BLOCKANDTACHO\tReset both the internal counter\n' +
+     '\t\t\tand the block counter\n' +
+     '\t\tRESET_ALL\tReset all tachometer counters\n' +
      '<b>Example:</b>\n' +
-     '  OnRevSyncEx(OUT_BC, 50, 30, RESET_NONE);', 'Output'],
+     '\tOnRevSyncEx(OUT_BC, 50, 30, RESET_NONE);', 'Output'],
     ['OutputPower', 'OutputPower(outputs, power)', '<b>OutputPower(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">power</span>)</b>\n\n' +
-     'This function enables setting the output percentage power on\n' +
+     'This function enables setting the output percentage power on ' +
      'the output ports\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
-     '  <span foreground="brown">power</span>    Specify output speed [-100 – 100 %]\n', 'Output'],
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">power</span>\tSpecify output speed [-100 – 100 %]\n', 'Output'],
     ['OutputSpeed', 'OutputSpeed(outputs, speed)', '<b>OutputSpeed(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">speed</span>)</b>\n\n' +
-     'This function enables setting the output percentage speed on the output\n' +
-     'ports. This modes automatically enables speed control, which means the\n' +
+     'This function enables setting the output percentage speed on the output ' +
+     'ports. This modes automatically enables speed control, which means the ' +
      'system will automatically adjust the power to keep the specified speed.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports\n' +
-     '  <span foreground="brown">speed</span>    Specify output speed [-100 – 100 %]\n', 'Output'],
+     '\t<span foreground="brown">outputs</span>\tDesired output ports\n' +
+     '\t<span foreground="brown">speed</span>\tSpecify output speed [-100 – 100 %]\n', 'Output'],
     ['OutputStart', 'OutputStart(outputs)', '<b>OutputStart(' +
      '<span foreground="brown">outputs</span>)</b>\n\n' +
      'This function enables starting the specified output ports.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports.', 'Output'],
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.', 'Output'],
     ['OutputStop', 'OutputStop(outputs, useBrake)', '<b>OutputStop(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">useBrake</span>)</b>\n\n' +
      'This function enables stopping the specified output port.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>    Desired output ports\n' +
-     '  <span foreground="brown">useBreak</span>   0: Float, 1: Break', 'Output'],
+     '\t<span foreground="brown">outputs</span>\tDesired output ports\n' +
+     '\t<span foreground="brown">useBreak</span>\t0: Float, 1: Break', 'Output'],
     ['OutputStepPower', 'OutputStepPower(outputs, power, step1, step2, step3)',
      '<b>OutputStepPower(' +
      '<span foreground="brown">outputs</span>, ' +
@@ -368,11 +391,11 @@ EVC_FUNCS = [
      '<span foreground="brown">step3</span>)</b>\n\n' +
      'This function enables specifying a full motor power cycle in tacho counts.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>\n' +
-     '  <span foreground="brown">power</span>\n' +
-     '  <span foreground="brown">step1</span>  specifyes the power ramp up periode in tacho counts, \n' +
-     '  <span foreground="brown">step2</span>  specifyes the constant power period in tacho counts,\n' +
-     '  <span foreground="brown">step3</span>  specifyes the power down period in tacho counts.', 'Output'],
+     '\t<span foreground="brown">outputs</span>\n' +
+     '\t<span foreground="brown">power</span>\n' +
+     '\t<span foreground="brown">step1</span>\tspecifyes the power ramp up periode in tacho counts, \n' +
+     '\t<span foreground="brown">step2</span>\tspecifyes the constant power period in tacho counts,\n' +
+     '\t<span foreground="brown">step3</span>\tspecifyes the power down period in tacho counts.', 'Output'],
     ['OutputStepSpeed', 'OutputStepSpeed(outputs, speed, step1, step2, step3)',
      '<b>OutputStepSpeed(' +
      '<span foreground="brown">outputs</span>, ' +
@@ -380,34 +403,34 @@ EVC_FUNCS = [
      '<span foreground="brown">step1</span>, ' +
      '<span foreground="brown">step2</span>, ' +
      '<span foreground="brown">step3</span>)</b>\n\n' +
-     'This function enables specifying a full motor power cycle in tacho counts.\n' +
-     'The system will automatically adjust the power level to the motor to keep\n' +
+     'This function enables specifying a full motor power cycle in tacho counts. ' +
+     'The system will automatically adjust the power level to the motor to keep ' +
      'the specified output speed.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>\n' +
-     '  <span foreground="brown">speed</span>\n' +
-     '  <span foreground="brown">step1</span>    specifyes the power ramp up periode in tacho counts,\n' +
-     '  <span foreground="brown">step2</span>    specifyes the constant power period in tacho counts,\n' +
-     '  <span foreground="brown">step3</span>    specifyes the power down period in tacho counts.', 'Output'],
+     '\t<span foreground="brown">outputs</span>\n' +
+     '\t<span foreground="brown">speed</span>\n' +
+     '\t<span foreground="brown">step1</span>\tspecifyes the power ramp up periode in tacho counts,\n' +
+     '\t<span foreground="brown">step2</span>\tspecifyes the constant power period in tacho counts,\n' +
+     '\t<span foreground="brown">step3</span>\tspecifyes the power down period in tacho counts.', 'Output'],
     ['OutputStepSync', 'OutputStepSync(outputs, speed, turn, step)',
      '<b>OutputStepSync(' +
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">speed</span>, ' +
      '<span foreground="brown">turn</span>, ' +
      '<span foreground="brown">step</span>)</b>\n\n' +
-     'This function enables synchronizing two motors. Synchronization should be\n' +
-     'used when motors should run as synchrone as possible, for example to\n' +
+     'This function enables synchronizing two motors. Synchronization should be ' +
+     'used when motors should run as synchrone as possible, for example to ' +
      'archieve a model driving straight. Duration is specified in tacho counts.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
-     '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
-     '  <span foreground="brown">speed</span>\n' +
-     '  <span foreground="brown">turn</span>:    0  :  Motor will run with same power\n' +
-     '           100:  One motor will run with specified power while the other will\n' +
-     '                 be close to zero\n' +
-     '           200:  One motor will run with specified power forward while the other\n' +
-     '                 will run in the opposite direction at the same power level.\n' +
-     '  <span foreground="brown">step</span>:    Tacho pulses, 0 = Infinite', 'Output'],
+     '\t<span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+     '\t\tOUT_BD or OUT_CD. Anything else is invalid.\n' +
+     '\t<span foreground="brown">speed</span>\n' +
+     '\t<span foreground="brown">turn</span>:\t0  :  Motor will run with same power\n' +
+     '\t\t100:  One motor will run with specified power while the other will\n' +
+     '\t\t      be close to zero\n' +
+     '\t\t200:  One motor will run with specified power forward while the other\n' +
+     '\t\t      will run in the opposite direction at the same power level.\n' +
+     '\t<span foreground="brown">step</span>:    Tacho pulses, 0 = Infinite', 'Output'],
     ['OutputTimePower', 'OutputTimePower(outputs, power, time1, time2, time3)',
      '<b>OutputTimePower(' +
      '<span foreground="brown">outputs</span>, ' +
@@ -417,11 +440,11 @@ EVC_FUNCS = [
      '<span foreground="brown">time3</span>)</b>\n\n' +
      'This function enables specifying a full motor power cycle in time.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
-     '  <span foreground="brown">power</span>\n' +
-     '  <span foreground="brown">time1</span>    specifyes the power ramp up periode in milliseconds,\n' +
-     '  <span foreground="brown">time2</span>    specifyes the constant power period in milliseconds,\n' +
-     '  <span foreground="brown">time3</span>    specifyes the power down period in milliseconds.', 'Output'],
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">power</span>\n' +
+     '\t<span foreground="brown">time1</span>\tspecifyes the power ramp up periode in milliseconds,\n' +
+     '  <span foreground="brown">time2</span>\tspecifyes the constant power period in milliseconds,\n' +
+     '  <span foreground="brown">time3</span>\tspecifyes the power down period in milliseconds.', 'Output'],
     ['OutputTimeSpeed', 'OutputTimeSpeed(outputs, speed, time1, time2, time3)',
      '<b>OutputTimeSpeed(' +
      '<span foreground="brown">outputs</span>, ' +
@@ -431,37 +454,37 @@ EVC_FUNCS = [
      '<span foreground="brown">time3</span>)</b>\n\n' +
      'This function enables specifying a full motor power cycle in time.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports.\n' +
-     '  <span foreground="brown">speed</span>\n' +
-     '  <span foreground="brown">time1</span>    specifyes the power ramp up periode in milliseconds,\n' +
-     '  <span foreground="brown">time2</span>    specifyes the constant power period in milliseconds,\n' +
-     '  <span foreground="brown">time3</span>    specifyes the power down period in milliseconds.', 'Output'],
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n' +
+     '\t<span foreground="brown">speed</span>\n' +
+     '\t<span foreground="brown">time1</span>\tspecifyes the power ramp up periode in milliseconds,\n' +
+     '\t<span foreground="brown">time2</span>\tspecifyes the constant power period in milliseconds,\n' +
+     '\t<span foreground="brown">time3</span>\tspecifyes the power down period in milliseconds.', 'Output'],
     ['OutputTimeSync', 'OutputTimeSync(outputs, speed, turn, time)',
      '<b>OutputTimeSync('+
      '<span foreground="brown">outputs</span>, ' +
      '<span foreground="brown">speed</span>, ' +
      '<span foreground="brown">turn</span>, ' +
      '<span foreground="brown">time</span>)</b>\n\n' +
-     'This function enables synchronizing two motors. Synchronization should be\n' +
-     'used when motors should run as synchrone as possible, for example to\n' +
+     'This function enables synchronizing two motors. Synchronization should be ' +
+     'used when motors should run as synchrone as possible, for example to ' +
      'archieve a model driving straight. Duration is specified in time.\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
-     '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
-     '  <span foreground="brown">speed</span>\n' +
-     '  <span foreground="brown">turn</span>     0  :  Motor will run with same power\n' +
-     '           100:  One motor will run with specified power while the other will\n' +
-     '                 be close to zero\n' +
-     '           200:  One motor will run with specified power forward while the other\n' +
-     '                 will run in the opposite direction at the same power level.\n' +
-     '  <span foreground="brown">time</span>', 'Output'],
+     '\t<span foreground="brown">outputs</span>\tHas to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+     '\t\tOUT_BD or OUT_CD. Anything else is invalid.\n' +
+     '\t<span foreground="brown">speed</span>\n' +
+     '\t<span foreground="brown">turn</span>\t0  :  Motor will run with same power\n' +
+     '\t\t100:  One motor will run with specified power while the other will\n' +
+     '\t\t      be close to zero\n' +
+     '\t\t200:  One motor will run with specified power forward while the other\n' +
+     '\t\t      will run in the opposite direction at the same power level.\n' +
+     '\t<span foreground="brown">time</span>', 'Output'],
     ['Off', 'Off(outputs)', '<b>Off(' +
      '<span foreground="brown">outputs</span>)</b>\n\n' +
      'Turn the specified outputs off (with braking).\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Desired output ports.\n\n' +
+     '\t<span foreground="brown">outputs</span>\tDesired output ports.\n\n' +
      '<b>Example:</b>\n' +
-     ' Off(OUT_A); // turn off output A', 'Output'],
+     '\tOff(OUT_A); // turn off output A', 'Output'],
     ['PlayTone', 'PlayTone(frequency, duration)', '<b>PlayTone(' +
      '<span foreground="brown">frequency</span>, ' +
      '<span foreground="brown">duration</span>)</b>\n\n', 'Sound'],
@@ -524,30 +547,47 @@ EVC_FUNCS = [
      '<span foreground="brown">y</span>, ' +
      '<span foreground="brown">w</span>, ' +
      '<span foreground="brown">h</span>)</b>\n\n' +
-     'This function lets you draw a rectangle on the screen at x, y with\n' +
+     'This function lets you draw a rectangle on the screen at x, y with ' +
      'the specified width and height.\n\n' +
      '<b>Parameters:</b>\n' +
-     '  <span foreground="brown">x</span>       The x value for the lower left corner of the rectangle.\n' +
-     '  <span foreground="brown">y</span>       The y value for the lower left corner of the rectangle.\n' +
-     '  <span foreground="brown">width</span>   The width of the rectangle.\n' +
-     '  <span foreground="brown">height</span>  The height of the rectangle.\n' +
+     '\t<span foreground="brown">x</span>\tThe x value for the lower left corner of the rectangle.\n' +
+     '\t<span foreground="brown">y</span>\tThe y value for the lower left corner of the rectangle.\n' +
+     '\t<span foreground="brown">width</span>\tThe width of the rectangle.\n' +
+     '\t<span foreground="brown">height</span>\tThe height of the rectangle.\n' +
      '<b>Example:</b>\n' +
-     '  RectOut(5,5,168,118);', 'Display'],
+     '\tRectOut(5,5,168,118);', 'Display'],
+    ['RectOutEx', 'RectOutEx(x, y, w, h, options)', '<b>RectOutEx(' +
+     '<span foreground="brown">x</span>, '
+     '<span foreground="brown">y</span>, ' +
+     '<span foreground="brown">w</span>, ' +
+     '<span foreground="brown">h</span>, ' +
+     '<span foreground="brown">options</span>)</b>\n\n' +
+     'This function lets you draw a rectangle on the screen at x, y with ' +
+     'the specified width and height.\n\n' +
+     '<b>Parameters:</b>\n' +
+     '\t<span foreground="brown">x</span>\tThe x value for the lower left corner of the rectangle.\n' +
+     '\t<span foreground="brown">y</span>\tThe y value for the lower left corner of the rectangle.\n' +
+     '\t<span foreground="brown">width</span>\tThe width of the rectangle.\n' +
+     '\t<span foreground="brown">height</span>\tThe height of the rectangle.\n' +
+     '\t<span foreground="brown">options</span>\tDRAW_OPT_NORMAL\n' +
+     '\t\tDRAW_OPT_FILL_SHAPE\n' +
+     '<b>Example:</b>\n' +
+     '\tRectOut(5,5,168,118, DRAW_OPT_FILL_SHAPE);', 'Display'],
     ['ResetGyro', 'ResetGyro()', '<b>ResetGyro()</b>\n\n' +
-     'Reset the angle of the gyrosensor to 0 by changing modes back\n' +
-     'and forth. This will take 2 seconds and is NOT SURE to work\n' +
+     'Reset the angle of the gyrosensor to 0 by changing modes back ' +
+     'and forth. This will take 2 seconds and is NOT SURE to work ' +
      'as expected.\n\n' +
      '<b>Example:</b>\n' +
-     '  ResetGyro();', 'Input'],
+     '\tResetGyro();', 'Input'],
     ['ResetTachoCount', 'ResetTachoCount(outputs)', '<b>ResetTachoCount(' +
      '<span foreground="brown">outputs</span>)</b>\n\n' +
-     'This function enables resetting the tacho count for the\n' +
-     'individual output ports. The tacho count is also resetted\n' +
+     'This function enables resetting the tacho count for the ' +
+     'individual output ports. The tacho count is also resetted ' +
      'at program start.\n', 'Output'],
     ['ResetRotationCount', 'ResetRotationCount(outputs)', '<b>ResetRotationCount(' +
      '<span foreground="brown">outputs</span>)</b>\n\n' +
-     'This function enables the program to clear the tacho count\n' +
-     'used as sensor input. This rotation count is resetted at\n' +
+     'This function enables the program to clear the tacho count ' +
+     'used as sensor input. This rotation count is resetted at ' +
      'boot time, not at program start.', 'Output'],
     ['ResetAllTachoCounts', 'ResetAllTachoCounts()', '<b>ResetAllTachoCounts(' +
      '<span foreground="brown">outputs</span>)</b>\n\n' +
@@ -556,15 +596,15 @@ EVC_FUNCS = [
      '<span foreground="brown">output</span>, ' +
      '<span foreground="brown">speed</span>, ' +
      '<span foreground="brown">angle</span>)</b>\n\n' +
-     'Rotate motor with given speed for a defined angle.\n' +
+     'Rotate motor with given speed for a defined angle. ' +
      'Code stops till the angle is reached\n\n' +
      '<b>Parameters</b>\n' +
-     '  <span foreground="brown">outputs</span>  Has to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
-     '           OUT_BD or OUT_CD. Anything else is invalid.\n' +
-     '  <span foreground="brown">speed</span>    \n' +
-     '  <span foreground="brown">angle</span>    Angle limit, in degree\n' +
+     '\t<span foreground="brown">outputs</span>\tHas to be OUT_AB, OUT_AC, OUT_AD, OUT_BC,\n' +
+     '\t\tOUT_BD or OUT_CD. Anything else is invalid.\n' +
+     '\t<span foreground="brown">speed</span>\t\n' +
+     '\t<span foreground="brown">angle</span>\tAngle limit, in degree\n' +
      '<b>Example:</b>\n' +
-     '  RotateMotor(OUT_A, 75, 180);', 'Output'],
+     '\tRotateMotor(OUT_A, 75, 180);', 'Output'],
     ['RotateMotorEx', 'RotateMotorEx(outputs, speed, angle, turn, sync, stop)',
      '<b>RotateMotorEx(' +
      '<span foreground="brown">outputs</span>,' +
@@ -731,6 +771,8 @@ EVC_FUNCS = [
      '<span foreground="brown">pattern</span>)</b>\n\n', 'Button'],
     ['SetLedWarning', 'SetLedWarning(value)', '<b>SetLedWarning(' +
      '<span foreground="brown">value</span>)</b>\n\n', 'Button'],
+    ['LedPattern', 'LedPattern()', 'LedPattern()', 'Button'],
+    ['LedWarning', 'LedWarning()', 'LedWarning()', 'Button'],
     ['Wait', 'Wait(time)', '<b>Wait(<span foreground="brown">time_ms</span>)</b>\n\n' +
      'Make code sleep for specified amount of time.\n\n' +
      '<b>Parameters</b>\n' +
@@ -761,6 +803,8 @@ EVC_CONSTS = [
     ['BTNCENTER', 'BTNCENTER'],
     ['BTNUP', 'BTNUP'],
     ['BTNDOWN', 'BTNDOWN'],
+    ['DRAW_OPT_NORMAL ','DRAW_OPT_NORMAL'],
+    ['DRAW_OPT_FILL_SHAPE', 'DRAW_OPT_FILL_SHAPE'],
     ['LCD_WIDTH', 'LCD_WIDTH'],
     ['LCD_HEIGHT', 'LCD_HEIGHT'],
     ['ICONTYPE_NORMAL', 'ICONTYPE_NORMAL'],
@@ -863,6 +907,10 @@ EVC_CONSTS = [
     ['SOUND_DOWN', 'SOUND_DOWN'],
     ['SOUND_LOW_BEEP', 'SOUND_LOW_BEEP'],
     ['SOUND_FAST_UP', 'SOUND_FAST_UP'],
+    ['FONTTYPE_NORMAL', 'FONTTYPE_NORMAL'],
+    ['FONTTYPE_SMALL', 'FONTTYPE_SMALL'],
+    ['FONTTYPE_LARGE', 'FONTTYPE_LARGE'],
+    ['FONTTYPE_TINY', 'FONTTYPE_TINY'],
     ['S_ICON_CHARGING', 'S_ICON_CHARGING'],
     ['S_ICON_BATT_4', 'S_ICON_BATT_4'],
     ['S_ICON_BATT_3', 'S_ICON_BATT_3'],
