@@ -152,8 +152,10 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         if len(files) > 1:
             for nth_file in files[1:]:
                 if Path(nth_file).is_file():
-                    loaded_files += self.load_file_in_editor(Path(nth_file).resolve().as_uri())
-                    LOGGER.debug('{} files loaded'.format(loaded_files))
+                    if self.load_file_in_editor(Path(nth_file).resolve().as_uri()):
+                        LOGGER.debug('loaded {}'.format(nth_file))
+                        loaded_files += 1
+            LOGGER.debug('{} files loaded'.format(loaded_files))
         if not loaded_files:
             self.open_new()
 
@@ -376,24 +378,25 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
     def load_file_in_editor(self, file_uri):
         '''
-        create new page and load document
+        create new page and load document(s)
         '''
-        if not 'untitled' in file_uri:
-            # is current page a untitled and empty document
-            page_num = self.notebook.get_n_pages()
-            if page_num:
-                editor = self.get_editor()
+        page_num = self.notebook.get_n_pages()
+        if page_num:
+            editor = self.get_editor()
+            #   untitled -> new page        untitled and empty doc -> replace with file_uri
+            if (not 'untitled' in file_uri) and 'untitled' in editor.document.get_uri():
                 start_iter, end_iter = editor.get_buffer().get_bounds()
                 if start_iter.equal(end_iter):
-                    LOGGER.debug('empty buffer found')
-                    # load in existing buffer
+                    LOGGER.debug('found empty untitled doc')
                     editor.document.set_uri(file_uri)
                     editor.load_file(editor.document)
                     self.change_language_selection(editor)
                     self.set_title(editor.document)
-                    editor.document.dec_untitled()  # TODO
-                    return
-        self.make_new_page(file_uri)
+                    editor.document.dec_untitled()
+                    return True
+        LOGGER.debug('make new page {}'.format(file_uri))
+        if self.make_new_page(file_uri):
+            return True
 
     def make_new_page(self, file_uri):
         '''
@@ -418,14 +421,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             buf.connect('mark_set', self.update_cursor_location)
             editor.codeview.grab_focus()
 
-            # only needed for zero pages
-            #if not self.save_doc_action.get_enabled():
-            #    self.save_doc_action.set_enabled(True)
-
-            #if not self.btn_save_as.get_sensitive():
-            #    self.btn_save_as.set_sensitive(True)
-            #if not self.btn_print.get_sensitive():
-            #    self.btn_print.set_sensitive(True)
             if not self.btn_language.get_sensitive():
                 self.btn_language.set_sensitive(True)
 
@@ -433,7 +428,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
             LOGGER.debug('file {} loaded in buffer, modified {}'
                          .format(file_uri, buf.get_modified()))
-        return 1
+        return True
 
     def dlg_close_confirmation(self, editor):
         '''
