@@ -24,10 +24,11 @@ import logging
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, Gio, Pango
 
 import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
+from minded.utils import create_tags, convert_markup_to_tags
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ CSS = b'''
             background-color: white;
         }
     '''
+
 
 class ApiViewer():
     '''A window with a Treeview to select item and a Textview to see
@@ -77,8 +79,17 @@ class ApiViewer():
         self.title_label = builder.get_object('title_label')
         self.title_label.set_markup("<big>NXC Programmers's Guide</big>")
 
-        self.info_view = builder.get_object('info_view')
-        self.info_view.set_markup('')
+        info_view = builder.get_object('info_view')
+        info_view.set_wrap_mode(Gtk.WrapMode.WORD)
+
+        tabs = Pango.TabArray.new(3, True)
+        tabs.set_tab(0, Pango.TabAlign.LEFT, 15)
+        tabs.set_tab(1, Pango.TabAlign.LEFT, 95)
+        tabs.set_tab(2, Pango.TabAlign.LEFT, 290)
+        info_view.set_tabs(tabs)
+
+        self.info_buffer = info_view.get_buffer()
+        create_tags(self.info_buffer)
 
         self.window.show_all()
         self.window.connect('delete-event', self.quit)
@@ -115,7 +126,7 @@ class ApiViewer():
             self.title_label.set_markup("<big>NXC Programmers's Guide</big>")
         elif stack.get_visible_child_name() == 'evc':
             self.title_label.set_markup("<big>EVC Programmers's Guide</big>")
-        self.info_view.set_markup('')
+        self.info_buffer.set_text('')
 
     def on_row_activated(self, treeview, treepath, treecolumn):  #pylint: disable=unused-argument
         '''single-click or ENTER-key on TreeView expands or
@@ -137,13 +148,12 @@ class ApiViewer():
             functions = nxc_funcs.NXC_FUNCS
 
         model, treeiter = selection.get_selected()
-
         if treeiter is not None:
             LOGGER.debug('you selected {}'.format(model[treeiter][0]))
             for func in functions:
                 if func[0] == model[treeiter][0] and func[2]:
-                    self.info_view.set_markup('\n<tt><span font="Mono 11">' +
-                                              func[2] + '</span></tt>')
+                    self.info_buffer.set_text(func[2])
+                    convert_markup_to_tags(self.info_buffer)
                     break
 
     def quit(self, *args):      #pylint: disable=unused-argument
