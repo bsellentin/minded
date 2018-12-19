@@ -23,6 +23,7 @@
 
 import sys
 from pathlib import Path
+import fnmatch
 
 
 # internationalization
@@ -311,26 +312,24 @@ def look_for_settings(settings):
             LOGGER.warning('no nbc executable found')
     # arm-c compiler
     if not Path(settings.get_string('armgcc')).is_file():
-        # Debian-stretch
-        if Path('/usr/bin/arm-linux-gnueabi-gcc-6').is_file():
-            # package gcc-6-arm-linux-gnueabi
-            settings.set_string('armgcc', '/usr/bin/arm-linux-gnueabi-gcc-6')
-        # Ubuntu xenial
-        elif Path('/usr/bin/arm-linux-gnueabi-gcc-5').is_file():
-            settings.set_string('armgcc', '/usr/bin/arm-linux-gnueabi-gcc-5')
-        # Ubuntu bionic beaver
-        elif Path('/usr/bin/arm-linux-gnueabi-gcc-7').is_file():
-            settings.set_string('armgcc', '/usr/bin/arm-linux-gnueabi-gcc-7')
+        found = False
+        for file in Path('/usr/bin').iterdir():
+            if fnmatch.fnmatch(file, '/usr/bin/arm-linux-gnueabi-gcc-?'):
+                found = True
+                break
+        if found:
+            settings.set_string('armgcc', str(file))
         else:
             LOGGER.warning('no arm-gcc executable found')
     # c++ compiler
     if not Path(settings.get_string('armgplusplus')).is_file():
-        if Path('/usr/bin/arm-linux-gnueabi-g++-6').is_file():
-            settings.set_string('armgplusplus', '/usr/bin/arm-linux-gnueabi-g++-6')
-        # Ubuntu xenial
-        elif Path('/usr/bin/arm-linux-gnueabi-g++-5').is_file():
-            # package g++-5-arm-linux-gnueabi
-            settings.set_string('armgplusplus', '/usr/bin/arm-linux-gnueabi-g++-5')
+        found = False
+        for file in Path('/usr/bin').iterdir():
+            if fnmatch.fnmatch(file, '/usr/bin/arm-linux-gnueabi-g++-?'):
+                found = True
+                break
+        if found:
+            settings.set_string('armgplusplus', str(file))
         else:
             LOGGER.warning('no arm-g++ executable found')
     # check for ev3-library, development first
