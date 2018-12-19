@@ -318,6 +318,9 @@ def look_for_settings(settings):
         # Ubuntu xenial
         elif Path('/usr/bin/arm-linux-gnueabi-gcc-5').is_file():
             settings.set_string('armgcc', '/usr/bin/arm-linux-gnueabi-gcc-5')
+        # Ubuntu bionic beaver
+        elif Path('/usr/bin/arm-linux-gnueabi-gcc-7').is_file():
+            settings.set_string('armgcc', '/usr/bin/arm-linux-gnueabi-gcc-7')
         else:
             LOGGER.warning('no arm-gcc executable found')
     # c++ compiler
@@ -341,7 +344,7 @@ def look_for_settings(settings):
             LOGGER.warning('EV3 library not found')
     if Path('./EV3-API/API').is_dir():
         settings.set_string('incs', str(Path('./EV3-API/API').resolve()))
-    elif not Path(settings.get_string('incs')).is_dir():
+    elif not Path(settings.get_string('incs'), 'ev3.h').is_file():
         if Path('/usr/lib/c4ev3').is_dir():
             settings.set_string('incs', '/usr/lib/c4ev3')
         else:
