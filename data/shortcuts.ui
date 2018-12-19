@@ -49,6 +49,12 @@
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;ctrl&gt;L</property>
+                <property name="title" translatable="yes">Change programming language</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
                 <property name="accelerator">&lt;ctrl&gt;&lt;Alt&gt;Page_Down</property>
                 <property name="title" translatable="yes">Switch to the next document</property>
               </object>
@@ -136,6 +142,43 @@
               <object class="GtkShortcutsShortcut">
                 <property name="accelerator">&lt;ctrl&gt;A</property>
                 <property name="title" translatable="yes">Select all text</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes">Editing</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">Insert</property>
+                <property name="title" translatable="yes">Toggle insert / overwrite</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;Alt&gt;Up</property>
+                <property name="title" translatable="yes">Move current line up</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="accelerator">&lt;Alt&gt;Down</property>
+                <property name="title" translatable="yes">Move current line down</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="accelerator">&lt;alt&gt;Left</property>
+                <property name="title" translatable="yes">Move current word left</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="accelerator">&lt;alt&gt;Right</property>
+                <property name="title" translatable="yes">Move current word right</property>
               </object>
             </child>
           </object>

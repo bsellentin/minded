@@ -76,6 +76,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             ['brick_filer', self.on_btn_brickfiler_clicked],
             ['api_browser', self.on_btn_apiviewer_clicked],
             ['overwrite_mode', self.on_key_insert],
+            ['select_lang', self.on_btn_language_clicked]
         ]
         for action in actions:
             add_simple_action(self, action[0], action[1])
@@ -101,7 +102,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             ['win.close_doc', ['<Ctrl>w']],
             ['win.transmit', ['F6']],
             ['win.compile', ['F5']],
-            ['win.overwrite_mode', ['Insert']]
+            ['win.overwrite_mode', ['Insert']],
+            ['win.select_lang', ['<Ctrl>l']]
         ]
         for accel in accels:
             self.app.set_accels_for_action(accel[0], accel[1])
@@ -496,16 +498,23 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.set_title(page.document)
         self.change_overwrite_status(page.codeview)
 
+    def on_btn_language_clicked(self, action, param):
+        LOGGER.debug('<ctrl>l')
+        self.btn_language.get_popover().popup()
+
     def on_languageselect_changed(self, selection):
         '''
         single click, language changed
+        GtkTreeView->GtkTreeSelection->signal: changed
+        not good for using <KEY down> or <KEY up>
         '''
-        model, treeiter = selection.get_selected()
-        self.change_language(model, treeiter)
+        #model, treeiter = selection.get_selected()
+        #self.change_language(model, treeiter)
+        pass
 
     def on_languagetree_row_activated(self, treeview, path, column):
         '''
-        double click
+        double click or <Enter>
         '''
         selection = treeview.get_selection()
         model, treeiter = selection.get_selected()
