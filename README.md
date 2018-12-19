@@ -25,12 +25,12 @@ For Debian-based systems MindEd requires the following packages to run:
 For systemwide installation click [releases](https://github.com/bsellentin/minded/releases)
 and download the latest version as deb-package. In the download-folder execute as *root*:
 
-    $dpkg -i minded-*X.Y.Z*_amd64.deb
+    $ dpkg -i minded-*X.Y.Z*_amd64.deb
 
 Advantage: you get mime-support - clicking on a brick-file in the filemanager opens
 MindEd. If something goes wrong, open a terminal and start by typing
 
-    $minded --debug
+    $ minded --debug
 
 For local installation clone the repository:
 
@@ -48,11 +48,11 @@ Now run Minded as normal user.
     minded$ python3 minded.py --debug
 
 
-MindEd looks for the NBC compiler in `/usr/bin` and in `/usr/local/bin`. GCC cross-compiler is searched
-in `/usr/bin` as `arm-linux-gnueabi-gcc-6` (Debian) or `arm-linux-gnueabi-gcc` (Ubuntu). Other
-names and paths can be set using dconf-editor -> org -> gge-em -> minded.
+MindEd looks for the NBC compiler in `/usr/bin` and in `/usr/local/bin`.
+GCC cross-compiler is searched in `/usr/bin` as `arm-linux-gnueabi-gcc-?`.
+Other names and paths can be set in settings-menu or dconf-editor -> org -> gge-em -> minded.
 
-EV3 brick needs firmware >= 1.03.
+EV3-brick needs firmware >= 1.03.
 
 ## Documentation
 
