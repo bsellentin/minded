@@ -17,13 +17,13 @@ For Debian-based systems MindEd requires the following packages to run:
 1. gir1.2-gtk-3.0 (>=3.18)
 1. gir1.2-gudev-1.0
 1. python3-usb
-1. nbc
-1. gcc-arm-linux-gnueabi
+1. nbc, if you want to program NXT-brick
+1. gcc-arm-linux-gnueabi, if you want to program EV3-brick
 
 ## Installation
 
-For systemwide installation click __release__ and download the latest version as
-deb-package. In the download-folder execute as *root*:
+For systemwide installation click [releases](https://github.com/bsellentin/minded/releases)
+and download the latest version as deb-package. In the download-folder execute as *root*:
 
     $dpkg -i minded-*X.Y.Z*_amd64.deb
 
