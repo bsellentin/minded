@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-12 22:00+0100\n"
+"POT-Creation-Date: 2019-02-11 18:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,100 +17,92 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: editorapp.py:96 editorapp.py:100
+#: editorapp.py:98 editorapp.py:102
 msgid "Filename {} to long!"
 msgstr ""
 
-#: editorapp.py:97
+#: editorapp.py:99
 msgid "Maximum allowable are 15 characters"
 msgstr ""
 
-#: editorapp.py:101
+#: editorapp.py:103
 msgid "Maximum allowable are 20 characters"
 msgstr ""
 
-#: editorapp.py:106
+#: editorapp.py:108
 msgid "Filename {} unvalid!"
 msgstr ""
 
-#: editorapp.py:107
+#: editorapp.py:109
 msgid "Filename contains non-alphanumeric characters."
 msgstr ""
 
-#: editorapp.py:315
+#: editorapp.py:316
 msgid "Could not save file {}"
 msgstr ""
 
-#: widgets.py:64
+#: widgets.py:97
 msgid "Please choose a file"
 msgstr ""
 
-#: widgets.py:76
+#: widgets.py:109
 msgid "Brick files"
 msgstr ""
 
-#: widgets.py:82
+#: widgets.py:115
 msgid "Any files"
 msgstr ""
 
-#: widgets.py:92
+#: widgets.py:125
 msgid "Pick a file"
 msgstr ""
 
-#: widgets.py:141
+#: widgets.py:174
 msgid "Line Ending"
 msgstr ""
 
-#: widgets.py:166
+#: widgets.py:199
 msgid "Save changes to document {} before closing?"
 msgstr ""
 
-#: widgets.py:168
+#: widgets.py:201
 msgid "Close without Saving"
 msgstr ""
 
-#: widgets.py:169
+#: widgets.py:202
 msgid "Cancel"
 msgstr ""
 
-#: widgets.py:170
+#: widgets.py:203
 msgid "Save"
 msgstr ""
 
-#: widgets.py:172
+#: widgets.py:205
 msgid "Changes to document {} will be permanently lost."
 msgstr ""
 
-#: mindedappwin.py:300 mindedappwin.py:326
+#: mindedappwin.py:311 mindedappwin.py:337
 msgid "You have to save first!"
 msgstr ""
 
-#: mindedappwin.py:301 mindedappwin.py:327
+#: mindedappwin.py:312 mindedappwin.py:338
 msgid "The compiler works on the real file."
 msgstr ""
 
-#: mindedappwin.py:316 mindedappwin.py:342
+#: mindedappwin.py:327 mindedappwin.py:353
 msgid "# Error: unknown file extension, expected: .nxc or .evc"
 msgstr ""
 
-#: mindedappwin.py:414 mindedappwin.py:593
+#: mindedappwin.py:426 mindedappwin.py:604
 msgid "INS"
 msgstr ""
 
-#: mindedappwin.py:591
+#: mindedappwin.py:602
 msgid "OVR"
 msgstr ""
 
-#: mindedappwin.py:606
+#: mindedappwin.py:617
 msgid "Ln {}, Col {}"
-msgstr ""
-
-#: mindedappwin.py:625
-msgid "No NBC-executable found!"
-msgstr ""
-
-#: mindedappwin.py:626
-msgid "not in /usr/bin, not in /usr/local/bin"
 msgstr ""
 
 #: preferences.py:69
@@ -162,67 +154,95 @@ msgid "Print the document"
 msgstr ""
 
 #: ../data/shortcuts.ui:53
-msgid "Switch to the next document"
+msgid "Change programming language"
 msgstr ""
 
 #: ../data/shortcuts.ui:59
+msgid "Switch to the next document"
+msgstr ""
+
+#: ../data/shortcuts.ui:65
 msgid "Switch to the previous document"
 msgstr ""
 
-#: ../data/shortcuts.ui:66
+#: ../data/shortcuts.ui:72
 msgid "Compiler"
 msgstr ""
 
-#: ../data/shortcuts.ui:70
+#: ../data/shortcuts.ui:76
 msgid "Compile the program"
 msgstr ""
 
-#: ../data/shortcuts.ui:76
+#: ../data/shortcuts.ui:82
 msgid "Transmit program to brick"
 msgstr ""
 
-#: ../data/shortcuts.ui:83
+#: ../data/shortcuts.ui:89
 msgid "Windows"
 msgstr ""
 
-#: ../data/shortcuts.ui:87
+#: ../data/shortcuts.ui:93
 msgid "Quit the application"
 msgstr ""
 
-#: ../data/shortcuts.ui:94
+#: ../data/shortcuts.ui:100
 msgid "Copy and Paste"
 msgstr ""
 
-#: ../data/shortcuts.ui:98
+#: ../data/shortcuts.ui:104
 msgid "Copy selected text to clipboard"
 msgstr ""
 
-#: ../data/shortcuts.ui:104
+#: ../data/shortcuts.ui:110
 msgid "Cut selected text to clipboard"
 msgstr ""
 
-#: ../data/shortcuts.ui:110
+#: ../data/shortcuts.ui:116
 msgid "Paste text from clipboard"
 msgstr ""
 
-#: ../data/shortcuts.ui:117
+#: ../data/shortcuts.ui:123
 msgid "Undo and Redo"
 msgstr ""
 
-#: ../data/shortcuts.ui:121
+#: ../data/shortcuts.ui:127
 msgid "Undo previous command"
 msgstr ""
 
-#: ../data/shortcuts.ui:127
+#: ../data/shortcuts.ui:133
 msgid "Redo previous command"
 msgstr ""
 
-#: ../data/shortcuts.ui:134
+#: ../data/shortcuts.ui:140
 msgid "Selection"
 msgstr ""
 
-#: ../data/shortcuts.ui:138
+#: ../data/shortcuts.ui:144
 msgid "Select all text"
+msgstr ""
+
+#: ../data/shortcuts.ui:151
+msgid "Editing"
+msgstr ""
+
+#: ../data/shortcuts.ui:155
+msgid "Toggle insert / overwrite"
+msgstr ""
+
+#: ../data/shortcuts.ui:161
+msgid "Move current line up"
+msgstr ""
+
+#: ../data/shortcuts.ui:167
+msgid "Move current line down"
+msgstr ""
+
+#: ../data/shortcuts.ui:174
+msgid "Move current word left"
+msgstr ""
+
+#: ../data/shortcuts.ui:181
+msgid "Move current word right"
 msgstr ""
 
 #: ../data/mindedappwin.ui:14
@@ -238,7 +258,7 @@ msgid "nxc"
 msgstr ""
 
 #: ../data/mindedappwin.ui:19 ../data/minded-preferences-dialog.ui:475
-#: ../data/apiviewer.ui:89
+#: ../data/apiviewer.ui:88
 msgid "NXC"
 msgstr ""
 
@@ -247,7 +267,7 @@ msgid "evc"
 msgstr ""
 
 #: ../data/mindedappwin.ui:23 ../data/minded-preferences-dialog.ui:697
-#: ../data/apiviewer.ui:124
+#: ../data/apiviewer.ui:123
 msgid "EVC"
 msgstr ""
 
@@ -436,7 +456,7 @@ msgstr ""
 #: ../data/brickinfo.ui:79 ../data/brickinfo.ui:91 ../data/brickinfo.ui:103
 #: ../data/brickinfo.ui:115 ../data/brickinfo.ui:127 ../data/brickinfo.ui:139
 #: ../data/brickinfo.ui:151 ../data/brickinfo.ui:163 ../data/brickinfo.ui:175
-#: ../data/brickinfo.ui:187 ../data/apiviewer.ui:153 ../data/apiviewer.ui:167
+#: ../data/brickinfo.ui:187 ../data/apiviewer.ui:152
 msgid "label"
 msgstr ""
 
@@ -452,11 +472,11 @@ msgstr ""
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: ../data/apiviewer.ui:75
+#: ../data/apiviewer.ui:74
 msgid "NXC functions"
 msgstr ""
 
-#: ../data/apiviewer.ui:110
+#: ../data/apiviewer.ui:109
 msgid "EVC functions"
 msgstr ""
 

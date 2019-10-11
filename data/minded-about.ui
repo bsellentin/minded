@@ -7,13 +7,13 @@
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">MindEd</property>
-    <property name="version">0.7.9</property>
+    <property name="version">0.7.13</property>
     <property name="comments" translatable="yes">An Editor for LEGO Mindstorms Bricks</property>
     <property name="website">https://github.com/bsellentin/minded</property>
     <property name="website_label" translatable="yes">MindEd Website</property>
     <property name="authors">Bernd Sellentin</property>
     <property name="logo">/usr/share/minded/minded.png</property>
-    <property name="copyright">2017 - 2018 selles</property>
+    <property name="copyright">2017 - 2019 selles</property>
     <property name="license_type">gpl-3-0</property>
     <child internal-child="vbox">
       <object class="GtkBox">

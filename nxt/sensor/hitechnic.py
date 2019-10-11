@@ -441,7 +441,7 @@ and can be converted into a list of bools or an integer."""
             return self.datalst[i]
 
     class Analog_Data():
-        def __init__(self, a0, a1, a2, a3, a4):
+        def __init__(self, a0, a1, a2, a3, a4) -> None:
             self.a0, self.a1, self.a2, self.a3, self.a4 = a0, a1, a2, a3, a4
 
     def get_analog(self):

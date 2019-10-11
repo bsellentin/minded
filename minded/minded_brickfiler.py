@@ -22,6 +22,8 @@ import urllib.request
 from urllib.parse import urlparse, unquote
 import logging
 
+from typing import List, Dict, Tuple, Any, Union
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
@@ -57,8 +59,10 @@ def write_file(brick, file_name, data):
     writer.close()
 
 def write_files(brick, file_uris):
-    '''write multiple files to NXT brick'''
-    wnames = []
+    '''write multiple files to NXT brick
+    returns wnames[str name, str len], what is this good for?
+    '''
+    wnames = []  # type: List[Tuple[str, str]]
     for file_uri in file_uris:
         if file_uri:
             logger.debug('File: {} Type {}'.format(file_uri, type(file_uri)))
@@ -93,21 +97,22 @@ class BrickListing(Gtk.ListStore):
 
     def populate(self, brick, path):
 
+        filelist: List[Tuple[str, object, int, bool]] = []
+
         if brick.__class__.__name__ == 'Brick':
             self.clear()
-            filelist = []
 
             finder = FileFinder(brick, path)
             for (fname, size) in finder:
                 # exclude NVconfig.sys?
                 if Path(fname).suffix == ".rso":
-                    filelist.append([fname, AUDIOICON, size, False])
+                    filelist.append((fname, AUDIOICON, size, False))
                 elif Path(fname).suffix == ".ric":
-                    filelist.append([fname, GRAPHICICON, size, False])
+                    filelist.append((fname, GRAPHICICON, size, False))
                 elif Path(fname).suffix in [".rxe", ".rtm"]:
-                    filelist.append([fname, EXECICON, size, False])
+                    filelist.append((fname, EXECICON, size, False))
                 else:
-                    filelist.append([fname, FILEICON, size, False])
+                    filelist.append((fname, FILEICON, size, False))
 
             filelist.sort()
             for file in filelist:
@@ -119,8 +124,8 @@ class BrickListing(Gtk.ListStore):
 
         elif brick.__class__.__name__ == 'EV3':
             self.clear()
-            dirlist = []
-            filelist = []
+            dirlist: List[Tuple[str, object, int, bool]] = []
+
             '''
             #define   vmEXT_SOUND                   ".rsf"     //!< Robot Sound File
             #define   vmEXT_GRAPHICS                ".rgf"     //!< Robot Graphics File
@@ -132,19 +137,20 @@ class BrickListing(Gtk.ListStore):
             #define   vmEXT_ARCHIVE                 ".raf"     //!< Robot Archive File
             '''
             if brick.usb_ready():
-                content = brick.list_dir(path)
+                content: Dict[str, Union[List, Dict]] = brick.list_dir(path)
                 for folder in content['folders']:
                     if folder in ['.', '..',]:
                         pass
                     else:
-                        dirlist.append([folder, DIRICON, 2, True])  # TODO: get number of objects
+                        dirlist.append((folder, DIRICON, 2, True))  # TODO: get number of objects
                 for file in content['files']:
+                    logger.debug('{}'.format(file))
                     if Path(file['name']).suffix == ".rgf":
-                        filelist.append([file['name'], GRAPHICICON, file['size'], False])
+                        filelist.append((file['name'], GRAPHICICON, file['size'], False))
                     elif Path(file['name']).suffix in [".rsf", ".rmd", ".wav", ".rso"]:
-                        filelist.append([file['name'], AUDIOICON, file['size'], False])
+                        filelist.append((file['name'], AUDIOICON, file['size'], False))
                     else:
-                        filelist.append([file['name'], FILEICON, file['size'], False])
+                        filelist.append((file['name'], FILEICON, file['size'], False))
 
                 # store sorted directories first
                 dirlist.sort()
@@ -335,7 +341,7 @@ class BrickFiler():
                                           self.current_ev3_directory)
             hpaned.add1(self.make_brickfile_panel('EV3', self.ev3_model))
         else:
-            self.nxt_model = BrickListing(None, None, None)
+            self.nxt_model = BrickListing(None, None)
             hpaned.add1(self.make_brickfile_panel('No brick', self.nxt_model))
 
         self.current_directory = str(Path.home())
@@ -535,7 +541,7 @@ class BrickFiler():
         brick is drag source
         select NXT-file(s) to copy to host or to delete
         '''
-        file_uris = []
+        file_uris: List[str] = []
         for item in iconview.get_selected_items():
             selected_iter = iconview.get_model().get_iter(item)
             file_uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
@@ -554,7 +560,7 @@ class BrickFiler():
         host is drag source
         set the selected uri(s) to copy to brick
         '''
-        file_uris = []
+        file_uris: List[str] = []
         for item in iconview.get_selected_items():
             selected_iter = iconview.get_model().get_iter(item)
             uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
@@ -574,7 +580,7 @@ class BrickFiler():
         brick is drag destination
         write file to brick from host 
         '''
-        file_uris = selection.get_uris()
+        file_uris: List[str] = selection.get_uris()
 
         if context.get_actions() == DRAG_ACTION:
 
@@ -646,8 +652,7 @@ class BrickFiler():
         host is drag destination
         read file from brick and write to host
         '''
-        # TODO: ev3
-        file_uris = selection.get_uris()
+        file_uris: List[str] = selection.get_uris()
 
         if context.get_actions() == DRAG_ACTION:
 
@@ -699,7 +704,7 @@ class BrickFiler():
         '''
         delete button as drag destination
         '''
-        file_uris = selection.get_uris()
+        file_uris: List[str] = selection.get_uris()
         logger.debug('selected to delete: {}'.format(file_uris))
 
         if context.get_actions() == DRAG_ACTION:
@@ -740,6 +745,7 @@ class BrickFiler():
     def delete_nxt_file(self):
         '''delete file(s) on nxt-brick'''
         if self.nxt_model:
+            blacklist = ['! Startup.rso', '! Click.rso', 'NVConfig.sys', 'RPGReader.sys']
 
             for item in self.brick_view.get_selected_items():
                 logger.debug('{}'.format(item))
@@ -748,6 +754,8 @@ class BrickFiler():
                 if selected_iter is not None:
                     file_name = self.nxt_model.get_value(selected_iter, 0)
                     logger.debug('selected to delete: {}'.format(file_name))
+                    if file_name in blacklist:
+                        continue
                     try:
                         self.app.nxt_brick.delete(file_name)
                         logger.debug('deleted: {}'.format(file_name))
@@ -759,7 +767,7 @@ class BrickFiler():
         '''delete file(s) on ev3-brick'''
         if self.ev3_model:
             blacklist = ['BrkDL_SAVE', 'BrkProg_SAVE', 'SD_Card']
-            
+
             for item in  self.brick_view.get_selected_items():
                 logger.debug('item {}'.format(item))
                 selected_iter = self.ev3_model.get_iter(item)

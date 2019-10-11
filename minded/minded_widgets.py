@@ -3,15 +3,17 @@
 '''
 Widgets used for MindEd
 '''
-
+import os
+import signal
 from gettext import gettext as _
 import logging
 import platform
+from pathlib import Path
 
 import gi
 gi.require_version('Gtk', '3.0')
-
-from gi.repository import Gtk
+gi.require_version('GObject', '2.0')
+from gi.repository import Gtk, GObject
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +40,38 @@ class MindedTabLabel(Gtk.Bin):
 
     def set_text(self, text):
         self.label.set_text(text)
+
+class CancelProcDialog(Gtk.MessageDialog):
+    def __init__(self, parent, procid):
+        Gtk.MessageDialog.__init__(self, transient_for=parent,
+                                   modal=True,
+                                   message_type=Gtk.MessageType.INFO,
+                                   buttons=Gtk.ButtonsType.CANCEL,
+                                   text='idle proc')
+        LOGGER.debug('nbc_proc ID %s' % procid)
+
+        #response = self.run()
+        #if response == Gtk.ResponseType.CANCEL:
+        #    os.killpg(os.getpgid(procid), signal.SIGTERM)
+        #return False
+        #self.destroy()
+        self.show_all()
+
+class CancellationWin(Gtk.Window):
+    def __init__(self, parent, procid):
+        Gtk.Window.__init__(self, title='Cancel Proc')
+
+        self.procid = procid
+
+        box = Gtk.Box(spacing=6)
+        button = Gtk.Button.new_with_label('Cancel')
+        box.pack_start(button, True, True, 0)
+
+        button.connect('clicked', self.on_cancel_clicked)
+        self.show_all()
+
+    def on_cancel_clicked(self, button):
+        os.killpg(os.getpgid(self.procid), signal.SIGTERM)
 
 class ErrorDialog(Gtk.MessageDialog):
     '''
@@ -87,12 +121,19 @@ class FileSaveDialog(Gtk.FileChooserDialog):
     '''
     File save dialog with choice for newline-type
     '''
-    def __init__(self, parent, document):
+    def __init__(self, parent, document, language):
 
-        Gtk.FileChooserDialog.__init__(self, _('Pick a file'), parent,
+        '''Gtk.FileChooserDialog.__init__(self, _('Pick a file'), parent,
                                        Gtk.FileChooserAction.SAVE,
                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                       Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
+                                       Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))'''
+        Gtk.FileChooserDialog.__init__(self, _('Pick a file'), parent,
+                                       Gtk.FileChooserAction.SAVE,
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+                                       #Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
+
+        SaveButton = self.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT)
+        SaveButton.connect("clicked", self.validateChoice, language)
 
         self.set_do_overwrite_confirmation(True)
         self.set_local_only(False)
@@ -108,6 +149,25 @@ class FileSaveDialog(Gtk.FileChooserDialog):
             self.set_uri(document.get_uri())
         except GObject.GError as e:
             LOGGER.error('# Error: {}'.format(e.message))
+
+    def validateChoice(self, button, language):
+        filename = Path(self.get_filename())
+        LOGGER.debug('ValidateChoice {}'.format(filename))
+
+        if language:
+            if language.get_name() == 'EVC':
+                if filename.suffix != '.evc':
+                    LOGGER.debug('No suffix')
+                    filename = filename.with_suffix('.evc')
+                    LOGGER.debug('append suffix: {}'.format(filename.name))
+            if language.get_name() == 'NXC':
+                if filename.suffix != '.nxc':
+                    LOGGER.debug('No suffix')
+                    filename = filename.with_suffix('.nxc')
+                    LOGGER.debug('append suffix: {}'.format(filename.name))
+
+            self.set_filename(str(filename))
+        self.response(Gtk.ResponseType.ACCEPT)
 
     def get_choice(self, choice_type):
         '''

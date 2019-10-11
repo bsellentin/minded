@@ -96,7 +96,7 @@ def find_bricks(host=None, name=None, silent=False, method=Method()):
         raise NoBackendError("No selected backends are available! Did you install the comm modules?")
 
 
-def find_one_brick(host=None, name=None, silent=False, strict=None, debug=False, method=None, confpath=None):
+def find_one_brick(host=None, name=None, silent=False, strict=False, debug=False, method=None, confpath=None):
     """Use to find one brick. The host and name args limit the search to
 a given MAC or brick name. Set silent to True to stop nxt-python from
 printing anything during the search. This function by default
@@ -117,7 +117,7 @@ name, strict, or method) are provided."""
     if not (host or name or strict or method):
         host	= conf.get('Brick', 'host')
         name	= conf.get('Brick', 'name')
-        strict	= bool(int(conf.get('Brick', 'strict')))
+        strict	= bool(conf.get('Brick', 'strict'))
         #method	= eval('Method(%s)' % conf.get('Brick', 'method'))
         method_value = conf.get('Brick', 'method')
         if method_value:
@@ -195,7 +195,7 @@ def device_brick(filename):
 
 
 def read_config(confpath=None, debug=False):
-    conf = configparser.RawConfigParser({'host': None, 'name': None, 'strict': True, 'method': ''})
+    conf = configparser.RawConfigParser({'host': '', 'name': '', 'strict': True, 'method': ''})
     if not confpath: confpath = os.path.expanduser('~/.nxt-python')
     if conf.read([confpath]) == [] and debug:
         print("Warning: Config file (should be at %s) was not read. Use nxt.locator.make_config() to create a config file." % confpath)
@@ -217,7 +217,7 @@ def make_config(confpath=None):
     conf.add_section('Brick')
     conf.set('Brick', 'name', 'MyNXT')
     conf.set('Brick', 'host', '54:32:59:92:F9:39')
-    conf.set('Brick', 'strict', 0)
+    conf.set('Brick', 'strict', False)
     conf.set('Brick', 'method', 'usb=True, bluetooth=False, fantomusb=True')
     conf.write(open(confpath, 'w'))
     print("The file has been written at %s" % confpath)

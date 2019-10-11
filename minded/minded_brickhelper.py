@@ -1,13 +1,30 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+# Copyright (C) 2017 Bernd Sellentin <sel@gge-em.org>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 from pathlib import Path
+import os
 import subprocess
 import shlex
 import struct
 import hashlib
 import mmap
 
+from minded.minded_widgets import CancellationWin
 
 import logging
 logger = logging.getLogger(__name__)
@@ -20,6 +37,7 @@ class BrickHelper():
     def __init__(self, application):
 
         self.application = application
+        self.procid = -1
 
     def nbc_proc(self, document, upload: bool = False):
         '''
@@ -27,39 +45,53 @@ class BrickHelper():
         returns (error, msg)
         '''
         nbc_exec = self.application.settings.get_string('nbcpath')
-        if not nbc_exec:
-            return (2, 'no NBC-executable found')
+        # if not nbc_exec: Error: 127, /bin/sh: 1: /usr/local/bin/nbc: not found
+
+        enhancedfw = self.application.settings.get_boolean('enhancedfw')
+        if enhancedfw:
+            nbc_exec = nbc_exec + ' -EF'
+        logger.debug('use enhancedfw: {}'.format(enhancedfw))
+
+        if upload:
+            # compile and upload
+            nbc_opts = (' -d %s' % (shlex.quote(document.get_path())))
+            logger.debug('upload: {}'.format(nbc_opts))
         else:
-            enhancedfw = self.application.settings.get_boolean('enhancedfw')
-            if enhancedfw:
-                nbc_exec = nbc_exec + ' -EF'
-            logger.debug('use enhancedfw: {}'.format(enhancedfw))
+            # compile only
+            nbcout = str(Path(document.get_path()).with_suffix('.rxe'))
+            logger.debug('File to compile: {}'.format(document.get_path()))
+            nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout),
+                                       shlex.quote(document.get_path())))
 
-            if upload:
-                # compile and upload
-                nbc_opts = (' -d %s' % (shlex.quote(document.get_path())))
-                logger.debug('upload: {}'.format(nbc_opts))
-            else:
-                # compile only
-                #nbcout = str(Path(document.get_filepath(),
-                #             Path(document.get_shortname()).stem + '.rxe'))
-                nbcout = str(Path(document.get_path()).with_suffix('.rxe'))
-                logger.debug('File to compile: {}'.format(document.get_path()))
-                nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout),
-                                           shlex.quote(document.get_path())))
+        # TODO: nbc dies silently if not enough free memory on brick
+        # 1. compile
+        # 2. check filesize
+        # 3. check free memory
+        #    name, host, signal_strength, user_flash = self.application.nxt_brick.get_device_info()
+        # 4. nbc -b: treat input file as a binary file (don't compile it)
+        #    nbc_opts = (' -b %s' % (shlex.quote(document.get_path())))
+        #    Error: unexpected filetype specified (.rxe)
 
-            # do it
-            nbc_proc = subprocess.Popen(('%s %s' % (nbc_exec, nbc_opts)),
-                                        shell=True, stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
+        # do it
+        nbc_proc = subprocess.Popen(('%s %s' % (nbc_exec, nbc_opts)),
+                                    shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, preexec_fn=os.setsid)
 
+        self.procid = nbc_proc.pid
+        logger.debug('nbc_proc ID %s' % self.procid)
+
+        cancel_win = CancellationWin(self, nbc_proc.pid)
+
+        try:
+            nbc_data = nbc_proc.communicate(timeout=30)
+            # nbc_data[0]: stdout, nbc_data[1]: stderr
+        except TimeoutExpired:
+            nbc_proc.kill()
             nbc_data = nbc_proc.communicate()
-            if nbc_proc.returncode:  # Error
-                return (nbc_proc.returncode, nbc_data[1].decode())
-            else:  # OK
-                # nur die letzten 5 Zeilen ausgeben
-                msg = '\n'.join([str(i) for i in nbc_data[0].decode().split('\n')[-5:]])
-                return (nbc_proc.returncode, msg)
+
+        cancel_win.destroy()
+        return (nbc_proc.returncode, nbc_data)
+
 
     def evc_proc(self, document, upload: bool = False):
         '''

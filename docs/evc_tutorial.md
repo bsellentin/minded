@@ -7,7 +7,7 @@
     + <a href="#rudolf">Rudolf stellt sich vor</a>
     + <a href="#always">Grundgerüst</a>
 + <a href="#fahre">Rudolf fährt um den Block</a>
-+ <a href = "#loops">Schleifen</a>
++ <a href = "#loops">Verweigungen und Schleifen</a>
 + <a href = "#variables">Variablen</a>
 + Verzweigungen
 + <a href="#sensors">Sensoren</a>
@@ -286,11 +286,53 @@ und jedesmal an vier Stellen die Zeiten ändern. Zwischenzeitlich sinkt die
 Spannung der Batterien und wieder stimmt die Zeit nicht. Wäre es mit `OutputTimeSpeed`
 besser? Nein, eher noch schlimmer. Was tun? 
 
-<h2 id = "loops">Schleifen</h2>
+<h2 id = "loops">Verzweigungen und Schleifen</h2>
 
-Damit Rudolf einmal um das Quadrat
-fährt, muss er viermal das gleiche machen, aber nicht du, denn dafür gibt es
-Schleifen. Hier bietet sich eine Zählschleife an:
+Wenn eine Entscheidung einmalig getroffen werden soll, verwendet man `if(Bedingung){Aktion}`.
+Ist die Bedingung wahr, wird die Aktion einmalig durchgeführt.
+
+```c
+    if(ich Geburtstag habe) { bekomme ich Geschenke }
+```
+
+Bei einer `while(Bedingung){Aktion}`-Schleife werden die Aktionen wiederholt, und zwar
+solange die Bedingung wahr ist.
+```c
+    while(Ampel ist rot) { Anhalten }
+```
+
+Die Bedingungen sind fast immer Vergleiche von Zahlen (oder Buchstaben) auf Gleichheit,
+Ungleichheit, größer oder kleiner mit einer anderen Zahl / Variable. So lassen sich
+Grenzwerte festlegen und Aktionen auf Abruf erstellen. Dabei gibt es diese Vergleichsoperatoren:
+
+```c
+    x == 5  //Prüfen auf Gleichheit  
+
+    x != 5  //Prüfen auf Ungleichheit  
+
+    x > 5   //Prüfen auf größer 5  
+
+    x < 5   //Prüfen auf kleiner 5  
+
+    x >= 5  //Prüfen auf größergleich 5  
+
+    x <= 5  //Prüfen auf kleinergleich 5  
+```
+
+Man kann auch mehrere Bedingungen in einer Schleife vereinen, und zwar mit dem Und-Operator:
+
+```c
+    x == 5 && y == 2 //Prüfen auf x gleich 5 und y gleich 2
+```
+
+Das Gegenstück dazu ist der Oder-Operator:
+
+```c
+    x == 5 || y == 2  //Prüfen auf x gleich 5 oder y gleich 2
+```
+
+Damit Rudolf einmal um das Quadrat fährt, muss er viermal das gleiche machen, aber nicht
+du, denn dafür gibt es die Zählschleife:
 
 ```
 for(Initialisierung; Bedingung; Aktualisierung){
@@ -298,27 +340,28 @@ for(Initialisierung; Bedingung; Aktualisierung){
 }
 ```
 
-Beispiel
-
-Initialisierung des Zählers
+Ein Raketen-Countdown kann so programmiert werden:
 
 ```c
 ...
   int i;
-  for(i=0; i<9; i++){
-    LcdPrintf(1, "Zahl: %d\n", i);
+  for(i=10; i>0; i--){
+    LcdPrintf(1, LCD_WIDTH/2, LCD_LINE4, "Zahl: %d\n", i);
     Wait(500);
   }
   ButtonWaitForAnyPress(10000);
 ...
 ```
-Mit `i=0` wird der Variablen i der Anfangswert 0 zugewiesen, mit der Bedingung `i<9` 
-wird dann überprüft, ob i kleiner als 9 ist. Falls das **wahr** ist, werden die
+
+Mit `i=0` wird der Variablen i der Anfangswert 10 zugewiesen, mit der Bedingung `i>0` 
+wird dann überprüft, ob i größer als 0 ist. Falls das **wahr** ist, werden die
 Anweisungen ausgeführt - hier die Ausgabe des Wertes von i auf dem Bildschirm.
-Danach wird die Variable aktualisiert, `i++` bedeutet, das sie um 1 erhöht wird.  
+Danach wird die Variable aktualisiert, `i--` bedeutet, das sie um 1 erniedrigt wird.  
 Jetzt wird die Schleife erneut durchlaufen: ist die Bedingung noch **wahr**? Dann
 mache die Anweisungen. Ist die Bedingung **falsch**? Dann verlasse die Schleife und
 mache danach weiter.
+
+Und jetzt ums Quadrat:
 
 ```c
 ...
@@ -380,11 +423,42 @@ FreeEV3();
 |double     |64 Bit ||
 |long double|64 Bit ||
 
-## Verzweigungen
+### Die Grundrechenarten  
+
+Die vier Grundrechenarten sind in EVC problemlos möglich:
+
+```c
+    x = 2 + 5;
+    x = 5 - 2;
+    x = 5/2;
+    x = 5*2;
+```
+
+Um Variablen um eins zu erhöhen, gibt es folgenden Befehl:
+
+```c
+    x = x + 1;
+```
+
+Als Kurzform kann man auch schreiben:
+
+```c
+    x++;
+```
+
+Diese Form ist auch für die Subtraktion möglich:
+
+```c
+    x = x - 1;
+    x--;
+```
 
 <h2 id="sensors">Sensoren</h2>
 
 <h3 id="touch">Berührungssensor</h3>
+
+Der Tastsensor liefert ein einfaches 1/0-Signal, je nachdem, ob er gedrückt ist oder
+nicht und fungiert damit als Schalter.
 
 ```c
 #include "ev3.h"
@@ -482,7 +556,11 @@ int main(){
 
 <h3 id="gyro">Kreiselsensor</h3>
 
-:warning: Rudolf kalibriert den Kreiselsensor beim Booten, deshalb muss er dabei absolut ruhig stehen.
+Der Gyrosensor ist in der Lage, Drehbewegungen und Richtungsbewegungen zu erkennen und
+zu messen.
+
+:warning: Rudolf kalibriert den Kreiselsensor beim Booten, deshalb muss er dabei absolut
+ruhig stehen.
 
 ```c
 #include "ev3.h"
@@ -520,6 +598,11 @@ return 0;
 
 <h3 id="ultrasonic">Ultraschallsensor</h3>
 
+Der Ultraschallabstandssensor sendet und empfängt Ultraschall. Da sich Ultraschall durch
+Luft fortpflanzt, aber von festen Gegenständen zurückgeworfen wird, kann der Sensor
+mithilfe der Laufzeitdifferenz zwischen Senden und Empfangen den Abstand zum reflektierenden
+Objekt errechnen.
+
 ```c
 #include "ev3.h"
 
@@ -549,6 +632,9 @@ int main(){
 ### Infrarotsensor
 
 ### NXT-Soundsensor
+
+Der Soundsensor aus der älteren NXT-Generation beeinhaltet ein Mikrofon, welches die
+Laustärke in Prozent misst.
 
 ```c
 #include "ev3.h"
@@ -581,6 +667,7 @@ int main(){
     LcdTextf(1,1,LCD_LINE4, "max:    %3d", max);
     LcdTextf(1,1,LCD_LINE5, "min:    %3d", min);
     Wait(20);
+    // Reset values
     if(ButtonIsDown(BTNDOWN)){
       min = 5000;
       max = 0;
@@ -687,28 +774,57 @@ gelesen werden können.
 |HiTechnic IR-Seeker | HT_DIR_DC   |                   | Direction of IR signal 1...9 |
 
 
-<h2 id="irbeacon">InfrarotSender</h2>
+<h2 id="irbeacon">Infrarot-Sender bzw. Fernbedienung</h2>
 
-|
+Der Infrarot-Sender kann über den roten Schieber auf 4 Kanäle eingestellt werden.
+Der Infrarot-Sensor muss auf den eingestellten Kanal sehen. Standard ist Kanal 0, also
+Schieber ganz vorne.
+
+```c
+...
+SetSensorIR(IN_1);
+SetIRBeaconCH(IN_1, 1);    // der Sensor hört auf Kanal 2
+
+int taste;
+
+taste = ReadSensor(IN_1);
+switch(taste){
+    case BEACON_UP_LEFT:
+        // tu was
+        break;
+    case BEACON_UP_RIGHT:
+        // tu was anders
+        break;
+    
+    ...
+    
+    default:
+        // was habe ich da gesehen?
+        break;
+}
+```
+
+|Kanal                | Nr |
+|---------------------|----|
 |BEACON_CH_1             |0|
 |BEACON_CH_2             |1|
 |BEACON_CH_3             |2|
 |BEACON_CH_4             |3|
 
-|Taste bzw. -kombination| Wert|
-|-----|----:|
-|BEACON_OFF              |0|
-|BEACON_UP_LEFT          |1|
-|BEACON_DOWN_LEFT        |2|
-|BEACON_UP_RIGHT         |3|
-|BEACON_DOWN_RIGHT       |4|
-|BEACON_UP               |5|
-|BEACON_DIAG_UP_LEFT     |6|
-|BEACON_DIAG_UP_RIGHT    |7|
-|BEACON_DOWN             |8|
-|BEACON_ON               |9|
-|BEACON_LEFT             |10|
-|BEACON_RIGHT            |11|
+|Taste bzw. -kombination    | sendet Konstante | bzw. Wert|
+|:--------------------------|:-----------------|---------:|
+|keine Taste gedrückt       |BEACON_OFF                 |0|
+|linke obere Taste          |BEACON_UP_LEFT             |1|
+|linke untere Taste         |BEACON_DOWN_LEFT           |2|
+|rechte obere Taste         |BEACON_UP_RIGHT            |3|
+|rechte untere Taste        |BEACON_DOWN_RIGHT          |4|
+|beide oberen Tasten        |BEACON_UP                  |5|
+|oben links und unten rechts|BEACON_DIAG_UP_LEFT        |6|
+|oben rechts und unten links|BEACON_DIAG_UP_RIGHT       |7|
+|beide unteren Tasten       |BEACON_DOWN                |8|
+|EIN/AUS Taste gedrückt     |BEACON_ON                  |9|
+|beide linken Tasten        |BEACON_LEFT               |10|
+|beide rechten Tasten       |BEACON_RIGHT              |11|
 
 <h2 id="parallel">Parallele Tasks</h2>
 

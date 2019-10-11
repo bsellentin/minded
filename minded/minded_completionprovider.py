@@ -21,6 +21,7 @@ BrickCompletionProvider of MindEd
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from typing import List
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -31,7 +32,7 @@ from gi.repository import GtkSource
 
 import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
-from minded.utils import create_tags, convert_markup_to_tags
+from minded.minded_utils import create_tags, convert_markup_to_tags
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +42,8 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
     def __init__(self, parent, language):
         super(BrickCompletionProvider, self).__init__()
 
-        self.funcs = []
-        self.consts = []
+        self.funcs = []  # type: List[List[str]]
+        self.consts = []  # type: List[List[str]]
         self.lang = ''
         self.info_widget = None
         self.parent = parent

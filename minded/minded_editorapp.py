@@ -24,6 +24,8 @@ import re
 from gettext import gettext as _
 import logging
 
+from typing import List, Tuple
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
@@ -31,8 +33,8 @@ from gi.repository import Gtk, Gdk, Gio, GObject, Pango
 gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
-from minded.brickcompletionprovider import BrickCompletionProvider
-from minded.widgets import ErrorDialog, FileSaveDialog
+from minded.minded_completionprovider import BrickCompletionProvider
+from minded.minded_widgets import ErrorDialog, FileSaveDialog
 
 LOGGER = logging.getLogger(__name__)
 
@@ -186,14 +188,13 @@ class EditorApp(Gtk.ScrolledWindow):
         self.lm = GtkSource.LanguageManager.new()
         self.this_lang = ()
 
-        self.custom_completion_provider = BrickCompletionProvider(self.this_lang)
-        self.codeview_completion = self.codeview.get_completion()
-        self.codeview_completion.add_provider(self.custom_completion_provider)
+        completion = self.codeview.get_completion()
+        self.custom_completion_provider = BrickCompletionProvider(self.codeview, self.this_lang)
+        completion.add_provider(self.custom_completion_provider)
 
-        self.word_completion_provider = GtkSource.CompletionWords.new()
-        self.word_completion_provider.register(self.buffer)
-        #self.word_completion = self.codeview.get_completion()
-        self.codeview_completion.add_provider(self.word_completion_provider)
+        word_completion_provider = GtkSource.CompletionWords.new()
+        word_completion_provider.register(self.buffer)
+        completion.add_provider(word_completion_provider)
 
         self.document = MindEdDocument(file_uri)
         # throws error if file not exists -> load empty buffer
@@ -210,7 +211,7 @@ class EditorApp(Gtk.ScrolledWindow):
         '''load MindEdDocument async into GtkSource.Buffer'''
 
         try:
-            loader = GtkSource.FileLoader.new(self.codeview.get_buffer(), document)
+            loader = GtkSource.FileLoader.new(self.get_buffer(), document)
             loader.load_async(1, None, None, None, self.file_load_finish, document)
         except GObject.GError as e:
             LOGGER.warning("Error: " + e.message)
@@ -225,6 +226,26 @@ class EditorApp(Gtk.ScrolledWindow):
         if success:
             self.set_completion(document)
             LOGGER.debug("NewlineType {}".format(document.get_newline_type()))
+
+            # cursor is at end of doc, restore last place
+            buf = self.get_buffer()
+            info = self.document.gio_file.query_info('metadata::gedit-position',
+                                                     Gio.FileQueryInfoFlags.NONE,
+                                                     None)
+            position = info.get_attribute_as_string('metadata::gedit-position')
+            LOGGER.debug('metadata {}'.format(position))
+            if position:
+                titer = buf.get_iter_at_offset(int(position))
+                # ensure titer is valid position
+                if not titer.is_cursor_position():
+                    titer.set_line_offset(0)
+            else:
+                # place cursor at begin
+                titer, end = buf.get_bounds()
+            buf.place_cursor(titer)
+            # scroll window to cursor - gedit does as idle (gedit-tab.c #1789)
+            self.codeview.scroll_to_mark(buf.get_insert(), 0.25, False, 0.0, 0.0)
+
         else:
             LOGGER.debug('Could not load {}'.format(document.get_path()))
 
@@ -234,7 +255,7 @@ class EditorApp(Gtk.ScrolledWindow):
         '''
 
         LOGGER.debug('dialog save_file_as: {}'.format(self.document.get_uri()))
-        save_dialog = FileSaveDialog(self.mindedappwin, self.document)
+        save_dialog = FileSaveDialog(self.mindedappwin, self.document, self.this_lang)
         save_dialog.connect('response', self.save_file_as_response, close_tab)
         save_dialog.show()
 
@@ -243,19 +264,6 @@ class EditorApp(Gtk.ScrolledWindow):
         #save_dialog = dialog
         if response == Gtk.ResponseType.ACCEPT:
             filename = Path(dialog.get_filename())  # or uri?
-
-            # check for right suffix
-            if self.this_lang:
-                if self.this_lang.get_name() == 'EVC':
-                    if filename.suffix != '.evc':
-                        LOGGER.debug('No suffix')
-                        filename = filename.with_suffix('.evc')
-                        LOGGER.debug('append suffix: {}'.format(filename.name))
-                if self.this_lang.get_name() == 'NXC':
-                    if filename.suffix != '.nxc':
-                        LOGGER.debug('No suffix')
-                        filename = filename.with_suffix('.nxc')
-                        LOGGER.debug('append suffix: {}'.format(filename.name))
 
             # check for valid filename
             (valid, msgtupel) = self.document.filename_is_valid(filename)
@@ -308,17 +316,35 @@ class EditorApp(Gtk.ScrolledWindow):
         try:
             success = source.save_finish(result)
             LOGGER.debug('file {} saved async {}'.format(self.document.get_uri(), success))
-
+            '''
+            if success:
+                # DONE: better when closing tab
+                # save cursor-position
+                info = self.document.gio_file.query_info('metadata::gedit-position',
+                                                         Gio.FileQueryInfoFlags.NONE,
+                                                         None)
+                LOGGER.debug('metadata::gedit-position {}'.format(
+                             info.get_attribute_as_string('metadata::gedit-position')))
+                mark = self.get_buffer().get_insert()
+                titer = self.get_buffer().get_iter_at_mark(mark)
+                offset = titer.get_offset()
+                self.document.gio_file.set_attribute_string('metadata::gedit-position',
+                                                            str(offset),
+                                                            Gio.FileQueryInfoFlags.NONE,
+                                                            None)
+                '''
         except GObject.GError as e:
             LOGGER.error('problem saving file {}'.format(e.message))
-            ErrorDialog(self,
+            ErrorDialog(self.mindedappwin,
                 _('Could not save file {}').format(self.document.get_uri()),
                 e.message)
         else:
             if close_tab:
                 # close tab request
                 page_num = self.mindedappwin.notebook.page_num(self)
-                self.mindedappwin.notebook.remove_page(page_num)
+                #self.mindedappwin.notebook.remove_page(page_num)
+                editor = self.mindedappwin.get_editor()
+                self.mindedappwin.close_this_tab(page_num, editor)
             else:
                 buf = self.get_buffer()
                 if buf.get_modified():
@@ -371,7 +397,7 @@ class EditorApp(Gtk.ScrolledWindow):
             # check if file already open
             for pagecount in range(self.mindedappwin.notebook.get_n_pages()-1, -1, -1):
                 editor = self.mindedappwin.notebook.get_nth_page(pagecount)
-                if editor.file == data.decode().strip('\r\n'):
+                if editor.document == data.decode().strip('\r\n'):
                     self.mindedappwin.notebook.set_current_page(pagecount)
                     break
             else:
@@ -380,8 +406,8 @@ class EditorApp(Gtk.ScrolledWindow):
             context.finish(True, False, etime)
 
         else:
-            print('DnD: got {}'.format(selection.get_target()))
-            print('DnDaction {}'.format(context.get_actions()))
+            LOGGER.debug('DnD: got {}'.format(selection.get_target()))
+            LOGGER.debug('DnDaction {}'.format(context.get_actions()))
         '''
         #print('got %s' % selection.get_target())
         #print(type(selection.get_target()))
@@ -409,7 +435,7 @@ class EditorApp(Gtk.ScrolledWindow):
 
     # bracket completion
     def on_key_press(self, view, event):
-        handled = False
+        handled = False  # tpye: bool
         doc = view.get_buffer()
         ch = self.to_char(event.keyval)
         # first handel selection
@@ -497,9 +523,9 @@ class EditorApp(Gtk.ScrolledWindow):
                     word = doc.get_text(start, iter1, False)
                     LOGGER.debug(word)
                     if word == 'skel':
-                        snippet = (start, iter1)
+                        snippet: Tuple[object, ...] = (start, iter1)
                     else:
-                        snippet = None
+                        snippet = ()
 
                 if snippet:
                     LOGGER.debug('insert snippet')
@@ -507,8 +533,8 @@ class EditorApp(Gtk.ScrolledWindow):
                     if language:
                         if language.get_name() == 'EVC':
                             text_to_insert = ('#include "ev3.h"\n' +
-                                'int main(){\n\tInitEV3();\n\n\t$0\n\n' +
-                                '\tFreeEV3();\n\treturn 0;\n}')
+                                'int main(){\n\n\t$0\n' +
+                                '\n\treturn 0;\n}')
                         elif language.get_name() == 'NXC':
                             text_to_insert = 'task main (){\n\t$0\n}'
                         else:
@@ -578,7 +604,7 @@ class EditorApp(Gtk.ScrolledWindow):
         try:
             return self.closing_parens[self.opening_parens.index(opener)]
         except ValueError:
-            return None
+            pass
 
     def get_current_line_indent(self, doc):
         it_start = doc.get_iter_at_mark(doc.get_insert())
@@ -598,7 +624,7 @@ class EditorApp(Gtk.ScrolledWindow):
     def add_brackets(self):
 
         brackets = '(){}[]""'
-        parens = [], []
+        parens: List[List[str]] = [[], []]
         for i in range(0, len(brackets), 2):
             parens[0].append(brackets[i+0])
             parens[1].append(brackets[i+1])

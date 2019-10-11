@@ -6,6 +6,8 @@ import threading
 import logging
 import usb.core
 
+from typing import Any, List, Dict, Union
+
 LOGGER = logging.getLogger(__name__)
 
 class DirCmdError(Exception):
@@ -26,8 +28,10 @@ class EV3():
     _lock = threading.Lock()
 
     def __init__(self):
-        self.device = usb.core.find(idVendor=ID_VENDOR_LEGO, idProduct=ID_PRODUCT_EV3)
-        if self.device is None:
+        self.device = usb.core.find(
+            idVendor=ID_VENDOR_LEGO,
+            idProduct=ID_PRODUCT_EV3)
+        if not self.device:
             raise RuntimeError("No Lego EV3 found")
         if self.device.is_kernel_driver_active(0) is True:
             self.device.detach_kernel_driver(0)
@@ -59,7 +63,7 @@ class EV3():
         ])
         self.send_direct_cmd(cmd)
 
-    def usb_ready(self):
+    def usb_ready(self) -> bool:
         '''opCOM_TEST
         TEST can be used to test a resource: if it is busy it will block
         the calling object by setting the dispatch status to "BUSYBREAK"
@@ -115,6 +119,8 @@ class EV3():
             (busy,) = struct.unpack('b', reply[5:len_data])
             if not busy:   # 0 = Ready, 1 = Busy
                 return True
+            else:
+                return False
         else:
             return False
 
@@ -380,8 +386,8 @@ class EV3():
             rest -= part_size
             if rest <= 0 and reply[6:7] != SYSTEM_END_OF_FILE:
                 raise SysCmdError("end of file not reached")
-        folders = []
-        files = []
+        folders = []  # type: List[str]
+        files = []  # type: List[Dict[str, Union[str, int]]]
         for line in data.split(sep=b'\x0A'):
             if line == b'':
                 pass
@@ -475,7 +481,8 @@ class EV3():
             LOGGER.debug(print_hex('Sent', cmd))
 
         if cmd[4:5] == DIRECT_COMMAND_NO_REPLY:
-            return msg_cnt
+            return cmd[2:4]
+            #return msg_cnt
         else:
             while True:
                 reply = bytes(self.device.read(EP_IN, 1024, EV3_USB_TIMEOUT))
@@ -496,7 +503,7 @@ class EV3():
                         )
                     return reply[:len_data]
 
-    def send_system_cmd(self, ops: bytes, reply: bool = True) -> bytes:
+    def send_system_cmd(self, ops: bytes, reply: bool=True) -> bytes:
         if reply:
             cmd_type = SYSTEM_COMMAND_REPLY
         else:
@@ -518,8 +525,10 @@ class EV3():
 
         self.device.write(EP_OUT, cmd, EV3_USB_TIMEOUT)
 
-        counter = struct.unpack('<H', cmd[2:4])[0]
-        LOGGER.debug('msg_cnt: %s, counter: %s' % (msg_cnt, counter))
+        #counter = struct.unpack('<H', cmd[2:4])[0]
+        counter = cmd[2:4]
+        cnt = struct.unpack('<H', counter)[0]
+        LOGGER.debug('msg_cnt: %s, counter: %s' % (msg_cnt, cnt))
         if not reply:
             return counter
         else:
@@ -528,7 +537,8 @@ class EV3():
             len_data = struct.unpack('<H', reply[:2])[0] + 2
             reply_counter = reply[2:4]
             rpl_cnt = struct.unpack('<H', reply_counter)[0]
-            if msg_cnt != struct.unpack('<H', reply_counter)[0]:
+            #if msg_cnt != struct.unpack('<H', reply_counter)[0]:
+            if msg_cnt != rpl_cnt:
                 LOGGER.debug('not for me, want %s, got %s' % (msg_cnt, rpl_cnt))
             else:
                 #print("sysreply: ", reply[4:5], "SYSTEM_REPLY", SYSTEM_REPLY)

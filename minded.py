@@ -32,6 +32,8 @@ import gettext
 
 import logging
 
+from typing import List
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
@@ -43,8 +45,8 @@ from gi.repository import GUdev
 
 from ev3 import ev3
 import nxt.locator
-from minded.mindedappwin import MindEdAppWin
-from minded.preferences import PreferencesDialog
+from minded.minded_appwin import MindEdAppWin, document_is_open
+from minded.minded_preferences import PreferencesDialog
 
 LOGGER = logging.getLogger(__name__)
 
@@ -74,10 +76,10 @@ class MindEdApp(Gtk.Application):
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
-        self.version = "0.7.11"
+        self.version = "0.7.13"
 
         self.args = ()
-        self.filelist = []
+        self.filelist: List[str] = []
         self.settings = ''
         # USB client
         self.client = None
@@ -118,7 +120,7 @@ class MindEdApp(Gtk.Application):
             gettext.textdomain('minded')
         # systemwide installation
         else:
-            pkgdatadir = '/usr/share/minded'
+            pkgdatadir = Path('/usr/share/minded')
             self.settings = Gio.Settings('org.gge-em.MindEd')
             locale.bindtextdomain('minded', '/usr/share/locale')
             locale.textdomain('minded')
@@ -149,9 +151,9 @@ class MindEdApp(Gtk.Application):
         builder = Gtk.Builder()
         if Gtk.get_minor_version() > 18:
             # use GtkShortcutsWindow
-            builder.add_from_resource('/org/gge-em/MindEd/app-menu.ui')
+            builder.add_from_resource('/org/gge-em/MindEd/minded-app-menu.ui')
         else:
-            builder.add_from_resource('/org/gge-em/MindEd/app-menu-traditional.ui')
+            builder.add_from_resource('/org/gge-em/MindEd/minded-app-menu-traditional.ui')
         self.set_app_menu(builder.get_object("appmenu"))
 
     def do_activate(self):
@@ -173,7 +175,14 @@ class MindEdApp(Gtk.Application):
             # MindEd already running, brick file in file browser clicked
             for nth_file in self.filelist[1:]:
                 if Path(nth_file).is_file():
-                    self.win.load_file_in_editor(Path(nth_file).resolve().as_uri())
+                    # check is file already open
+                    document_uri = Path(nth_file).resolve().as_uri()
+                    pagecount = document_is_open(self.win, document_uri)
+                    LOGGER.debug('pagecount {}'.format(pagecount))
+                    if pagecount:
+                        self.win.notebook.set_current_page(pagecount - 1)
+                    else:
+                        self.win.load_file_in_editor(document_uri)
         self.win.present()
 
     def do_command_line(self, command_line):
@@ -278,7 +287,7 @@ class MindEdApp(Gtk.Application):
     def on_shortcuts(self, action, param):
         ''' Gio.SimpleAction shortcuts '''
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/gge-em/MindEd/shortcuts.ui')
+        builder.add_from_resource('/org/gge-em/MindEd/minded-shortcuts.ui')
         shortcuts_win = builder.get_object('shortcuts-minded')
         shortcuts_win.set_transient_for(self.win)
         shortcuts_win.show_all()
@@ -286,7 +295,7 @@ class MindEdApp(Gtk.Application):
     def on_about(self, action, param):
         ''' Gio.SimpleAction about '''
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/gge-em/MindEd/about.ui')
+        builder.add_from_resource('/org/gge-em/MindEd/minded-about.ui')
         about_win = builder.get_object('about-dlg')
         about_win.set_version(self.version)
         about_win.set_transient_for(self.win)
@@ -314,7 +323,7 @@ def look_for_settings(settings):
     if not Path(settings.get_string('armgcc')).is_file():
         found = False
         for file in Path('/usr/bin').iterdir():
-            if fnmatch.fnmatch(file, '/usr/bin/arm-linux-gnueabi-gcc-?'):
+            if fnmatch.fnmatch(str(file), '/usr/bin/arm-linux-gnueabi-gcc-?'):
                 found = True
                 break
         if found:
@@ -325,7 +334,7 @@ def look_for_settings(settings):
     if not Path(settings.get_string('armgplusplus')).is_file():
         found = False
         for file in Path('/usr/bin').iterdir():
-            if fnmatch.fnmatch(file, '/usr/bin/arm-linux-gnueabi-g++-?'):
+            if fnmatch.fnmatch(str(file), '/usr/bin/arm-linux-gnueabi-g++-?'):
                 found = True
                 break
         if found:

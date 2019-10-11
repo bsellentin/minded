@@ -21,6 +21,7 @@ Browse the NXC- and EVC-API reference
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from typing import List
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -28,7 +29,7 @@ from gi.repository import Gtk, Gdk, Gio, Pango
 
 import minded.nxc_funcs as nxc_funcs
 import minded.evc_funcs as evc_funcs
-from minded.utils import create_tags, convert_markup_to_tags
+from minded.minded_utils import create_tags, convert_markup_to_tags
 
 LOGGER = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ class ApiViewer():
         '''A new API-viewer window'''
 
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/gge-em/MindEd/apiviewer.ui')
+        builder.add_from_resource('/org/gge-em/MindEd/minded-apiviewer.ui')
         builder.connect_signals(self)
 
         self.window = builder.get_object('window')
@@ -94,12 +95,12 @@ class ApiViewer():
         self.window.show_all()
         self.window.connect('delete-event', self.quit)
 
-    def populate_store(self, store, lang):
+    def populate_store(self, store, lang: str):
         '''read functions into store
         :param store: a Gtk.TreeStore
         :param lang: str programming language
         '''
-        categories = []
+        categories = []  # type: List[str]
         if lang == 'evc':
             functions = evc_funcs.EVC_FUNCS
         elif lang == 'nxc':

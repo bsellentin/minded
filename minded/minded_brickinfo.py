@@ -19,7 +19,7 @@ class BrickInfo():
 
         self.app = application
         builder = Gtk.Builder()
-        builder.add_from_resource('/org/gge-em/MindEd/brickinfo.ui')
+        builder.add_from_resource('/org/gge-em/MindEd/minded-brickinfo.ui')
         builder.connect_signals(self)
         self.window = builder.get_object("toolwin")
         self.window.set_application(application)

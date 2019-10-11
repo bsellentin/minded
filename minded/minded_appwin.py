@@ -19,9 +19,14 @@ MindEd - A IDE for programming LEGO Mindstorms Bricks
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import signal
+import threading
 from pathlib import Path
 from gettext import gettext as _
 import logging
+
+from typing import Tuple
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -30,13 +35,13 @@ from gi.repository import Gtk, Gdk, Gio, GObject
 gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
-from minded.editorapp import EditorApp, MindEdDocument
-from minded.brickhelper import BrickHelper
-from minded.brickinfo import BrickInfo
-from minded.brickfiler import BrickFiler
-from minded.apiviewer import ApiViewer
-from minded.widgets import ErrorDialog, FileOpenDialog
-from minded.widgets import CloseConfirmationDialog, MindedTabLabel
+from minded.minded_editorapp import EditorApp, MindEdDocument
+from minded.minded_brickhelper import BrickHelper
+from minded.minded_brickinfo import BrickInfo
+from minded.minded_brickfiler import BrickFiler
+from minded.minded_apiviewer import ApiViewer
+from minded.minded_widgets import ErrorDialog, FileOpenDialog, CancelProcDialog
+from minded.minded_widgets import CloseConfirmationDialog, MindedTabLabel
 
 LOGGER = logging.getLogger(__name__)
 
@@ -44,6 +49,15 @@ def add_simple_action(self, name, callback):
     action = Gio.SimpleAction.new(name, None)
     action.connect('activate', callback)
     self.add_action(action)
+
+def document_is_open(self, document_uri):
+    for page_num in range(self.notebook.get_n_pages()-1, -1, -1):
+            editor = self.notebook.get_nth_page(page_num)
+            LOGGER.debug('doc_uri:{}, get_uri: {}'.format(document_uri, editor.document.get_uri()))
+            if editor.document.get_uri() == document_uri:
+                # first page has page_num 0
+                return page_num + 1
+    return 0
 
 class MindEdAppWin(Gtk.ApplicationWindow):
     '''The Main Application Window'''
@@ -61,7 +75,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         self.set_application(self.app)
         # flag for delete-event on modified document
-        self.can_close = True
+        self.can_close = True  # type: bool
 
         actions = [
             ['new_doc', self.on_btn_new_clicked],
@@ -111,7 +125,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         builder = Gtk.Builder()
         GObject.type_register(GtkSource.View)
-        builder.add_from_resource('/org/gge-em/MindEd/mindedappwin.ui')
+        builder.add_from_resource('/org/gge-em/MindEd/minded-appwin.ui')
         builder.connect_signals(self)
         self.connect('delete-event', self.gtk_main_quit)
 
@@ -140,6 +154,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.log_buffer = compilerview.get_buffer()
         self.log_buffer.create_tag('warning', foreground='red', background='yellow')
 
+        self.canceldlg = None
+
         # Look for Brick
         if self.app.nxt_brick:
             self.brick_status.push(self.brick_status_id, 'NXT')
@@ -150,7 +166,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         self.add(box)
 
-        loaded_files = 0
+        loaded_files: int = 0
         if len(files) > 1:
             for nth_file in files[1:]:
                 if Path(nth_file).is_file():
@@ -166,11 +182,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         TopWin CloseButton clicked, are there unsaved changes
         '''
         # get_n_pages from 0...n-1, remove reversed!
-        for pagecount in range(self.notebook.get_n_pages()-1, -1, -1):
+        for page_num in range(self.notebook.get_n_pages()-1, -1, -1):
 
-            LOGGER.debug('Window close clicked! Remove page {}'.format(pagecount))
+            LOGGER.debug('Window close clicked! Remove page {}'.format(page_num))
 
-            editor = self.notebook.get_nth_page(pagecount)
+            editor = self.notebook.get_nth_page(page_num)
             buf = editor.get_buffer()
             if buf.get_modified():
 
@@ -179,14 +195,14 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
                 if response == Gtk.ResponseType.NO:
                     LOGGER.debug('Close tab without saving')
-                    self.notebook.remove_page(pagecount)
+                    self.notebook.remove_page(page_num)
                     dlg.destroy()
                 elif response == Gtk.ResponseType.CANCEL:
                     LOGGER.debug('Cancel closing tab')
                     dlg.destroy()
                     return True
                 elif response == Gtk.ResponseType.YES:
-                    LOGGER.debug('Save file on page {} before closing'.format(pagecount))
+                    LOGGER.debug('Save file on page {} before closing'.format(page_num))
                     self.can_close = False
                     editor.save_file_async(True, editor.document.get_newline_type())
                     dlg.destroy()
@@ -198,7 +214,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                     dlg.destroy()
 
             else:
-                self.notebook.remove_page(pagecount)
+                #self.notebook.remove_page(page_num)
+                self.close_this_tab(page_num, editor)
 
         if self.notebook.get_n_pages() == 0:
             LOGGER.debug('No more pages - destroy win')
@@ -236,11 +253,15 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         if response == Gtk.ResponseType.ACCEPT:
             LOGGER.debug('FileOpenDialog File selected: {}'.format(dialog.get_uri()))
             # check if file already open
-            for pagecount in range(self.notebook.get_n_pages()-1, -1, -1):
-                editor = self.notebook.get_nth_page(pagecount)
+            '''for page_num in range(self.notebook.get_n_pages()-1, -1, -1):
+                editor = self.notebook.get_nth_page(page_num)
                 if editor.document.get_uri() == dialog.get_uri():
-                    self.notebook.set_current_page(pagecount)
-                    break
+                    self.notebook.set_current_page(page_num)
+                    break'''
+            page_num = document_is_open(self, dialog.get_uri())
+            LOGGER.debug('page_num {}'.format(page_num))
+            if page_num:
+                self.notebook.set_current_page(page_num - 1)
             else:
                 self.load_file_in_editor(dialog.get_uri())
 
@@ -288,6 +309,23 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         if page_num != -1 and not editor.get_buffer().get_modified():
             if 'untitled' in editor.document.get_basename():
                 editor.document.dec_untitled()
+
+            else:
+                # GLib.Error: »/home/selles/untitled1«: No such file or directory
+                # save cursor position
+                info = editor.document.gio_file.query_info('metadata::gedit-position',
+                                                           Gio.FileQueryInfoFlags.NONE,
+                                                           None)
+                LOGGER.debug('metadata::gedit-position {}'.format(
+                             info.get_attribute_as_string('metadata::gedit-position')))
+                mark = editor.get_buffer().get_insert()
+                titer = editor.get_buffer().get_iter_at_mark(mark)
+                offset = titer.get_offset()
+                editor.document.gio_file.set_attribute_string('metadata::gedit-position',
+                                                            str(offset),
+                                                            Gio.FileQueryInfoFlags.NONE,
+                                                            None)
+
             self.notebook.remove_page(page_num)
             #TODO check for empty notebook, disable save-, save_as-, print-action
         else:
@@ -621,16 +659,28 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         compile and upload file to NXT brick
         '''
-        helper = BrickHelper(self.app)
+        msg: str = ''
+        nbc_error: int
+        nbc_data: Tuple[bytes, bytes]
 
-        (error, msg) = helper.nbc_proc(document, upload)
-        if error == 2:
-            ErrorDialog(self,
-                        _('No NBC-executable found!'),
-                        _('not in /usr/bin, not in /usr/local/bin'))
+        helper = BrickHelper(self.app)
+        (nbc_error, nbc_data) = helper.nbc_proc(document, upload)
+
+        if nbc_error == 1:
+            # compilation failed
+            msg = nbc_data[1].decode()
+        elif nbc_error == 0:
+            # compilation successful
+            msg = '\n'.join([str(i) for i in nbc_data[0].decode().split('\n')[-5:]])
         else:
-            self.log_buffer.set_text(msg)
-            self.format_log(self.log_buffer.get_start_iter())
+            # what happened?
+            LOGGER.debug('Error: {}, {}'.format(nbc_error, nbc_data[1].decode()))
+            ErrorDialog(self,
+                        'Error {}:'.format(nbc_error),
+                        nbc_data[1].decode())
+
+        self.log_buffer.set_text(msg)
+        self.format_log(self.log_buffer.get_start_iter())
 
         self.get_window().set_cursor(None)
 
