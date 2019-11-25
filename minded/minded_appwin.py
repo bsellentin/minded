@@ -53,7 +53,8 @@ def add_simple_action(self, name, callback):
 def document_is_open(self, document_uri):
     for page_num in range(self.notebook.get_n_pages()-1, -1, -1):
             editor = self.notebook.get_nth_page(page_num)
-            LOGGER.debug('doc_uri:{}, get_uri: {}'.format(document_uri, editor.document.get_uri()))
+            LOGGER.debug('doc_uri:{}, get_uri: {}'.format(document_uri,
+                         editor.document.get_uri()))
             if editor.document.get_uri() == document_uri:
                 # first page has page_num 0
                 return page_num + 1

@@ -316,23 +316,6 @@ class EditorApp(Gtk.ScrolledWindow):
         try:
             success = source.save_finish(result)
             LOGGER.debug('file {} saved async {}'.format(self.document.get_uri(), success))
-            '''
-            if success:
-                # DONE: better when closing tab
-                # save cursor-position
-                info = self.document.gio_file.query_info('metadata::gedit-position',
-                                                         Gio.FileQueryInfoFlags.NONE,
-                                                         None)
-                LOGGER.debug('metadata::gedit-position {}'.format(
-                             info.get_attribute_as_string('metadata::gedit-position')))
-                mark = self.get_buffer().get_insert()
-                titer = self.get_buffer().get_iter_at_mark(mark)
-                offset = titer.get_offset()
-                self.document.gio_file.set_attribute_string('metadata::gedit-position',
-                                                            str(offset),
-                                                            Gio.FileQueryInfoFlags.NONE,
-                                                            None)
-                '''
         except GObject.GError as e:
             LOGGER.error('problem saving file {}'.format(e.message))
             ErrorDialog(self.mindedappwin,
@@ -387,7 +370,9 @@ class EditorApp(Gtk.ScrolledWindow):
 
     def drag_data_received(self, source_widget, context, x, y, selection,
         info, etime):
-
+        '''
+        drop file from browser
+        '''
         if selection.get_target().name() == 'text/uri-list':
             LOGGER.debug("DnD: got text-uri")
             LOGGER.debug('DnDaction {}'.format(context.get_actions()))

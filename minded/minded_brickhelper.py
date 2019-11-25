@@ -22,7 +22,9 @@ import subprocess
 import shlex
 import struct
 import hashlib
+import re
 import mmap
+import contextlib
 
 from minded.minded_widgets import CancellationWin
 
@@ -163,6 +165,22 @@ class BrickHelper():
         cross-compile evc-file for EV3-brick, store local, upload later
         '''
         infile = document.get_path()
+
+        # look for own headers
+        headers = []
+        pattern = re.compile(b'".*.h"')
+        with open(infile, 'rb', 0) as file:
+            with contextlib.closing(mmap.mmap(file.fileno(), 0, \
+                access=mmap.ACCESS_READ)) as m:
+                for match in pattern.findall(m):
+                    myheader = match.decode()
+                    if not 'ev3.h' in myheader:
+                       # 1   :   -3
+                       # "myheader.h"
+                       myheader = str(Path(document.get_parent(),
+                                      Path(myheader[1:-3] + '.evc ')))
+                       headers.append(myheader)
+
         logger.debug('file to compile: {}'.format(infile))
 
         outfile = str(Path(document.get_parent(), Path(document.get_basename()).stem))
@@ -172,6 +190,7 @@ class BrickHelper():
         if cplusplus:
             arm_exec = self.application.settings.get_string('armgplusplus')
             language = 'c++'
+            arm_exec += ' -static-libstdc++'
         else:
             arm_exec = self.application.settings.get_string('armgcc')
             language = 'c'
@@ -180,13 +199,17 @@ class BrickHelper():
         incs = ' -I' + self.application.settings.get_string('incs')
 
         gcc_exec = arm_exec + ldflags + incs + ' -Os'
-        gcc_opts = (' -o %s -x %s %s -lev3api' % (shlex.quote(outfile), language, shlex.quote(infile)))
+        gcc_opts = (' -o %s -x %s %s ' % (shlex.quote(outfile), language, shlex.quote(infile)))
+        for header in headers:
+            gcc_opts += header
+        gcc_opts += '-lev3api'
 
         # is multithreading?
         with open(infile, 'rb', 0) as file, \
             mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as string:
             if string.find(b'pthread.h') != -1:
                 gcc_opts += ' -lpthread'
+            string.close()
         logger.debug('command: {}'.format(gcc_exec + gcc_opts))
 
         gcc_proc = subprocess.Popen(('%s %s' % (gcc_exec, gcc_opts)),
@@ -197,7 +220,7 @@ class BrickHelper():
         if gcc_proc.returncode:  # Error
             return (gcc_proc.returncode, gcc_data[1].decode())
         else:  # OK
-            msg = 'Compile successfull\n'
+            msg = '{}: compile successfull\n'.format(document.get_basename())
             return (gcc_proc.returncode, msg)
 
     def ev3_upload(self, infile):
