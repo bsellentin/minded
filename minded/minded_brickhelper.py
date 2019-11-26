@@ -178,7 +178,7 @@ class BrickHelper():
                        # 1   :   -3
                        # "myheader.h"
                        myheader = str(Path(document.get_parent(),
-                                      Path(myheader[1:-3] + '.evc ')))
+                                      Path(myheader[1:-3] + '.evc')))
                        headers.append(myheader)
 
         logger.debug('file to compile: {}'.format(infile))
@@ -199,10 +199,10 @@ class BrickHelper():
         incs = ' -I' + self.application.settings.get_string('incs')
 
         gcc_exec = arm_exec + ldflags + incs + ' -Os'
-        gcc_opts = (' -o %s -x %s %s ' % (shlex.quote(outfile), language, shlex.quote(infile)))
+        gcc_opts = (' -o %s -x %s %s' % (shlex.quote(outfile), language, shlex.quote(infile)))
         for header in headers:
-            gcc_opts += header
-        gcc_opts += '-lev3api'
+            gcc_opts += (' %s' % (shlex.quote(header)))
+        gcc_opts += ' -lev3api'
 
         # is multithreading?
         with open(infile, 'rb', 0) as file, \
