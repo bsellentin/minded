@@ -167,7 +167,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
 
         self.add(box)
 
-        loaded_files: int = 0
+        loaded_files = 0
         if len(files) > 1:
             for nth_file in files[1:]:
                 if Path(nth_file).is_file():
@@ -660,9 +660,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         compile and upload file to NXT brick
         '''
-        msg: str = ''
-        nbc_error: int
-        nbc_data: Tuple[bytes, bytes]
+        msg = ''
 
         helper = BrickHelper(self.app)
         (nbc_error, nbc_data) = helper.nbc_proc(document, upload)

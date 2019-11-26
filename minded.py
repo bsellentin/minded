@@ -79,7 +79,7 @@ class MindEdApp(Gtk.Application):
         self.version = "0.7.13"
 
         self.args = ()
-        self.filelist: List[str] = []
+        self.filelist = []
         self.settings = ''
         # USB client
         self.client = None

@@ -508,7 +508,7 @@ class EditorApp(Gtk.ScrolledWindow):
                     word = doc.get_text(start, iter1, False)
                     LOGGER.debug(word)
                     if word == 'skel':
-                        snippet: Tuple[object, ...] = (start, iter1)
+                        snippet = (start, iter1)
                     else:
                         snippet = ()
 
@@ -609,7 +609,7 @@ class EditorApp(Gtk.ScrolledWindow):
     def add_brackets(self):
 
         brackets = '(){}[]""'
-        parens: List[List[str]] = [[], []]
+        parens = [], []
         for i in range(0, len(brackets), 2):
             parens[0].append(brackets[i+0])
             parens[1].append(brackets[i+1])

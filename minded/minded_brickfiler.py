@@ -97,7 +97,7 @@ class BrickListing(Gtk.ListStore):
 
     def populate(self, brick, path):
 
-        filelist: List[Tuple[str, object, int, bool]] = []
+        filelist = []
 
         if brick.__class__.__name__ == 'Brick':
             self.clear()
@@ -124,7 +124,7 @@ class BrickListing(Gtk.ListStore):
 
         elif brick.__class__.__name__ == 'EV3':
             self.clear()
-            dirlist: List[Tuple[str, object, int, bool]] = []
+            dirlist = []
 
             '''
             #define   vmEXT_SOUND                   ".rsf"     //!< Robot Sound File
@@ -137,7 +137,7 @@ class BrickListing(Gtk.ListStore):
             #define   vmEXT_ARCHIVE                 ".raf"     //!< Robot Archive File
             '''
             if brick.usb_ready():
-                content: Dict[str, Union[List, Dict]] = brick.list_dir(path)
+                content = brick.list_dir(path)
                 for folder in content['folders']:
                     if folder in ['.', '..',]:
                         pass
@@ -541,7 +541,7 @@ class BrickFiler():
         brick is drag source
         select NXT-file(s) to copy to host or to delete
         '''
-        file_uris: List[str] = []
+        file_uris = []
         for item in iconview.get_selected_items():
             selected_iter = iconview.get_model().get_iter(item)
             file_uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
@@ -560,7 +560,7 @@ class BrickFiler():
         host is drag source
         set the selected uri(s) to copy to brick
         '''
-        file_uris: List[str] = []
+        file_uris = []
         for item in iconview.get_selected_items():
             selected_iter = iconview.get_model().get_iter(item)
             uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
@@ -580,7 +580,7 @@ class BrickFiler():
         brick is drag destination
         write file to brick from host 
         '''
-        file_uris: List[str] = selection.get_uris()
+        file_uris = selection.get_uris()
 
         if context.get_actions() == DRAG_ACTION:
 
@@ -652,7 +652,7 @@ class BrickFiler():
         host is drag destination
         read file from brick and write to host
         '''
-        file_uris: List[str] = selection.get_uris()
+        file_uris = selection.get_uris()
 
         if context.get_actions() == DRAG_ACTION:
 
@@ -704,7 +704,7 @@ class BrickFiler():
         '''
         delete button as drag destination
         '''
-        file_uris: List[str] = selection.get_uris()
+        file_uris = selection.get_uris()
         logger.debug('selected to delete: {}'.format(file_uris))
 
         if context.get_actions() == DRAG_ACTION:

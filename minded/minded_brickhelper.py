@@ -47,7 +47,8 @@ class BrickHelper():
         returns (error, msg)
         '''
         nbc_exec = self.application.settings.get_string('nbcpath')
-        # if not nbc_exec: Error: 127, /bin/sh: 1: /usr/local/bin/nbc: not found
+        if not nbc_exec:
+            return ('Error: 127', 'nbc-compiler not found')
 
         enhancedfw = self.application.settings.get_boolean('enhancedfw')
         if enhancedfw:
@@ -163,6 +164,7 @@ class BrickHelper():
     def cross_compile(self, document):
         '''
         cross-compile evc-file for EV3-brick, store local, upload later
+        returns ()gcc_proc.returncode, msg)
         '''
         infile = document.get_path()
 
@@ -189,10 +191,14 @@ class BrickHelper():
         cplusplus = self.application.settings.get_boolean('cplusplus')
         if cplusplus:
             arm_exec = self.application.settings.get_string('armgplusplus')
+            if not arm_exec:
+                return ('Error', 'C++-compiler not found')
             language = 'c++'
             arm_exec += ' -static-libstdc++'
         else:
             arm_exec = self.application.settings.get_string('armgcc')
+            if not arm_exec:
+                return ('Error', 'C-compiler not found')
             language = 'c'
 
         ldflags = ' -L' + self.application.settings.get_string('ldflags')
