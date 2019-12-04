@@ -19,14 +19,9 @@ MindEd - A IDE for programming LEGO Mindstorms Bricks
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import signal
-import threading
 from pathlib import Path
 from gettext import gettext as _
 import logging
-
-from typing import Tuple
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -420,6 +415,7 @@ class MindEdAppWin(Gtk.ApplicationWindow):
     def load_file_in_editor(self, file_uri):
         '''
         create new page and load document(s)
+        param: str file_uri
         '''
         page_num = self.notebook.get_n_pages()
         if page_num:

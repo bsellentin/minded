@@ -29,7 +29,7 @@ import contextlib
 from minded.minded_widgets import CancellationWin
 
 import logging
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 class BrickHelper():
     '''
@@ -53,16 +53,16 @@ class BrickHelper():
         enhancedfw = self.application.settings.get_boolean('enhancedfw')
         if enhancedfw:
             nbc_exec = nbc_exec + ' -EF'
-        logger.debug('use enhancedfw: {}'.format(enhancedfw))
+        LOGGER.debug('use enhancedfw: {}'.format(enhancedfw))
 
         if upload:
             # compile and upload
             nbc_opts = (' -d %s' % (shlex.quote(document.get_path())))
-            logger.debug('upload: {}'.format(nbc_opts))
+            LOGGER.debug('upload: {}'.format(nbc_opts))
         else:
             # compile only
             nbcout = str(Path(document.get_path()).with_suffix('.rxe'))
-            logger.debug('File to compile: {}'.format(document.get_path()))
+            LOGGER.debug('File to compile: {}'.format(document.get_path()))
             nbc_opts = (' -O=%s %s' % (shlex.quote(nbcout),
                                        shlex.quote(document.get_path())))
 
@@ -81,7 +81,7 @@ class BrickHelper():
                                     stderr=subprocess.PIPE, preexec_fn=os.setsid)
 
         self.procid = nbc_proc.pid
-        logger.debug('nbc_proc ID %s' % self.procid)
+        LOGGER.debug('nbc_proc ID %s' % self.procid)
 
         cancel_win = CancellationWin(self, nbc_proc.pid)
 
@@ -133,12 +133,12 @@ class BrickHelper():
         '''
         build rbf-starter-file, store local, upload later
         '''
-        logger.debug('building starter for: {}'.format(document.get_path()))
+        LOGGER.debug('building starter for: {}'.format(document.get_path()))
 
         prjname = Path(document.get_basename()).stem
         prjsstore = self.application.settings.get_string('prjsstore')
         prjpath = str(Path(prjsstore, prjname, prjname))
-        logger.debug('EV3-path: {}'.format(prjpath))
+        LOGGER.debug('EV3-path: {}'.format(prjpath))
 
         magic = b'LEGO'
         before = b'\x68\x00\x01\x00\x00\x00\x00\x00\x1C\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x60\x80'
@@ -183,10 +183,10 @@ class BrickHelper():
                                       Path(myheader[1:-3] + '.evc')))
                        headers.append(myheader)
 
-        logger.debug('file to compile: {}'.format(infile))
+        LOGGER.debug('file to compile: {}'.format(infile))
 
         outfile = str(Path(document.get_parent(), Path(document.get_basename()).stem))
-        logger.debug('executable to write: {}'.format(outfile))
+        LOGGER.debug('executable to write: {}'.format(outfile))
 
         cplusplus = self.application.settings.get_boolean('cplusplus')
         if cplusplus:
@@ -216,7 +216,7 @@ class BrickHelper():
             if string.find(b'pthread.h') != -1:
                 gcc_opts += ' -lpthread'
             string.close()
-        logger.debug('command: {}'.format(gcc_exec + gcc_opts))
+        LOGGER.debug('command: {}'.format(gcc_exec + gcc_opts))
 
         gcc_proc = subprocess.Popen(('%s %s' % (gcc_exec, gcc_opts)),
                                     shell=True, stdout=subprocess.PIPE,
