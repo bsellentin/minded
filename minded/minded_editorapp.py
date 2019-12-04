@@ -20,11 +20,8 @@ Editor Application of MindEd
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from pathlib import Path
-import re
 from gettext import gettext as _
 import logging
-
-from typing import List, Tuple
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -35,79 +32,10 @@ from gi.repository import GtkSource
 
 from minded.minded_completionprovider import BrickCompletionProvider
 from minded.minded_widgets import ErrorDialog, FileSaveDialog
+from minded.minded_document import MindEdDocument
 
 LOGGER = logging.getLogger(__name__)
 
-class MindEdDocument(GtkSource.File):
-    '''
-    representation of a file
-    '''
-
-    untitledDocCount = 0
-
-    def __init__(self, file_uri):
-        GtkSource.File.__init__(self)
-
-        # bricks don't want prognames with non-alphanumeric characters
-        # returns None if non-alphanumeric character found
-        self.forbiddenchar = re.compile('^[a-zA-Z0-9_.]+$')
-
-        if file_uri == 'untitled':
-            dirname = Path.home()
-            MindEdDocument.untitledDocCount += 1
-            filename = file_uri + str(MindEdDocument.untitledDocCount)
-            file_uri = Path(dirname, filename).as_uri()
-
-        self.gio_file = Gio.File.new_for_uri(file_uri)
-        self.set_location(self.gio_file)
-
-    def get_uri(self):
-        '''file:///path/to/the/file.ext'''
-        return self.gio_file.get_uri()
-
-    def set_uri(self, documenturi):
-        '''new uri eg save as'''
-        old_uri = self.gio_file.get_uri()
-        self.gio_file = Gio.File.new_for_uri(documenturi)
-        self.set_location(self.gio_file)
-        LOGGER.debug('old {} gio_file to new {}'.format(old_uri, self.gio_file.get_uri()))
-
-    def get_path(self):
-        '''/path/to/the/file.ext'''
-        return self.gio_file.get_path()
-
-    def get_parent(self):
-        '''/path/to/the/'''
-        return self.gio_file.get_parent().get_path()
-
-    def get_basename(self):
-        '''file.ext'''
-        return self.gio_file.get_basename()
-
-    def dec_untitled(self):
-        MindEdDocument.untitledDocCount -= 1
-
-    def filename_is_valid(self, newname):
-        '''
-        p-bricks don't want prognames with non-alphanumeric characters
-        nxt max progname length is 15.3, ev3 20.3
-        :param newname:  filename as Path '''
-
-        if self.forbiddenchar.match(newname.stem) is not None:
-            if newname.suffix == '.nxc' and len(newname.stem) > 15:
-                err_msg = _('Filename {} to long!').format(newname.stem)
-                hint_msg = _('Maximum allowable are 15 characters')
-                return (0, (err_msg, hint_msg))
-            if newname.suffix == '.evc' and len(newname.stem) > 20:
-                err_msg = _('Filename {} to long!').format(newname.stem)
-                hint_msg = _('Maximum allowable are 20 characters')
-                return (0, (err_msg, hint_msg))
-            LOGGER.debug('valid: {}'.format(newname.stem))
-            return (1, (None, None))
-        else:
-            err_msg = _('Filename {} unvalid!').format(newname)
-            hint_msg = _('Filename contains non-alphanumeric characters.')
-            return (0, (err_msg, hint_msg))
 
 class EditorApp(Gtk.ScrolledWindow):
     '''This class handels all editing tasks.
@@ -161,10 +89,12 @@ class EditorApp(Gtk.ScrolledWindow):
             ['linewrapmode', 'wrap-mode']
         ]
         for setter in setters:
-            self.settings.bind(setter[0], self.codeview, setter[1], Gio.SettingsBindFlags.DEFAULT)
+            self.settings.bind(setter[0], self.codeview, setter[1], \
+                               Gio.SettingsBindFlags.DEFAULT)
         del setters
 
-        self.settings.bind('highlightmatchingbrackets', self.buffer, 'highlight-matching-brackets',
+        self.settings.bind('highlightmatchingbrackets', self.buffer, \
+                           'highlight-matching-brackets',
                            Gio.SettingsBindFlags.DEFAULT)
 
         self.codeview.override_font(Pango.FontDescription(
@@ -209,7 +139,7 @@ class EditorApp(Gtk.ScrolledWindow):
 
     def load_file(self, document):
         '''load MindEdDocument async into GtkSource.Buffer'''
-
+        LOGGER.debug('load file {} type {}'.format(document.get_basename(), type(document)))
         try:
             loader = GtkSource.FileLoader.new(self.get_buffer(), document)
             loader.load_async(1, None, None, None, self.file_load_finish, document)
@@ -382,7 +312,8 @@ class EditorApp(Gtk.ScrolledWindow):
             # check if file already open
             for pagecount in range(self.mindedappwin.notebook.get_n_pages()-1, -1, -1):
                 editor = self.mindedappwin.notebook.get_nth_page(pagecount)
-                if editor.document == data.decode().strip('\r\n'):
+                #LOGGER.debug('{}{}'.format(editor.document.get_uri(), data.decode().strip('\r\n')))
+                if editor.document.get_uri() == data.decode().strip('\r\n'):
                     self.mindedappwin.notebook.set_current_page(pagecount)
                     break
             else:
