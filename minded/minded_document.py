@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+from gettext import gettext as _
 import re
 import logging
 
 import gi
-from gi.repository import Gio
+from gi.repository import Gio, GLib
 gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
@@ -34,6 +35,7 @@ class MindEdDocument(GtkSource.File):
 
         self.gio_file = Gio.File.new_for_uri(file_uri)
         self.set_location(self.gio_file)
+        LOGGER.debug('Location: {}'.format(self.gio_file.get_parse_name()))
 
     def get_uri(self):
         '''file:///path/to/the/file.ext'''
@@ -41,7 +43,9 @@ class MindEdDocument(GtkSource.File):
         return self.gio_file.get_uri()
 
     def set_uri(self, documenturi):
-        '''new uri eg save as'''
+        '''new uri eg save as
+           str documenturi
+        '''
         old_uri = self.gio_file.get_uri()
         self.gio_file = Gio.File.new_for_uri(documenturi)
         self.set_location(self.gio_file)
@@ -77,7 +81,7 @@ class MindEdDocument(GtkSource.File):
                 err_msg = _('Filename {} to long!').format(newname.stem)
                 hint_msg = _('Maximum allowable are 20 characters')
                 return (0, (err_msg, hint_msg))
-            LOGGER.debug('valid: {}'.format(newname.stem))
+            LOGGER.debug('valid: {}'.format(newname))
             return (1, (None, None))
         else:
             err_msg = _('Filename {} unvalid!').format(newname)

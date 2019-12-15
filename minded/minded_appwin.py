@@ -249,11 +249,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         if response == Gtk.ResponseType.ACCEPT:
             LOGGER.debug('FileOpenDialog File selected: {}'.format(dialog.get_uri()))
             # check if file already open
-            '''for page_num in range(self.notebook.get_n_pages()-1, -1, -1):
-                editor = self.notebook.get_nth_page(page_num)
-                if editor.document.get_uri() == dialog.get_uri():
-                    self.notebook.set_current_page(page_num)
-                    break'''
             page_num = document_is_open(self, dialog.get_uri())
             LOGGER.debug('page_num {}'.format(page_num))
             if page_num:

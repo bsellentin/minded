@@ -86,8 +86,9 @@ class ErrorDialog(Gtk.MessageDialog):
                                    text=what)
         self.format_secondary_text(why)
 
-        self.run()
-        self.destroy()
+        response = self.run()
+        if response == Gtk.ResponseType.OK:
+            self.destroy()
 
 class FileOpenDialog(Gtk.FileChooserDialog):
     '''
@@ -123,19 +124,13 @@ class FileSaveDialog(Gtk.FileChooserDialog):
     '''
     def __init__(self, parent, document, language):
 
-        '''Gtk.FileChooserDialog.__init__(self, _('Pick a file'), parent,
-                                       Gtk.FileChooserAction.SAVE,
-                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                       Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))'''
         Gtk.FileChooserDialog.__init__(self, _('Pick a file'), parent,
                                        Gtk.FileChooserAction.SAVE,
-                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
-                                       #Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
-
-        SaveButton = self.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT)
-        SaveButton.connect("clicked", self.validateChoice, language)
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                       Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
 
         self.set_do_overwrite_confirmation(True)
+        self.set_modal(True)
         self.set_local_only(False)
 
         self.create_extra_widget()
@@ -146,28 +141,13 @@ class FileSaveDialog(Gtk.FileChooserDialog):
         #self.set_choice('newline_type', 'windows')
 
         try:
-            self.set_uri(document.get_uri())
-        except GObject.GError as e:
+            if document.gio_file.query_exists(None):
+                self.set_uri(document.get_uri())
+            else:
+                self.set_current_folder(document.get_parent())
+                self.set_current_name(document.get_basename())
+        except GLib.Error as e:
             LOGGER.error('# Error: {}'.format(e.message))
-
-    def validateChoice(self, button, language):
-        filename = Path(self.get_filename())
-        LOGGER.debug('ValidateChoice {}'.format(filename))
-
-        if language:
-            if language.get_name() == 'EVC':
-                if filename.suffix != '.evc':
-                    LOGGER.debug('No suffix')
-                    filename = filename.with_suffix('.evc')
-                    LOGGER.debug('append suffix: {}'.format(filename.name))
-            if language.get_name() == 'NXC':
-                if filename.suffix != '.nxc':
-                    LOGGER.debug('No suffix')
-                    filename = filename.with_suffix('.nxc')
-                    LOGGER.debug('append suffix: {}'.format(filename.name))
-
-            self.set_filename(str(filename))
-        self.response(Gtk.ResponseType.ACCEPT)
 
     def get_choice(self, choice_type):
         '''

@@ -195,6 +195,19 @@ class EditorApp(Gtk.ScrolledWindow):
         if response == Gtk.ResponseType.ACCEPT:
             filename = Path(dialog.get_filename())  # or uri?
 
+            # check for right suffix
+            if self.this_lang:
+                if self.this_lang.get_name() == 'EVC':
+                    if filename.suffix != '.evc':
+                        LOGGER.debug('No suffix')
+                        filename = filename.with_suffix('.evc')
+                        LOGGER.debug('append suffix: {}'.format(filename.name))
+                if self.this_lang.get_name() == 'NXC':
+                    if filename.suffix != '.nxc':
+                        LOGGER.debug('No suffix')
+                        filename = filename.with_suffix('.nxc')
+                        LOGGER.debug('append suffix: {}'.format(filename.name))
+
             # check for valid filename
             (valid, msgtupel) = self.document.filename_is_valid(filename)
             if valid:
@@ -214,7 +227,7 @@ class EditorApp(Gtk.ScrolledWindow):
                 dialog.destroy()
             else:
                 ErrorDialog(dialog, msgtupel[0], msgtupel[1])
-                dialog.set_uri(self.document.get_uri())
+                dialog.set_current_name(str(filename.name))
 
         elif response == Gtk.ResponseType.CANCEL:
             LOGGER.debug('cancelled: SAVE AS')
