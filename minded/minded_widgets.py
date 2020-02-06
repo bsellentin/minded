@@ -40,7 +40,7 @@ class MindedTabLabel(Gtk.Bin):
 
     def set_text(self, text):
         self.label.set_text(text)
-
+'''
 class CancelProcDialog(Gtk.MessageDialog):
     def __init__(self, parent, procid):
         Gtk.MessageDialog.__init__(self, transient_for=parent,
@@ -56,7 +56,7 @@ class CancelProcDialog(Gtk.MessageDialog):
         #return False
         #self.destroy()
         self.show_all()
-
+'''
 class CancellationWin(Gtk.Window):
     def __init__(self, parent, procid):
         Gtk.Window.__init__(self, title='Cancel Proc')
@@ -201,7 +201,7 @@ class CloseConfirmationDialog(Gtk.MessageDialog):
     '''
     def __init__(self, parent, filename):
 
-        Gtk.MessageDialog.__init__(self, parent, 0, Gtk.MessageType.WARNING,
+        Gtk.MessageDialog.__init__(self, parent, 1, Gtk.MessageType.WARNING,
                                    Gtk.ButtonsType.NONE,
                                    _('Save changes to document {} before closing?').format(filename))
 
