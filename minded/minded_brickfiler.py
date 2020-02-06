@@ -190,7 +190,7 @@ class HostListing(Gtk.ListStore):
                         except PermissionError:
                             dirlist.append([str(entry.name), ERRORICON, 0, False])
                     elif entry.is_file():
-                        if entry.suffix == '.rso':
+                        if entry.suffix in [".rsf", ".rmd", ".wav", ".rso"]:
                             filelist.append([str(entry.name), AUDIOICON,
                                              entry.stat().st_size, False])
                         elif entry.suffix == '.ric':
