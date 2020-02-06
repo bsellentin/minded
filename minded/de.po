@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-11 18:11+0100\n"
+"POT-Creation-Date: 2020-02-06 16:19+0100\n"
 "PO-Revision-Date: 2018-11-13 20:39+0100\n"
 "Last-Translator: Bernd Sellentin <sel@gge-em.org>\n"
 "Language-Team: German\n"
@@ -18,332 +18,174 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2\n"
 
-#: editorapp.py:98 editorapp.py:102
-msgid "Filename {} to long!"
-msgstr "Dateiname {} ist zu lang!"
-
-#: editorapp.py:99
-msgid "Maximum allowable are 15 characters"
-msgstr "Maximal erlaubt sind 15 Zeichen."
-
-#: editorapp.py:103
-msgid "Maximum allowable are 20 characters"
-msgstr "Maximal erlaubt sind 20 Zeichen."
-
-#: editorapp.py:108
-msgid "Filename {} unvalid!"
-msgstr "Dateiname {} ungültig!"
-
-#: editorapp.py:109
-msgid "Filename contains non-alphanumeric characters."
-msgstr "Dateiname enthält ungültige Zeichen."
-
-#: editorapp.py:316
-msgid "Could not save file {}"
-msgstr "Konnte Datei {} nicht speichern."
-
-#: widgets.py:97
-msgid "Please choose a file"
-msgstr "Datei auswählen"
-
-#: widgets.py:109
-msgid "Brick files"
-msgstr "Brick Dateien"
-
-#: widgets.py:115
-msgid "Any files"
-msgstr "Alle Dateien"
-
-#: widgets.py:125
-msgid "Pick a file"
-msgstr "Datei auswählen"
-
-#: widgets.py:174
-msgid "Line Ending"
-msgstr "Zeilenende"
-
-#: widgets.py:199
-msgid "Save changes to document {} before closing?"
-msgstr "Änderungen am Dokument {} speichern?"
-
-#: widgets.py:201
-msgid "Close without Saving"
-msgstr "Schließen ohne speichern"
-
-#: widgets.py:202
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: widgets.py:203
-msgid "Save"
-msgstr "Speichern"
-
-#: widgets.py:205
-msgid "Changes to document {} will be permanently lost."
-msgstr "Änderungen am Dokument {} gehen verloren."
-
-#: mindedappwin.py:311 mindedappwin.py:337
+#: minded_appwin.py:341 minded_appwin.py:367
 msgid "You have to save first!"
 msgstr "Zuerst speichern!"
 
-#: mindedappwin.py:312 mindedappwin.py:338
+#: minded_appwin.py:342 minded_appwin.py:368
 msgid "The compiler works on the real file."
 msgstr "Der Compiler arbeitet mit der echten Datei."
 
-#: mindedappwin.py:327 mindedappwin.py:353
+#: minded_appwin.py:357 minded_appwin.py:383
 msgid "# Error: unknown file extension, expected: .nxc or .evc"
 msgstr "# Fehler: unbekannte Dateiendung, .nxc oder .evc erwartet"
 
-#: mindedappwin.py:426 mindedappwin.py:604
+#: minded_appwin.py:457 minded_appwin.py:637
 msgid "INS"
 msgstr "EINF"
 
-#: mindedappwin.py:602
+#: minded_appwin.py:635
 msgid "OVR"
 msgstr "ÜBS"
 
-#: mindedappwin.py:617
+#: minded_appwin.py:650
 msgid "Ln {}, Col {}"
 msgstr "Z. {}, Sp. {}"
 
-#: preferences.py:69
+#: minded_document.py:77 minded_document.py:81
+msgid "Filename {} to long!"
+msgstr "Dateiname {} ist zu lang!"
+
+#: minded_document.py:78
+msgid "Maximum allowable are 15 characters"
+msgstr "Maximal erlaubt sind 15 Zeichen."
+
+#: minded_document.py:82
+msgid "Maximum allowable are 20 characters"
+msgstr "Maximal erlaubt sind 20 Zeichen."
+
+#: minded_document.py:87
+msgid "Filename {} unvalid!"
+msgstr "Dateiname {} ungültig!"
+
+#: minded_document.py:88
+msgid "Filename contains non-alphanumeric characters."
+msgstr "Dateiname enthält ungültige Zeichen."
+
+#: minded_preferences.py:69
 msgid "choose NBC-file"
 msgstr "wähle NBC-Datei"
 
-#: preferences.py:76
+#: minded_preferences.py:76
 msgid "choose gcc-file"
 msgstr "wähle gcc-Datei"
 
-#: preferences.py:82
+#: minded_preferences.py:82
 msgid "choose C++-file"
 msgstr "wähle C++-Datei"
 
-#: preferences.py:88
+#: minded_preferences.py:88
 msgid "choose libev3api-file"
 msgstr "wähle libev3api-Datei"
 
-#: preferences.py:94
+#: minded_preferences.py:94
 msgid "choose ev3-header"
 msgstr "wähle ev3.h-Header"
 
-#: ../data/shortcuts.ui:13
-msgid "Documents"
-msgstr "Dokumente"
+#: minded_editorapp.py:266
+msgid "Could not save file {}"
+msgstr "Konnte Datei {} nicht speichern."
 
-#: ../data/shortcuts.ui:17
-msgid "Create new document"
-msgstr "Ein neues Dokument anlegen"
+#: minded_widgets.py:99
+msgid "Please choose a file"
+msgstr "Datei auswählen"
 
-#: ../data/shortcuts.ui:23
-msgid "Open a document"
-msgstr "Dokument öffnen"
+#: minded_widgets.py:111
+msgid "Brick files"
+msgstr "Brick Dateien"
 
-#: ../data/shortcuts.ui:29
-msgid "Save the document"
-msgstr "Dokument speichern"
+#: minded_widgets.py:117
+msgid "Any files"
+msgstr "Alle Dateien"
 
-#: ../data/shortcuts.ui:35
-msgid "Save document as"
-msgstr "Dokument mit neuem Namen speichern"
+#: minded_widgets.py:127
+msgid "Pick a file"
+msgstr "Datei auswählen"
 
-#: ../data/shortcuts.ui:41
-msgid "Close the document"
-msgstr "Dokument schließen"
+#: minded_widgets.py:181
+msgid "Line Ending"
+msgstr "Zeilenende"
 
-#: ../data/shortcuts.ui:47
-msgid "Print the document"
-msgstr "Dokument drucken"
+#: minded_widgets.py:206
+msgid "Save changes to document {} before closing?"
+msgstr "Änderungen am Dokument {} speichern?"
 
-#: ../data/shortcuts.ui:53
-msgid "Change programming language"
-msgstr "Programmiersprache wechseln"
+#: minded_widgets.py:208
+msgid "Close without Saving"
+msgstr "Schließen ohne speichern"
 
-#: ../data/shortcuts.ui:59
-msgid "Switch to the next document"
-msgstr "Zum nächsten Dokument wechseln"
+#: minded_widgets.py:209
+msgid "Cancel"
+msgstr "Abbrechen"
 
-#: ../data/shortcuts.ui:65
-msgid "Switch to the previous document"
-msgstr "Zum vorherigen Dokument wechseln"
+#: minded_widgets.py:210
+msgid "Save"
+msgstr "Speichern"
 
-#: ../data/shortcuts.ui:72
-msgid "Compiler"
-msgstr "Compiler"
+#: minded_widgets.py:212
+msgid "Changes to document {} will be permanently lost."
+msgstr "Änderungen am Dokument {} gehen verloren."
 
-#: ../data/shortcuts.ui:76
-msgid "Compile the program"
-msgstr "Programm übersetzen"
-
-#: ../data/shortcuts.ui:82
-msgid "Transmit program to brick"
-msgstr "Programm auf den Stein hochladen"
-
-#: ../data/shortcuts.ui:89
-msgid "Windows"
-msgstr "Fenster"
-
-#: ../data/shortcuts.ui:93
-msgid "Quit the application"
-msgstr "Anwendung beenden"
-
-#: ../data/shortcuts.ui:100
-msgid "Copy and Paste"
-msgstr "Kopieren und Einfügen"
-
-#: ../data/shortcuts.ui:104
-msgid "Copy selected text to clipboard"
-msgstr "Ausgewählten Text in die Zwischenablage kopieren"
-
-#: ../data/shortcuts.ui:110
-msgid "Cut selected text to clipboard"
-msgstr "Ausgewählten Text in die Zwischenablage ausschneiden"
-
-#: ../data/shortcuts.ui:116
-msgid "Paste text from clipboard"
-msgstr "Text aus der Zwischenablage einfügen"
-
-#: ../data/shortcuts.ui:123
-msgid "Undo and Redo"
-msgstr "Rückgängig und Wiederholen"
-
-#: ../data/shortcuts.ui:127
-msgid "Undo previous command"
-msgstr "Vorherigen Befehl rückgängig machen"
-
-#: ../data/shortcuts.ui:133
-msgid "Redo previous command"
-msgstr "Vorherigen Befehl wiederholen"
-
-#: ../data/shortcuts.ui:140
-msgid "Selection"
-msgstr "Markierung"
-
-#: ../data/shortcuts.ui:144
-msgid "Select all text"
-msgstr "Alles auswählen"
-
-#: ../data/shortcuts.ui:151
-msgid "Editing"
-msgstr "Bearbeiten"
-
-#: ../data/shortcuts.ui:155
-msgid "Toggle insert / overwrite"
-msgstr "Einfügen / Überschreiben umschalten"
-
-#: ../data/shortcuts.ui:161
-msgid "Move current line up"
-msgstr "Aktuelle Zeile nach oben verschieben"
-
-#: ../data/shortcuts.ui:167
-msgid "Move current line down"
-msgstr "Aktuelle Zeile nach unten verschieben"
-
-#: ../data/shortcuts.ui:174
-msgid "Move current word left"
-msgstr "Aktuelles Wort nach links verschieben"
-
-#: ../data/shortcuts.ui:181
-msgid "Move current word right"
-msgstr "Aktuelles Wort nach rechts verschieben"
-
-#: ../data/mindedappwin.ui:14
-msgid "text"
-msgstr ""
-
-#: ../data/mindedappwin.ui:15 ../data/mindedappwin.ui:323
-msgid "Text"
-msgstr ""
-
-#: ../data/mindedappwin.ui:18
-msgid "nxc"
-msgstr ""
-
-#: ../data/mindedappwin.ui:19 ../data/minded-preferences-dialog.ui:475
-#: ../data/apiviewer.ui:88
-msgid "NXC"
-msgstr "NXC"
-
-#: ../data/mindedappwin.ui:22
-msgid "evc"
-msgstr ""
-
-#: ../data/mindedappwin.ui:23 ../data/minded-preferences-dialog.ui:697
-#: ../data/apiviewer.ui:123
-msgid "EVC"
-msgstr "EVC"
-
-#: ../data/mindedappwin.ui:26
-msgid "python"
-msgstr ""
-
-#: ../data/mindedappwin.ui:27
-msgid "Python"
-msgstr "Python"
-
-#: ../data/mindedappwin.ui:46
-msgid "Create a new document"
-msgstr "Eine neue Datei anlegen"
-
-#: ../data/mindedappwin.ui:67
-msgid "Open a file"
-msgstr "Eine Datei öffnen"
-
-#: ../data/mindedappwin.ui:91
-msgid "Save the current file"
-msgstr "Die geöffnete Datei speichern"
-
-#: ../data/mindedappwin.ui:131
-msgid "Transmit"
-msgstr "Übertragen"
-
-#: ../data/mindedappwin.ui:156
-msgid "Compile"
-msgstr "Compilieren"
-
-#: ../data/mindedappwin.ui:248
-msgid "compiler-log"
-msgstr "Compiler Log"
-
-#: ../data/mindedappwin.ui:431
-msgid "language"
-msgstr ""
-
-#: ../data/mindedappwin.ui:449
-msgid "Print…"
-msgstr "Drucken…"
-
-#: ../data/mindedappwin.ui:455
-msgid "Save As…"
-msgstr "Speichern unter…"
-
-#: ../data/mindedappwin.ui:461
-msgid "Tools"
-msgstr "Werkzeuge"
-
-#: ../data/mindedappwin.ui:465 ../data/brickinfo.ui:7
-msgid "Brick Info"
-msgstr "Stein-Info"
-
-#: ../data/mindedappwin.ui:469
-msgid "Brick Filer"
-msgstr "Brick Dateimanager"
-
-#: ../data/mindedappwin.ui:478
-msgid "API Help"
-msgstr "API-Hilfe"
-
-#: ../data/app-menu-traditional.ui:7 ../data/minded-preferences-dialog.ui:20
-#: ../data/app-menu.ui:7
+#: ../data/minded-app-menu-traditional.ui:7
+#: ../data/minded-preferences-dialog.ui:20 ../data/minded-app-menu.ui:7
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: ../data/app-menu-traditional.ui:11 ../data/app-menu.ui:15
+#: ../data/minded-app-menu-traditional.ui:11 ../data/minded-app-menu.ui:15
 msgid "About"
 msgstr "Über"
 
-#: ../data/app-menu-traditional.ui:17 ../data/app-menu.ui:21
+#: ../data/minded-app-menu-traditional.ui:17 ../data/minded-app-menu.ui:21
 msgid "Quit"
 msgstr "Beenden"
+
+#: ../data/minded-brickinfo.ui:7 ../data/minded-appwin.ui:461
+msgid "Brick Info"
+msgstr "Stein-Info"
+
+#: ../data/minded-brickinfo.ui:28
+msgid "Brick name"
+msgstr "Stein-Name"
+
+#: ../data/minded-brickinfo.ui:41 ../data/minded-brickinfo.ui:54
+#: ../data/minded-brickinfo.ui:66 ../data/minded-brickinfo.ui:79
+#: ../data/minded-brickinfo.ui:91 ../data/minded-brickinfo.ui:103
+#: ../data/minded-brickinfo.ui:115 ../data/minded-brickinfo.ui:127
+#: ../data/minded-brickinfo.ui:139 ../data/minded-brickinfo.ui:151
+#: ../data/minded-brickinfo.ui:163 ../data/minded-brickinfo.ui:175
+#: ../data/minded-brickinfo.ui:187 ../data/minded-apiviewer.ui:152
+msgid "label"
+msgstr ""
+
+#: ../data/minded-brickinfo.ui:201
+msgid "Rename brick"
+msgstr "P-Stein umbenennen"
+
+#: ../data/minded-brickinfo.ui:222
+msgid "Upload firmware"
+msgstr "Firmware hochladen"
+
+#: ../data/minded-brickinfo.ui:261
+msgid "Refresh"
+msgstr "Neu laden"
+
+#: ../data/minded-apiviewer.ui:74
+msgid "NXC functions"
+msgstr "NXC-Funktionen"
+
+#: ../data/minded-apiviewer.ui:88 ../data/minded-preferences-dialog.ui:475
+#: ../data/minded-appwin.ui:19
+msgid "NXC"
+msgstr "NXC"
+
+#: ../data/minded-apiviewer.ui:109
+msgid "EVC functions"
+msgstr "EVC-Funktionen"
+
+#: ../data/minded-apiviewer.ui:123 ../data/minded-preferences-dialog.ui:697
+#: ../data/minded-appwin.ui:23
+msgid "EVC"
+msgstr "EVC"
 
 #: ../data/minded-preferences-dialog.ui:47
 msgid "Display line numbers"
@@ -403,7 +245,7 @@ msgstr "Editor Zeichensatz"
 
 #: ../data/minded-preferences-dialog.ui:391
 msgid "Editor"
-msgstr ""
+msgstr "Editor"
 
 #: ../data/minded-preferences-dialog.ui:413
 msgid "NBC-compiler"
@@ -449,60 +291,231 @@ msgstr "EV3-Header nicht gefunden"
 msgid "no c++ executable found"
 msgstr "C++-Compiler nicht gefunden"
 
-#: ../data/brickinfo.ui:28
-msgid "Brick name"
-msgstr "Stein-Name"
-
-#: ../data/brickinfo.ui:41 ../data/brickinfo.ui:54 ../data/brickinfo.ui:66
-#: ../data/brickinfo.ui:79 ../data/brickinfo.ui:91 ../data/brickinfo.ui:103
-#: ../data/brickinfo.ui:115 ../data/brickinfo.ui:127 ../data/brickinfo.ui:139
-#: ../data/brickinfo.ui:151 ../data/brickinfo.ui:163 ../data/brickinfo.ui:175
-#: ../data/brickinfo.ui:187 ../data/apiviewer.ui:152
-msgid "label"
-msgstr ""
-
-#: ../data/brickinfo.ui:259
-msgid "Refresh"
-msgstr "Neu laden"
-
 #: ../data/minded-tab-label.ui:17
 msgid "Close Document"
 msgstr "Dokument schließen"
 
-#: ../data/app-menu.ui:11
-msgid "Keyboard Shortcuts"
-msgstr "Tastenkürzel"
+#: ../data/minded-appwin.ui:14
+msgid "text"
+msgstr ""
 
-#: ../data/apiviewer.ui:74
-msgid "NXC functions"
-msgstr "NXC-Funktionen"
+#: ../data/minded-appwin.ui:15 ../data/minded-appwin.ui:324
+msgid "Text"
+msgstr ""
 
-#: ../data/apiviewer.ui:109
-msgid "EVC functions"
-msgstr "EVC-Funktionen"
+#: ../data/minded-appwin.ui:18
+msgid "nxc"
+msgstr ""
 
-#: ../data/about.ui:11
+#: ../data/minded-appwin.ui:22
+msgid "evc"
+msgstr ""
+
+#: ../data/minded-appwin.ui:26
+msgid "python"
+msgstr ""
+
+#: ../data/minded-appwin.ui:27
+msgid "Python"
+msgstr "Python"
+
+#: ../data/minded-appwin.ui:46
+msgid "Create a new document"
+msgstr "Eine neue Datei anlegen"
+
+#: ../data/minded-appwin.ui:67
+msgid "Open a file"
+msgstr "Eine Datei öffnen"
+
+#: ../data/minded-appwin.ui:92
+msgid "Save the current file"
+msgstr "Die geöffnete Datei speichern"
+
+#: ../data/minded-appwin.ui:132
+msgid "Transmit"
+msgstr "Übertragen"
+
+#: ../data/minded-appwin.ui:157
+msgid "Compile"
+msgstr "Compilieren"
+
+#: ../data/minded-appwin.ui:249
+msgid "compiler-log"
+msgstr "Compiler Log"
+
+#: ../data/minded-appwin.ui:427
+msgid "Language"
+msgstr "Sprache"
+
+#: ../data/minded-appwin.ui:445
+msgid "Print…"
+msgstr "Drucken…"
+
+#: ../data/minded-appwin.ui:451
+msgid "Save As…"
+msgstr "Speichern unter…"
+
+#: ../data/minded-appwin.ui:457
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: ../data/minded-appwin.ui:465
+msgid "Brick Filer"
+msgstr "Brick Dateimanager"
+
+#: ../data/minded-appwin.ui:474
+msgid "API Help"
+msgstr "API-Hilfe"
+
+#: ../data/minded-appwin.ui:532
+msgid "Other _Documents…"
+msgstr "Weitere Dokumente…"
+
+#: ../data/minded-appwin.ui:536
+msgid "Open another file"
+msgstr "Ein weiteres Dokument öffnen"
+
+#: ../data/minded-shortcuts.ui:13
+msgid "Documents"
+msgstr "Dokumente"
+
+#: ../data/minded-shortcuts.ui:17
+msgid "Create new document"
+msgstr "Ein neues Dokument anlegen"
+
+#: ../data/minded-shortcuts.ui:23
+msgid "Open a document"
+msgstr "Dokument öffnen"
+
+#: ../data/minded-shortcuts.ui:29
+msgid "Save the document"
+msgstr "Dokument speichern"
+
+#: ../data/minded-shortcuts.ui:35
+msgid "Save document as"
+msgstr "Dokument mit neuem Namen speichern"
+
+#: ../data/minded-shortcuts.ui:41
+msgid "Close the document"
+msgstr "Dokument schließen"
+
+#: ../data/minded-shortcuts.ui:47
+msgid "Print the document"
+msgstr "Dokument drucken"
+
+#: ../data/minded-shortcuts.ui:53
+msgid "Change programming language"
+msgstr "Programmiersprache wechseln"
+
+#: ../data/minded-shortcuts.ui:59
+msgid "Switch to the next document"
+msgstr "Zum nächsten Dokument wechseln"
+
+#: ../data/minded-shortcuts.ui:65
+msgid "Switch to the previous document"
+msgstr "Zum vorherigen Dokument wechseln"
+
+#: ../data/minded-shortcuts.ui:72
+msgid "Compiler"
+msgstr "Compiler"
+
+#: ../data/minded-shortcuts.ui:76
+msgid "Compile the program"
+msgstr "Programm übersetzen"
+
+#: ../data/minded-shortcuts.ui:82
+msgid "Transmit program to brick"
+msgstr "Programm auf den Stein hochladen"
+
+#: ../data/minded-shortcuts.ui:89
+msgid "Windows"
+msgstr "Fenster"
+
+#: ../data/minded-shortcuts.ui:93
+msgid "Quit the application"
+msgstr "Anwendung beenden"
+
+#: ../data/minded-shortcuts.ui:100
+msgid "Copy and Paste"
+msgstr "Kopieren und Einfügen"
+
+#: ../data/minded-shortcuts.ui:104
+msgid "Copy selected text to clipboard"
+msgstr "Ausgewählten Text in die Zwischenablage kopieren"
+
+#: ../data/minded-shortcuts.ui:110
+msgid "Cut selected text to clipboard"
+msgstr "Ausgewählten Text in die Zwischenablage ausschneiden"
+
+#: ../data/minded-shortcuts.ui:116
+msgid "Paste text from clipboard"
+msgstr "Text aus der Zwischenablage einfügen"
+
+#: ../data/minded-shortcuts.ui:123
+msgid "Undo and Redo"
+msgstr "Rückgängig und Wiederholen"
+
+#: ../data/minded-shortcuts.ui:127
+msgid "Undo previous command"
+msgstr "Vorherigen Befehl rückgängig machen"
+
+#: ../data/minded-shortcuts.ui:133
+msgid "Redo previous command"
+msgstr "Vorherigen Befehl wiederholen"
+
+#: ../data/minded-shortcuts.ui:140
+msgid "Selection"
+msgstr "Markierung"
+
+#: ../data/minded-shortcuts.ui:144
+msgid "Select all text"
+msgstr "Alles auswählen"
+
+#: ../data/minded-shortcuts.ui:151
+msgid "Editing"
+msgstr "Bearbeiten"
+
+#: ../data/minded-shortcuts.ui:155
+msgid "Toggle insert / overwrite"
+msgstr "Einfügen / Überschreiben umschalten"
+
+#: ../data/minded-shortcuts.ui:161
+msgid "Move current line up"
+msgstr "Aktuelle Zeile nach oben verschieben"
+
+#: ../data/minded-shortcuts.ui:167
+msgid "Move current line down"
+msgstr "Aktuelle Zeile nach unten verschieben"
+
+#: ../data/minded-shortcuts.ui:174
+msgid "Move current word left"
+msgstr "Aktuelles Wort nach links verschieben"
+
+#: ../data/minded-shortcuts.ui:181
+msgid "Move current word right"
+msgstr "Aktuelles Wort nach rechts verschieben"
+
+#: ../data/minded-about.ui:11
 msgid "An Editor for LEGO Mindstorms Bricks"
 msgstr "Ein Editor für LEGO Mindstorms Steine"
 
-#: ../data/about.ui:13
+#: ../data/minded-about.ui:13
 msgid "MindEd Website"
 msgstr "Minded Website"
 
-#~ msgid "No NBC-executable found!"
-#~ msgstr "NBC-Compiler nicht gefunden!"
+#: ../data/minded-app-menu.ui:11
+msgid "Keyboard Shortcuts"
+msgstr "Tastenkürzel"
 
-#~ msgid "not in /usr/bin, not in /usr/local/bin"
-#~ msgstr "weder in /usr/bin, noch in /usr/local/bin"
+#: ../data/minded-fwupdate.ui:32
+msgid "Choose firmware file"
+msgstr "Wähle Firmware-Datei"
 
-#~ msgid "C-compiler:"
-#~ msgstr "C-Compiler"
+#: ../data/minded-fwupdate.ui:45
+msgid "choose firmware-file"
+msgstr "wähle Firmware-Datei"
 
-#~ msgid "C++-compiler:"
-#~ msgstr "C++-Compiler"
+#: ../data/minded-fwupdate.ui:101
+msgid "Upload"
+msgstr "Hochladen"
 
-#~ msgid "Help"
-#~ msgstr "Hilfe"
-
-#~ msgid "Close"
-#~ msgstr "Schließen"
