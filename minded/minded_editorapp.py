@@ -33,6 +33,7 @@ from gi.repository import GtkSource
 from minded.minded_completionprovider import BrickCompletionProvider
 from minded.minded_widgets import ErrorDialog, FileSaveDialog
 from minded.minded_document import MindEdDocument
+from minded.minded_recent import RecentFiles
 
 LOGGER = logging.getLogger(__name__)
 
@@ -284,6 +285,9 @@ class EditorApp(Gtk.ScrolledWindow):
                 self.mindedappwin.change_tab_label(self, self.document.get_basename())
                 # change headerbar
                 self.mindedappwin.set_title(self.document)
+                # add to recent files
+                recent = RecentFiles()
+                recent.add(self.document.get_uri())
 
         if not self.mindedappwin.can_close:
             # there was window-delete-event, but modified document

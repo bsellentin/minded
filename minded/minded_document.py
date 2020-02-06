@@ -6,7 +6,7 @@ import re
 import logging
 
 import gi
-from gi.repository import Gio, GLib
+from gi.repository import Gio
 gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
