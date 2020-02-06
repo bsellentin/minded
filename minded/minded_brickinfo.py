@@ -10,6 +10,8 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
 from gi.repository import Gtk
 
+from minded.minded_fwupdate import NxtFirmwareUpdate
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -127,7 +129,10 @@ class BrickInfo():
         widget.destroy()
 
     def on_btn_firmware_clicked(self, button):
-        pass
+        if self.brick_type == 'nxt':
+            dlg = NxtFirmwareUpdate(self.app)
+        else:
+            pass
 
     def on_btn_refresh_clicked(self, button):
         ''' reload brick-info '''

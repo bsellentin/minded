@@ -198,6 +198,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Rename brick</property>
                 <signal name="clicked" handler="on_btn_brickname_clicked" swapped="no"/>
                 <child>
                   <object class="GtkImage">
@@ -218,6 +219,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Upload firmware</property>
                 <signal name="clicked" handler="on_btn_firmware_clicked" swapped="no"/>
                 <child>
                   <object class="GtkImage">

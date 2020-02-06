@@ -35,8 +35,9 @@ from minded.minded_brickhelper import BrickHelper
 from minded.minded_brickinfo import BrickInfo
 from minded.minded_brickfiler import BrickFiler
 from minded.minded_apiviewer import ApiViewer
-from minded.minded_widgets import ErrorDialog, FileOpenDialog, CancelProcDialog
+from minded.minded_widgets import ErrorDialog, FileOpenDialog
 from minded.minded_widgets import CloseConfirmationDialog, MindedTabLabel
+from minded.minded_recent import RecentFiles
 
 LOGGER = logging.getLogger(__name__)
 
@@ -122,6 +123,11 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         builder = Gtk.Builder()
         GObject.type_register(GtkSource.View)
         builder.add_from_resource('/org/gge-em/MindEd/minded-appwin.ui')
+
+        recent_view = builder.get_object('recent_view')
+        recent = RecentFiles()
+        recent_view.set_model(recent.recent_store)
+
         builder.connect_signals(self)
         self.connect('delete-event', self.gtk_main_quit)
 
@@ -135,7 +141,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         self.brick_status = builder.get_object('brick_status')
         self.brick_status_id = self.brick_status.get_context_id('BrickStatus')
         self.overwrite_status = builder.get_object('ovw_status')
-        #self.overwrite_status_id = self.overwrite_status.get_context_id('ovw_id')
         self.cursor_location = builder.get_object('colln_status')
         self.cursor_location_id = self.cursor_location.get_context_id('ColLn')
         self.btn_language = builder.get_object('btn_language')
@@ -149,8 +154,6 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         compilerview = builder.get_object('compilerview')
         self.log_buffer = compilerview.get_buffer()
         self.log_buffer.create_tag('warning', foreground='red', background='yellow')
-
-        self.canceldlg = None
 
         # Look for Brick
         if self.app.nxt_brick:
@@ -238,6 +241,9 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             self.make_new_page(path)
             editor = self.get_editor()
 
+        # close popover
+        editor.grab_focus()
+
         dialog = FileOpenDialog(self, path)
         dialog.connect('response', self.open_file_response, editor)
         dialog.show()
@@ -255,6 +261,8 @@ class MindEdAppWin(Gtk.ApplicationWindow):
                 self.notebook.set_current_page(page_num - 1)
             else:
                 self.load_file_in_editor(dialog.get_uri())
+                recent = RecentFiles()
+                recent.add(dialog.get_uri())
 
         elif response == Gtk.ResponseType.CANCEL:
             LOGGER.debug('FileOpenDialog Cancel clicked')
@@ -532,17 +540,23 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         LOGGER.debug('<ctrl>l')
         self.btn_language.get_popover().popup()
 
-    def on_languageselect_changed(self, selection):
+    def on_recentview_row_activated(self, treeview, path, column):
         '''
-        single click, language changed
-        GtkTreeView->GtkTreeSelection->signal: changed
-        not good for using <KEY down> or <KEY up>
+        single click or <Enter>
         '''
-        #model, treeiter = selection.get_selected()
-        #self.change_language(model, treeiter)
-        pass
+        selection = treeview.get_selection()
+        model, treeiter = selection.get_selected()
+        # check if file already open
+        page_num = document_is_open(self, model[treeiter][2])
+        LOGGER.debug('page_num {}'.format(page_num))
+        if page_num:
+            self.notebook.set_current_page(page_num - 1)
+        else:
+            self.load_file_in_editor(model[treeiter][2])
 
-    def on_languagetree_row_activated(self, treeview, path, column):
+        self.get_editor().grab_focus()
+
+    def on_languageview_row_activated(self, treeview, path, column):
         '''
         double click or <Enter>
         '''
@@ -587,14 +601,10 @@ class MindEdAppWin(Gtk.ApplicationWindow):
             self.language_label.set_text('Text')
             path = Gtk.TreePath(0)
 
-        select = self.language_tree.get_selection()
-        select.disconnect_by_func(self.on_languageselect_changed)
         try:
             self.language_tree.set_cursor(path, None, False)    # emits changed-signal
         except UnboundLocalError:
             LOGGER.debug("Known Language, but not in language_tree")
-
-        select.connect('changed', self.on_languageselect_changed)
 
     def set_title(self, document):
         '''
