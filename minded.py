@@ -32,8 +32,6 @@ import gettext
 
 import logging
 
-from typing import List
-
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GObject', '2.0')
@@ -76,7 +74,8 @@ class MindEdApp(Gtk.Application):
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
-        self.version = "0.7.13"
+        self.version = "0.7.14"
+        GLib.set_application_name("minded")
 
         self.args = ()
         self.filelist = []
@@ -135,10 +134,6 @@ class MindEdApp(Gtk.Application):
         action.connect("activate", self.on_preferences)
         self.add_action(action)
 
-        action = Gio.SimpleAction.new('shortcuts', None)
-        action.connect('activate', self.on_shortcuts)
-        self.add_action(action)
-
         action = Gio.SimpleAction.new('about', None)
         action.connect('activate', self.on_about)
         self.add_action(action)
@@ -151,6 +146,9 @@ class MindEdApp(Gtk.Application):
         builder = Gtk.Builder()
         if Gtk.get_minor_version() > 18:
             # use GtkShortcutsWindow
+            action = Gio.SimpleAction.new('shortcuts', None)
+            action.connect('activate', self.on_shortcuts)
+            self.add_action(action)
             builder.add_from_resource('/org/gge-em/MindEd/minded-app-menu.ui')
         else:
             builder.add_from_resource('/org/gge-em/MindEd/minded-app-menu-traditional.ui')
@@ -251,10 +249,6 @@ class MindEdApp(Gtk.Application):
                 LOGGER.debug(' uevent: added NXT')
                 self.win.brick_status.push(self.win.brick_status_id, "NXT")
                 self.win.transmit_action.set_enabled(True)
-                #try:
-                #    self.win.nxt_filer.nxt_model.populate(self.brick, '*.*')
-                #except AttributeError:
-                #    pass
             elif self.look_for_brick(device) == 'ev3':
                 LOGGER.debug(' uevent: added EV3')
                 self.win.brick_status.push(self.win.brick_status_id, "EV3")
@@ -284,13 +278,14 @@ class MindEdApp(Gtk.Application):
         dlg.window.set_modal(True)
         dlg.window.present()
 
-    def on_shortcuts(self, action, param):
-        ''' Gio.SimpleAction shortcuts '''
-        builder = Gtk.Builder()
-        builder.add_from_resource('/org/gge-em/MindEd/minded-shortcuts.ui')
-        shortcuts_win = builder.get_object('shortcuts-minded')
-        shortcuts_win.set_transient_for(self.win)
-        shortcuts_win.show_all()
+    if Gtk.get_minor_version() > 18:
+        def on_shortcuts(self, action, param):
+            ''' Gio.SimpleAction shortcuts '''
+            builder = Gtk.Builder()
+            builder.add_from_resource('/org/gge-em/MindEd/minded-shortcuts.ui')
+            shortcuts_win = builder.get_object('shortcuts-minded')
+            shortcuts_win.set_transient_for(self.win)
+            shortcuts_win.show_all()
 
     def on_about(self, action, param):
         ''' Gio.SimpleAction about '''
@@ -342,21 +337,19 @@ def look_for_settings(settings):
         else:
             LOGGER.warning('no arm-g++ executable found')
     # check for ev3-library, development first
-    if Path('./EV3-API/API/libev3api.a').is_file():
-        settings.set_string('ldflags', str(Path('./EV3-API/API').resolve()))
-    # systemwide installation
-    elif not Path(settings.get_string('ldflags')).is_file():
+    if Path('./EV3-API/API').is_dir():
+        if Path('./EV3-API/API/libev3api.a').is_file():
+            settings.set_string('ldflags', str(Path('./EV3-API/API').resolve()))
+            settings.set_string('incs', str(Path('./EV3-API/API').resolve()))
+    elif Path('/usr/lib/c4ev3').is_dir():
         if Path('/usr/lib/c4ev3/libev3api.a').is_file():
             settings.set_string('ldflags', '/usr/lib/c4ev3')
-        else:
-            LOGGER.warning('EV3 library not found')
-    if Path('./EV3-API/API').is_dir():
-        settings.set_string('incs', str(Path('./EV3-API/API').resolve()))
-    elif not Path(settings.get_string('incs'), 'ev3.h').is_file():
-        if Path('/usr/lib/c4ev3').is_dir():
+        if Path('/usr/lib/c4ev3/ev3.h').is_file():
             settings.set_string('incs', '/usr/lib/c4ev3')
-        else:
-            LOGGER.warning('EV3 headers not found')
+    elif not Path(settings.get_string('ldflags')).is_file():
+        LOGGER.warning('EV3 library not found')
+    elif not Path(settings.get_string('incs'), 'ev3.h').is_file():
+        LOGGER.warning('EV3 headers not found')
 
     if not settings.get_string('prjsstore'):
         settings.set_string('prjsstore', '/home/root/lms2012/prjs')
