@@ -86,9 +86,9 @@ Ist eine Datei mit der Endung `.evc` geladen, dann steht rechts unten auch EVC a
 ausgewählte Sprache. Oder eben NXT, wenn eine `.nxc`-Datei geladen ist.
 
 Bei einer neuen Datei weiß MindEd natürlich nicht, ob sie für einen NXT- oder 
-einen EV3-Stein bestimmt sein soll, mit einem Klick kann hier die passende Sprache
-ausgewählt werden. Damit wird dann auch die Syntax-Hervorhebung und die Auto-
-Vervollständigung aktiviert.
+einen EV3-Stein bestimmt sein soll, mit einem Klick auf das Sprachenmenü in der 
+Statuszeile kann die passende Sprache ausgewählt werden. Damit wird dann auch die 
+Syntax-Hervorhebung und die Auto-Vervollständigung aktiviert.
 
 ![minded.png](minded.png)
 
@@ -119,7 +119,8 @@ bekannt und richtig geschrieben ist.
 gehört eine schließende.*
 
 Nun schalte den EV3-Stein ein, schließe ihn mit dem USB-Kabel an den Computer an
-und übertrage das Programm mit einem Klick auf den Transmit-Button zum EV3-Stein.
+und übertrage das Programm mit einem Klick auf den Transmit-Button ![network-transmit.png](network-transmit.png) 
+zum EV3-Stein.
 Wenn alles geklappt hat, sollte im unteren Teil des MindEd-Fensters `Upload of
 rudolf successfull` zu lesen und ein Sound zu hören sein.  
 In der Datei-Navigation des EV3-Steins findest du jetzt den Ordner `rudolf`, öffne
@@ -141,6 +142,12 @@ int main(){
   return 0;
 }
 ```
+
+Nachdem du EVC (oder NXC) als Sprache der neuen Datei ausgewählt hast, tippe
+`skel` und drücke dann die Tabulator-Taste: so erstellst du schnell dieses Grundgerüst.
+
+:warning: Im Hamburger-Menü ![open-menu.png](open-menu.png) findest du die C-API-Hilfe.
+Dort sind die Befehle nachlesbar!
 
 <h2 id="fahre">Rudolf fährt um den Block</h2>
 
@@ -239,6 +246,7 @@ int main(){
 }
 ```
 
+
 Rudolf fährt wieder und beim Rückwärtsfahren piept er wie ein großer Lastwagen.
 Allerdings wird Rudolf langsamer werden, wenn er bergauf fahren soll. Und er
 wird deutlich schneller werden, wenn es den Berg herunter geht. Es wäre besser,
@@ -259,6 +267,8 @@ eine schräge Ebene hoch und runter fahren.
 ```
 
 Mit Speed anstelle von Power zu arbeiten ist häufig die bessere Variante.
+
+:warning: Verwende negative power- oder speed-Werte um rückwärts zu fahren.
 
 ### Rudolf fährt ums Quadrat
 
@@ -631,6 +641,33 @@ int main(){
 
 ### Infrarotsensor
 
+Im Default-Modus misst auch der Infrarotsensor den Abstand von Objekten.
+
+```c
+#include "ev3.h"
+int main(){
+
+    /**
+     * Initialize EV3Ir sensor in default mode 0
+     * connected at port 1
+     */
+    SetSensorIR(IN_1);
+
+    int proximity = 0;
+
+    LcdText(1, 0, LCD_LINE8, "Exit with <CENTER>");
+
+    while(ButtonIsUp(BTNCENTER)){
+
+        proximity = ReadSensor(IN_1);
+        LcdTextf(1, 0, LCD_LINE4, "Proximity: %.3d cm", proximity);
+
+    }
+
+    return 0;
+}
+```
+
 ### NXT-Soundsensor
 
 Der Soundsensor aus der älteren NXT-Generation beeinhaltet ein Mikrofon, welches die
@@ -641,28 +678,28 @@ Laustärke in Prozent misst.
 
 int main(){
   InitEV3();
-  
+
   int x;
   int min;
   int max;
-  
+
   SetSensorNXTSound(IN_2);
 
   LcdSelectFont(1);
   LcdText(1,1,LCD_LINE8,"Exit with <CENTER>");
   LcdText(1,1,LCD_LINE6,"Reset with <DOWN>");
-  
+
   while(ButtonIsUp(BTNCENTER)){
-    
+
     x = ReadSensor(IN_2);
-    
+
     if(x>max){
       max = x;
     }
     if(x<min){
       min=x;
     }
-    
+
     LcdTextf(1,1,LCD_LINE3, "Sensor: %3d", x);
     LcdTextf(1,1,LCD_LINE4, "max:    %3d", max);
     LcdTextf(1,1,LCD_LINE5, "min:    %3d", min);
@@ -673,7 +710,6 @@ int main(){
       max = 0;
     }
   }
-  
   FreeEV3();
   return 0;
 }
@@ -703,6 +739,8 @@ int main(){
   PlaySound(SOUND_LOW_BEEP);
   Wait(300);                           // wait is hardcoded
 
+
+  LcdText(1,1,LCD_LINE1,"Play melody");
   unsigned short melody[7][2] = {
     {TONE_D4, NOTE_QUARTER},             // 1000/4
     {TONE_E4, NOTE_EIGHT},
@@ -715,14 +753,31 @@ int main(){
 
   PlayTones(melody);
 
-  //PlayFile("/home/root/lms2012/sys/ui/GeneralAlarm.rsf");
-  PlayFile("/home/root/lms2012/sys/ui/OverpowerAlert.rsf");
-  
   LcdText(1,1,LCD_LINE8,"Exit with <CENTER>");
   ButtonWaitForAnyPress(10000);
   FreeEV3();
 }
 ```
+
+```
+#include "ev3.h"
+int main(){
+
+    // Play robot sound file
+    PlayFile("/home/root/lms2012/prjs/sound/Dog bark 1.rsf");  // der absolute Pfad
+    PlayFile("../prjs/sound/Dog bark 2.rsf");                  // oder relativ
+
+    Wait(2000);
+
+    return 0;
+
+}
+```
+
+Um eine Roboter-Sound-Datei - wovon es viele in der Originalsoftware zu finden gibt - abzuspielen,
+muss die Datei mit dem Brick-Dateimanager in das Projektverzeichnis hochgeladen werden. Damit
+`PlayFile` die Datei findet, ist der Pfad nach einem der obigen Muster anzugeben. `PlayFile`
+blockiert den weitern Programmablauf nicht.
 
 ## Mehr über Motoren
 
@@ -782,8 +837,8 @@ Schieber ganz vorne.
 
 ```c
 ...
-SetSensorIR(IN_1);
-SetIRBeaconCH(IN_1, 1);    // der Sensor hört auf Kanal 2
+SetSensorMode(IN_1, IR_REMOTE);     // Remote-Modus
+SetIRBeaconCH(IN_1, BEACON_CH_2);   // der Sensor hört auf Kanal 2
 
 int taste;
 
