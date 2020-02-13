@@ -5,7 +5,7 @@
 BrickCompletionProvider of MindEd
 '''
 
-# Copyright (C) 2017 Bernd Sellentin <sel@gge-em.org>
+# Copyright (C) 2017-20 Bernd Sellentin <sel@gge-em.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@ BrickCompletionProvider of MindEd
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from typing import List
+#import time as t
+
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -42,8 +43,8 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
     def __init__(self, parent, language):
         super(BrickCompletionProvider, self).__init__()
 
-        self.funcs = []  # type: List[List[str]]
-        self.consts = []  # type: List[List[str]]
+        self.funcs = []
+        self.consts = []
         self.lang = ''
         self.info_widget = None
         self.parent = parent
@@ -90,19 +91,37 @@ class BrickCompletionProvider(GObject.GObject, GtkSource.CompletionProvider):
             if mov_iter.backward_word_start():
                 start_iter = mov_iter.copy()
                 left_text = buf.get_text(start_iter, end_iter, True)
-                #print left_text
             else:
                 left_text = ''
 
+            # wiki.python.org/moin/PythonSpeed/PerformanceTips
+            funcs = self.funcs
+            consts = self.consts
+            #logger.debug('loc: {} glob: {}'.format(id(funcs), id(self.funcs)))
+            item = GtkSource.CompletionItem.new
+            append = proposals.append
             if len(left_text) > 1:
-                for func in self.funcs:
-                    if func[0].startswith(left_text):
-                        proposals.append(GtkSource.CompletionItem.new(
-                            func[0], func[1], None, func[2]))
-                for const in self.consts:
-                    if const[0].startswith(left_text):
-                        proposals.append(GtkSource.CompletionItem.new(
-                            const[0], const[1], None, None))
+                #start = t.time()
+                # fastest
+                [append(item(func[0], func[1], None, func[2]))
+                    for func in funcs if func[0].startswith(left_text)]
+                # faster
+                #[proposals.append(GtkSource.CompletionItem.new(func[0], func[1], None, func[2]))
+                #    for func in self.funcs if func[0].startswith(left_text)]
+                # slowest
+                #for func in self.funcs:
+                #    if func[0].startswith(left_text):
+                #        proposals.append(GtkSource.CompletionItem.new(
+                #            func[0], func[1], None, func[2]))
+                [append(item(const[0], const[1], None, None))
+                    for const in consts if const[0].startswith(left_text)]
+                #for const in self.consts:
+                #    if const[0].startswith(left_text):
+                #        proposals.append(GtkSource.CompletionItem.new(
+                #            const[0], const[1], None, None))
+                #end = t.time()
+                #logger.debug('Elapsed time {}'.format(round(end-start, 6)))
+
                 context.add_proposals(self, proposals, True)
 
     def do_activate_proposal(self, completion_item, text_iter):

@@ -49,6 +49,8 @@ class ApiViewer():
     def __init__(self, application):
         '''A new API-viewer window'''
 
+        self.app = application
+
         builder = Gtk.Builder()
         builder.add_from_resource('/org/gge-em/MindEd/minded-apiviewer.ui')
         builder.connect_signals(self)
@@ -100,15 +102,18 @@ class ApiViewer():
         :param store: a Gtk.TreeStore
         :param lang: str programming language
         '''
-        categories = []  # type: List[str]
         if lang == 'evc':
             functions = evc_funcs.EVC_FUNCS
         elif lang == 'nxc':
             functions = nxc_funcs.NXC_FUNCS
 
-        for cat in [func[3] for func in functions]:
-            if cat not in categories:
-                categories.append(cat)
+        cat_set = {func[3] for func in functions}         # create set
+        categories = sorted(cat_set)    # ordered list, time elapsed: 1.4e-05
+        del cat_set
+
+        #for cat in [func[3] for func in functions]:
+        #    if cat not in categories:
+        #        categories.append(cat) # unordered, time elapsed: 3.9e-05
         LOGGER.debug(categories)
 
         for cat in categories:
@@ -161,6 +166,7 @@ class ApiViewer():
         '''Close API-viewer-window'''
         # pylint: Unused argument 'args' (unused-argument)
         # but: TypeError: quit() takes 1 positional argument but 3 were given
+        self.app.apiviewer = None
         self.window.destroy()
         # needed! Else Window disappears, but App lives still.
         return True
