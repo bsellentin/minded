@@ -463,6 +463,7 @@
                     <keyword>DeleteFile</keyword>
                     <keyword>Float</keyword>
                     <keyword>GraphicOut</keyword>
+                    <keyword>I2CBytes</keyword>
                     <keyword>LineOut</keyword>
                     <keyword>MotorRotationCount</keyword>
                     <keyword>NumOut</keyword>
