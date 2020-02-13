@@ -32,7 +32,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 
 from nxt.brick import FileFinder, FileReader, FileWriter
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 (COLUMN_PATH, COLUMN_PIXBUF, COLUMN_SIZE, COLUMN_ISDIR) = range(4)
 
@@ -52,10 +52,10 @@ def read_file(brick, file_uri):
 def write_file(brick, file_name, data):
     '''write one file to NXT brick'''
     writer = FileWriter(brick, file_name, len(data))
-    logger.debug('Pushing {} ({} bytes) ...'.format(file_name, writer.size))
+    LOGGER.debug('Pushing {} ({} bytes) ...'.format(file_name, writer.size))
     sys.stdout.flush()
     writer.write(data)
-    logger.debug('wrote %d bytes' % len(data))
+    LOGGER.debug('wrote %d bytes' % len(data))
     writer.close()
 
 def write_files(brick, file_uris):
@@ -65,7 +65,7 @@ def write_files(brick, file_uris):
     wnames = []  # type: List[Tuple[str, str]]
     for file_uri in file_uris:
         if file_uri:
-            logger.debug('File: {} Type {}'.format(file_uri, type(file_uri)))
+            LOGGER.debug('File: {} Type {}'.format(file_uri, type(file_uri)))
             #TODO use Gio.File
             file_path = urlparse(unquote(file_uri))
             file_name = Path(file_path.path).name
@@ -75,7 +75,7 @@ def write_files(brick, file_uris):
                 data = url.read()
             finally:
                 url.close()
-            logger.debug('name {}, size: {}'.format(file_name, len(data)))
+            LOGGER.debug('name {}, size: {}'.format(file_name, len(data)))
             try:
                 write_file(brick, file_name, data)
                 wnames.append((file_name, str(len(data))))
@@ -118,9 +118,9 @@ class BrickListing(Gtk.ListStore):
             for file in filelist:
                 self.append(file)
 
-            if logger.isEnabledFor(logging.DEBUG):
+            if LOGGER.isEnabledFor(logging.DEBUG):
                 for row in self:
-                    logger.debug('{} {}'.format(row[COLUMN_PATH], row[COLUMN_SIZE]))
+                    LOGGER.debug('{} {}'.format(row[COLUMN_PATH], row[COLUMN_SIZE]))
 
         elif brick.__class__.__name__ == 'EV3':
             self.clear()
@@ -144,7 +144,7 @@ class BrickListing(Gtk.ListStore):
                     else:
                         dirlist.append((folder, DIRICON, 2, True))  # TODO: get number of objects
                 for file in content['files']:
-                    logger.debug('{}'.format(file))
+                    LOGGER.debug('{}'.format(file))
                     if Path(file['name']).suffix == ".rgf":
                         filelist.append((file['name'], GRAPHICICON, file['size'], False))
                     elif Path(file['name']).suffix in [".rsf", ".rmd", ".wav", ".rso"]:
@@ -329,13 +329,13 @@ class BrickFiler():
 
         # Look for Brick
         if self.app.nxt_brick:
-            logger.info('got app.nxt_brick')
+            LOGGER.info('got app.nxt_brick')
             self.nxt_model = BrickListing(self.app.nxt_brick,
                                           '*.*')
             hpaned.add1(self.make_brickfile_panel(str(self.app.nxt_brick.sock),
                                                   self.nxt_model))
         elif self.app.ev3_brick:
-            logger.info('got app.ev3_brick')
+            LOGGER.info('got app.ev3_brick')
             self.current_ev3_directory = self.app.settings.get_string('prjsstore')
             self.ev3_model = BrickListing(self.app.ev3_brick,
                                           self.current_ev3_directory)
@@ -479,7 +479,7 @@ class BrickFiler():
         model = widget.get_model()
         path = model[item][COLUMN_PATH]
         is_dir = model[item][COLUMN_ISDIR]
-        logger.debug('double click on {}, is_dir {}'.format(path, is_dir))
+        LOGGER.debug('double click on {}, is_dir {}'.format(path, is_dir))
 
         if self.app.ev3_brick and is_dir:
             self.current_ev3_directory = str(Path(self.current_ev3_directory, path))
@@ -546,13 +546,13 @@ class BrickFiler():
             selected_iter = iconview.get_model().get_iter(item)
             file_uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
             file_uris.append(file_uri)
-        logger.debug(file_uris)
+        LOGGER.debug(file_uris)
         success = selection.set_uris(file_uris)
-        if logger.isEnabledFor(logging.DEBUG):
+        if LOGGER.isEnabledFor(logging.DEBUG):
             if success:
-                logger.debug(selection.get_uris())
+                LOGGER.debug(selection.get_uris())
             else:
-                logger.debug('selection set uri(s) NOT okay')
+                LOGGER.debug('selection set uri(s) NOT okay')
 
     def drag_data_get_host_data(self, iconview, context, selection, target_id,
                                etime):
@@ -566,13 +566,13 @@ class BrickFiler():
             uri = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
             name = iconview.get_model().get_value(selected_iter, COLUMN_PATH)
             file_uris.append(Path(self.current_directory, name).as_uri())
-        logger.debug('dragged: {}'.format(file_uris))
+        LOGGER.debug('dragged: {}'.format(file_uris))
         success = selection.set_uris(file_uris)
-        if logger.isEnabledFor(logging.DEBUG):
+        if LOGGER.isEnabledFor(logging.DEBUG):
             if success:
-                logger.debug('selection set uris okay')
+                LOGGER.debug('selection set uris okay')
             else:
-                logger.debug('selection set uris NOT okay')
+                LOGGER.debug('selection set uris NOT okay')
 
     def drag_data_received_data(self, iconview, context, x, y, selection,
                                 info, etime):
@@ -595,12 +595,12 @@ class BrickFiler():
                 ext = ['.rxe', '.rso', '.ric', '.rtm', 'rpg']
                 for file in file_uris:
                     if file.endswith(tuple(ext)):
-                        logger.debug('dropped: {}'.format(file_uris))
+                        LOGGER.debug('dropped: {}'.format(file_uris))
                         wnames = write_files(self.app.nxt_brick, file_uris) # returns ('fname', 'size')
                         self.nxt_model.populate(self.app.nxt_brick, '*.*')
                         context.finish(True, False, etime)
                     else:
-                        logger.debug("don't want {}".format(file_uris))
+                        LOGGER.debug("don't want {}".format(file_uris))
                         # TODO: Give feedback
                         #bar = gtk.InfoBar()
                         #vb.pack_start(bar, False, False)
@@ -616,7 +616,7 @@ class BrickFiler():
                     info = gfile.query_file_type(Gio.FileQueryInfoFlags.NONE, None)
                     if info == Gio.FileType.DIRECTORY:
                         prj = gfile.get_basename()
-                        logger.debug('URI is directory')
+                        LOGGER.debug('URI is directory')
                         infos = gfile.enumerate_children('standard::name',
                                                          Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,
                                                          None)
@@ -625,15 +625,15 @@ class BrickFiler():
                             infile = str(Path(self.current_ev3_directory,
                                          prj, child.get_basename()))
                             outfile = child.get_parse_name()
-                            logger.debug('dropped: {}'.format(outfile))
-                            logger.debug('write to: {}'.format(infile))
+                            LOGGER.debug('dropped: {}'.format(outfile))
+                            LOGGER.debug('write to: {}'.format(infile))
                             data = open(outfile, 'rb').read()
                             self.app.ev3_brick.write_file(infile, data)
                     else:
                         infile = str(Path(self.current_ev3_directory, gfile.get_basename()))
                         outfile = gfile.get_parse_name()
-                        logger.debug('dropped: {}'.format(outfile))
-                        logger.debug('write to: {}'.format(infile))
+                        LOGGER.debug('dropped: {}'.format(outfile))
+                        LOGGER.debug('write to: {}'.format(infile))
                         data = open(outfile, 'rb').read()
                         #data = gfile.read()
                         self.app.ev3_brick.write_file(infile, data)
@@ -642,8 +642,8 @@ class BrickFiler():
                     self.ev3_model.populate(self.app.ev3_brick, self.current_ev3_directory)
                     context.finish(True, False, etime)
         else:
-            logger.debug('what happend?')
-            logger.debug(context.get_actions())
+            LOGGER.debug('what happend?')
+            LOGGER.debug(context.get_actions())
             context.finish(False, False, etime)
 
     def drag_data_received_brick_data(self, iconview, context, x, y, selection,
@@ -657,9 +657,9 @@ class BrickFiler():
         if context.get_actions() == DRAG_ACTION:
 
             if self.app.nxt_brick:
-                logger.debug(context.get_actions())
-                logger.debug(selection.get_uris())
-                logger.debug(self.current_directory)
+                LOGGER.debug(context.get_actions())
+                LOGGER.debug(selection.get_uris())
+                LOGGER.debug(self.current_directory)
                 for uri in file_uris:
                     host_uri = Path(self.current_directory, uri).as_uri()
                     nxtfile = read_file(self.app.nxt_brick, host_uri)
@@ -668,7 +668,7 @@ class BrickFiler():
                 for uri in file_uris:
                     for row in self.ev3_model:
                         if row[COLUMN_PATH] == uri:
-                            logger.debug('{} is directory: {}'.format(uri, row[COLUMN_ISDIR]))
+                            LOGGER.debug('{} is directory: {}'.format(uri, row[COLUMN_ISDIR]))
                             if row[COLUMN_ISDIR]:
 
                                 gfile = Gio.File.new_for_path(str(Path(self.current_directory, uri)))
@@ -676,7 +676,7 @@ class BrickFiler():
 
                                 content = self.app.ev3_brick.list_dir(str(Path(self.current_ev3_directory, uri)))
                                 for file in content['files']:
-                                    logger.debug(file['name'])
+                                    LOGGER.debug(file['name'])
                                     host_uri = str(Path(self.current_directory, uri, file['name']))
                                     gfile = Gio.File.new_for_path(host_uri)
                                     ev3_uri = str(Path(self.current_ev3_directory, uri, file['name']))
@@ -686,7 +686,7 @@ class BrickFiler():
                             else:
                                 host_uri = str(Path(self.current_directory, uri))
                                 gfile = Gio.File.new_for_path(host_uri)
-                                logger.debug(host_uri)
+                                LOGGER.debug(host_uri)
                                 ev3_uri = str(Path(self.current_ev3_directory, uri))
                                 data = self.app.ev3_brick.read_file(ev3_uri)
                                 gfile.replace_contents(data, None, False,
@@ -695,8 +695,8 @@ class BrickFiler():
             self.host_model.populate(self.current_directory)
             context.finish(True, False, etime)
         else:
-            logger.debug('what happend?')
-            logger.debug(context.get_actions())
+            LOGGER.debug('what happend?')
+            LOGGER.debug(context.get_actions())
             context.finish(False, False, etime)
 
     def drag_data_received_brick_deldata(self, iconview, context, x, y, selection,
@@ -705,16 +705,16 @@ class BrickFiler():
         delete button as drag destination
         '''
         file_uris = selection.get_uris()
-        logger.debug('selected to delete: {}'.format(file_uris))
+        LOGGER.debug('selected to delete: {}'.format(file_uris))
 
         if context.get_actions() == DRAG_ACTION:
             if self.app.nxt_brick:
                 for uri in selection.get_uris():
                     try:
                         self.app.nxt_brick.delete(uri)
-                        logger.debug('deleted {}'.format(uri))
+                        LOGGER.debug('deleted {}'.format(uri))
                     except:
-                        logger.debug('uri {} not deleted'.format(uri))
+                        LOGGER.debug('uri {} not deleted'.format(uri))
                 self.nxt_model.populate(self.app.nxt_brick, '*.*')
                 context.finish(True, False, etime)
 
@@ -722,7 +722,7 @@ class BrickFiler():
                 for uri in selection.get_uris():
                     for row in self.ev3_model:
                         if row[COLUMN_PATH] == uri:
-                            logger.debug('{} is directory: {}'.format(uri, row[COLUMN_ISDIR]))
+                            LOGGER.debug('{} is directory: {}'.format(uri, row[COLUMN_ISDIR]))
                             file_name = str(Path(self.current_ev3_directory,
                                                  row[COLUMN_PATH]))
                             if row[COLUMN_ISDIR]:
@@ -748,20 +748,20 @@ class BrickFiler():
             blacklist = ['! Startup.rso', '! Click.rso', 'NVConfig.sys', 'RPGReader.sys']
 
             for item in self.brick_view.get_selected_items():
-                logger.debug('{}'.format(item))
+                LOGGER.debug('{}'.format(item))
 
                 selected_iter = self.nxt_model.get_iter(item)
                 if selected_iter is not None:
                     file_name = self.nxt_model.get_value(selected_iter, 0)
-                    logger.debug('selected to delete: {}'.format(file_name))
+                    LOGGER.debug('selected to delete: {}'.format(file_name))
                     if file_name in blacklist:
                         continue
                     try:
                         self.app.nxt_brick.delete(file_name)
-                        logger.debug('deleted: {}'.format(file_name))
+                        LOGGER.debug('deleted: {}'.format(file_name))
                         self.nxt_model.remove(selected_iter)
                     except:
-                        logger.debug('File not deleted')
+                        LOGGER.debug('File not deleted')
 
     def delete_ev3_file(self):
         '''delete file(s) on ev3-brick'''
@@ -769,35 +769,36 @@ class BrickFiler():
             blacklist = ['BrkDL_SAVE', 'BrkProg_SAVE', 'SD_Card']
 
             for item in  self.brick_view.get_selected_items():
-                logger.debug('item {}'.format(item))
+                LOGGER.debug('item {}'.format(item))
                 selected_iter = self.ev3_model.get_iter(item)
                 if selected_iter is not None:
                     name = self.ev3_model.get_value(selected_iter, COLUMN_PATH)
                     file_name = str(Path(self.current_ev3_directory, name))
-                    logger.debug('selected to delete: {}'.format(file_name))
+                    LOGGER.debug('selected to delete: {}'.format(file_name))
                     if name in blacklist:
                         continue
                     if self.ev3_model.get_value(selected_iter, COLUMN_ISDIR):
                         # is Dir
                         try:
                             self.app.ev3_brick.del_dir(file_name)
-                            logger.debug('Directory {} deleted'.format(file_name))
+                            LOGGER.debug('Directory {} deleted'.format(file_name))
                             self.ev3_model.remove(selected_iter)
                         except:
-                            logger.debug('Directory not deleted')
+                            LOGGER.debug('Directory not deleted')
                     else:
                         # is File
                         try:
                             self.app.ev3_brick.del_file(file_name)
-                            logger.debug('deleted: {}'.format(file_name))
+                            LOGGER.debug('deleted: {}'.format(file_name))
                             self.ev3_model.remove(selected_iter)
                         except:
-                            logger.debug('File not deleted')
+                            LOGGER.debug('File not deleted')
                 else:
-                    logger.debug('No file selected')
+                    LOGGER.debug('No file selected')
 
     def quit(self, *args):
         '''Quit brickfiler'''
+        self.app.brickfiler = None
         self.window.destroy()
         return True
 

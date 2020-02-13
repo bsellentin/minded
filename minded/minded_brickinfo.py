@@ -144,6 +144,7 @@ class BrickInfo():
 
     def quit(self, *args):
         'Quit the program'
+        self.app.brickinfo = None
         self.window.destroy()
         # needed! Else Window disappears, but App lives still.
         return True

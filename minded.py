@@ -74,7 +74,7 @@ class MindEdApp(Gtk.Application):
 
         # For Gio.Application 2.40 -> Trusty
         self.win = None
-        self.version = "0.7.14"
+        self.version = "0.7.14 - Heinz"
         GLib.set_application_name("minded")
 
         self.args = ()
@@ -84,6 +84,10 @@ class MindEdApp(Gtk.Application):
         self.client = None
         self.nxt_brick = None
         self.ev3_brick = None
+        # windows
+        self.brickfiler = None
+        self.brickinfo = None
+        self.apiviewer = None
 
         self.add_main_option_entries([
             make_option("debug", description="Show debug information on the console"),

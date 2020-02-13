@@ -394,19 +394,28 @@ class MindEdAppWin(Gtk.ApplicationWindow):
         '''
         open new window with brick information like name, firmware...
         '''
-        BrickInfo(self.app)
+        if not self.app.brickinfo:
+            self.app.brickinfo = BrickInfo(self.app)
+        else:
+            self.app.brickinfo.window.present()
 
     def on_btn_brickfiler_clicked(self, action, param):
         '''
         open new window with brick file browser...
         '''
-        BrickFiler(self.app)
+        if not self.app.brickfiler:
+            self.app.brickfiler = BrickFiler(self.app)
+        else:
+            self.app.brickfiler.window.present()
 
     def on_btn_apiviewer_clicked(self, action, param):
         '''
         open new window with API reference browser
         '''
-        ApiViewer(self.app)
+        if not self.app.apiviewer:
+            self.app.apiviewer = ApiViewer(self.app)
+        else:
+            self.app.apiviewer.window.present()
 
     def open_new(self):
         '''
