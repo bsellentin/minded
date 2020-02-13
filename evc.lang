@@ -355,6 +355,7 @@
         <keyword>COL_COLOR</keyword>
         <keyword>US_DIST_CM</keyword>
         <keyword>US_DIST_IN</keyword>
+        <keyword>US_LISTEN</keyword>
         <keyword>GYRO_ANG</keyword>
         <keyword>GYRO_RATE</keyword>
         <keyword>IR_PROX</keyword>
@@ -371,6 +372,7 @@
         <keyword>NXT_COL_AMB</keyword>
         <keyword>NXT_COL_COL</keyword>
         <keyword>NXT_US_CM</keyword>
+        <keyword>NXT_US_IN</keyword>
         <keyword>HT_DIR_AC</keyword>
         <keyword>HT_DIR_DC</keyword>
         <keyword>HT_DIR_ACALL</keyword>
@@ -578,6 +580,7 @@
         <keyword>SetSensorNXTTouch</keyword>
         <keyword>SetSensorNXTLight</keyword>
         <keyword>SetSensorNXTSound</keyword>
+        <keyword>SetSensorNXTUS</keyword>
         <keyword>SetSensorMode</keyword>
         <keyword>SetDirection</keyword>
         <keyword>SetPower</keyword>
